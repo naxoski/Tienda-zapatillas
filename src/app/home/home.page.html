@@ -3,18 +3,30 @@
     <ion-title>
       Blank
     </ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-card class="ion-text-center">
+    <ion-card-title>
+      <ion-label><h2>Iniciar Sesion {{ nombreUsuario }}</h2></ion-label>
+      
+    </ion-card-title>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+    <ion-card-content>
+      <ion-item>
+        <ion-input  [(ngModel)]="user1" label="Usuario" labelPlacement="floating" placeholder="Enter text"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input label="Clave" labelPlacement="floating" placeholder="Enter text"></ion-input>
+      </ion-item>
+      <!--<ion-button size="default" [routerLink] = "['/pagina1']">Iniciar {{user1}}</ion-button>-->
+      <ion-button *ngIf="edad < 15" size="block" (click)="inicioSesion()" >Iniciar {{user1}}</ion-button>
+    </ion-card-content>
+  </ion-card>
+  <app-componente nombre="Ignacio"></app-componente>
 </ion-content>

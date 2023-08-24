@@ -1,0 +1,34 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>pagina1</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card class="ion-text-center">
+    <ion-card-title>
+      <ion-label><h2>Perfil</h2></ion-label>
+      
+    </ion-card-title>
+
+    <ion-card-content>
+      <ion-item>
+        <ion-textarea [readonly]="true" label="Nombre" placeholder="">{{usuarioR}}</ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-textarea [readonly]="true" label="Apellido" placeholder="Huerta"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-textarea [readonly]="true" label="Rut" placeholder="21.475.570-K"></ion-textarea>
+      </ion-item>
+      <ion-button size="default" [routerLink] = "['/home']">Cerrar</ion-button>
+      <ion-button size="default" [routerLink] = "['/pagina2']">Pagina2</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  
+</ion-content>
+

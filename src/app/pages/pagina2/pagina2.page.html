@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>pagina2</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">pagina2</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card>
+    <ion-card-content>
+    <ion-item><img src="assets/deus.jpg"></ion-item>
+    <ion-button size="default" [routerLink] = "['/pagina1']">Pagina1</ion-button>
+    </ion-card-content>
+    
+  </ion-card>
+  
+</ion-content>
