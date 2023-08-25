@@ -1,0 +1,15 @@
+.footer-component {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px 0;
+  box-sizing: border-box;
+}
+
+.footer-text {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+}

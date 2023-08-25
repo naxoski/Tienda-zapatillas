@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController,IonicSlides } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-home',
@@ -50,7 +51,7 @@ export class HomePage {
   }
   async presentToast() {
     const toast = await this.toastController.create({
-      message: 'Hello World!',
+      message: 'Inicio de sesion correcto!',
       duration: 1500,
       position: "bottom",
     });
