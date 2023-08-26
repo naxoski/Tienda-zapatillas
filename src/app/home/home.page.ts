@@ -47,7 +47,7 @@ export class HomePage {
       }
     }
     this.presentToast();
-    this.router.navigate(['/pagina1'],navigationExtras);
+    this.router.navigate(['/principal'],navigationExtras);
   }
   async presentToast() {
     const toast = await this.toastController.create({

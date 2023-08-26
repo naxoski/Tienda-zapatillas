@@ -20,13 +20,34 @@ const routes: Routes = [
     loadChildren: () => import('./pages/pagina2/pagina2.module').then( m => m.Pagina2PageModule)
   },
   {
+    path: 'principal',
+    loadChildren: () => import('./pages/principal/principal.module').then( m => m.PrincipalPageModule)
+  },
+  {
+    path: 'perfil',
+    loadChildren: () => import('./pages/perfil/perfil.module').then( m => m.PerfilPageModule)
+  },
+  {
+    path: 'recuperar-contra',
+    loadChildren: () => import('./pages/recuperar-contra/recuperar-contra.module').then( m => m.RecuperarContraPageModule)
+  },
+  {
+    path: 'crear-cuenta',
+    loadChildren: () => import('./pages/crear-cuenta/crear-cuenta.module').then( m => m.CrearCuentaPageModule)
+  },
+ 
+  {
+    path: 'carrito',
+    loadChildren: () => import('./pages/carrito/carrito.module').then( m => m.CarritoPageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then( m => m.NotFoundPageModule)
   },
-  {
-    path: 'main',
-    loadChildren: () => import('./pages/main/main.module').then( m => m.MainPageModule)
-  },
+
+
+
+
 
 ];
 
