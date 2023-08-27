@@ -15,9 +15,10 @@ export class HomePage {
   edad : number = 12;
   lista : any = [
     {
-      nombre : "diego",
-      apellido :"Espejo",
-      edad : 20
+      nombre : "ignacio",
+      apellido :"huerta",
+      edad : 19,
+      email: "ignaciohuerta8a@gmail.com"
     }
   ]
 

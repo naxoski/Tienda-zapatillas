@@ -6,11 +6,38 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+<ion-content>
+<ion-card class="profile-card">
+  <ion-card-header>
+    <ion-card-title>Naxitox</ion-card-title>
+    <ion-card-subtitle>ignaciohuerta8a@gmail.com</ion-card-subtitle>
+  </ion-card-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Perfil</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card-content>
+    <ion-avatar class="profile-avatar">
+      <img src="assets/chad.webp" alt="Avatar">
+    </ion-avatar>
+  </ion-card-content>
+
+  <ion-card-content>
+    <ion-item>
+      <ion-label position="stacked">Nombre</ion-label>
+      <ion-input readonly placeholder="Ignacio"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Apellido</ion-label>
+      <ion-input readonly placeholder="Huerta"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Edad</ion-label>
+      <ion-input readonly placeholder="19"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Contraseña</ion-label>
+      <ion-input readonly type="password" placeholder="********"></ion-input>
+    </ion-item>
+    <ion-button expand="full">Modificar Perfil</ion-button>
+  </ion-card-content>
+</ion-card>
 </ion-content>
+

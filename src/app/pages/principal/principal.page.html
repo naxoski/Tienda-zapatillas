@@ -5,9 +5,9 @@
         <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
       </ion-menu-button>
     </ion-buttons>
-    <ion-title class="center-title">Zhoes</ion-title>
+    <ion-title class="center-title" [routerLink] = "['/principal']">Zhoes</ion-title>
     <div class="icono-container" slot="end">
-      <a [routerLink] = "['/carrito']"><ion-icon size="large" name="bag-outline" class="icono-ajustado"></ion-icon></a>
+      <ion-icon size="large" name="bag-outline" class="icono-ajustado" [routerLink] = "['/carrito']"></ion-icon>
     </div>
   </ion-toolbar>
 </ion-header>
@@ -18,7 +18,8 @@
       <ion-title size="large">Principal</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-searchbar animated="true" placeholder="Animated"></ion-searchbar>
+  <ion-searchbar animated="true" placeholder="Buscar"></ion-searchbar>
+  <h1 style="text-align: center;">Podria interesarte</h1>
   <swiper-container>
     <swiper-slide><img src="assets/NIKE TERMINATOR.webp"> <p>Nike Terminator High</p></swiper-slide>
     <swiper-slide><img src="assets/nike air force 1.webp"><p>Nike Air Force 1</p></swiper-slide>
