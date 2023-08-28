@@ -10,6 +10,8 @@ import { PrincipalPage } from './principal.page';
 
 import {MatTabsModule} from '@angular/material/tabs';
 
+import {MatExpansionModule} from '@angular/material/expansion';
+
 
 
 
@@ -21,6 +23,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     PrincipalPageRoutingModule,
     MatTabsModule,
     PrincipalPageRoutingModule,
+    MatExpansionModule
     
   ],
   declarations: [PrincipalPage],

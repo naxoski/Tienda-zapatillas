@@ -27,7 +27,7 @@
   </swiper-container>
   <img src="/assets/banner.png" class="adjustable-image">
   <h1 style="text-align: center;">Nuevos Lanzamientos</h1>
-  <a href="#" class="clickable-image">
+  <a [routerLink] = "['/productos']" class="clickable-image">
     <img src="/assets/banner_publicitario.png" class="adjustable-image">
     <button class="buy-button">Comprar</button>
   </a>
@@ -94,7 +94,7 @@
   </swiper-container>
 
   <div class="notification-box">
-    <h2 class="notification-text">¿Quieres recibir ofertas?, Recibe nuestras notificaciones!</h2>
+    <h2 class="notification-text">¿Quieres recibir ofertas?, Activa nuestras notificaciones!</h2>
     <ion-list>
       <ion-item>
         <ion-input labelPlacement="floating" placeholder=" Ejemplo:hi@ionic.io">
