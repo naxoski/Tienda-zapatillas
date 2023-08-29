@@ -13,4 +13,28 @@
       <ion-title size="large">RecuperarContra</ion-title>
     </ion-toolbar>
   </ion-header>
+  <ion-card>
+    <ion-card-header>
+      Recuperación de Cuenta
+    </ion-card-header>
+    
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Correo Electrónico</ion-label>
+        <ion-input type="email" placeholder="Correo Electrónico" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="stacked">Pregunta de Seguridad</ion-label>
+        <ion-input type="text" placeholder="Pregunta de Seguridad" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="stacked">Respuesta de Seguridad</ion-label>
+        <ion-input type="text" placeholder="Respuesta de Seguridad" required></ion-input>
+      </ion-item>
+      
+      <ion-button expand="full" type="submit" [routerLink] = "['/home']">Recuperar Cuenta</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

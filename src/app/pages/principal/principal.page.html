@@ -21,12 +21,12 @@
   <ion-searchbar animated="true" placeholder="Buscar"></ion-searchbar>
   <h1 style="text-align: center;">Podria interesarte</h1>
   <swiper-container>
-    <swiper-slide><img src="assets/NIKE TERMINATOR.webp"> <p>Nike Terminator High</p></swiper-slide>
-    <swiper-slide><img src="assets/nike air force 1.webp"><p>Nike Air Force 1</p></swiper-slide>
-    <swiper-slide><img src="assets/nike run swift 3.webp"><p>Nike Run Swift 3</p></swiper-slide>
+    <swiper-slide><img src="assets/NIKE TERMINATOR.webp" [routerLink] = "['/productos']"> <p>Nike Terminator High</p></swiper-slide>
+    <swiper-slide><img src="assets/nike air force 1.webp" [routerLink] = "['/productos']"><p>Nike Air Force 1</p></swiper-slide>
+    <swiper-slide><img src="assets/nike run swift 3.webp" [routerLink] = "['/productos']"><p>Nike Run Swift 3</p></swiper-slide>
   </swiper-container>
-  <img src="/assets/banner.png" class="adjustable-image">
-  <h1 style="text-align: center;">Nuevos Lanzamientos</h1>
+  <img src="/assets/banner.png" class="adjustable-image" [routerLink] = "['/productos']">
+  <h1 style="text-align: center;" >Nuevos Lanzamientos</h1>
   <a [routerLink] = "['/productos']" class="clickable-image">
     <img src="/assets/banner_publicitario.png" class="adjustable-image">
     <button class="buy-button">Comprar</button>
@@ -34,7 +34,7 @@
 
   <h1 style="text-align: center;"> Más Vendidos</h1>
   <swiper-container>
-    <swiper-slide><img src="assets/Nike Dunk Low Retro.webp"> 
+    <swiper-slide><img src="assets/Nike Dunk Low Retro.webp" [routerLink] = "['/productos']"> 
       <p>Nike Dunk Low Retro</p>
       <ion-fab>
         <ion-fab-button size="small">
@@ -53,7 +53,7 @@
         </ion-fab-list>
       </ion-fab>
     </swiper-slide>
-    <swiper-slide><img src="assets/Nike Air Adjust Force 2023.webp">
+    <swiper-slide><img src="assets/Nike Air Adjust Force 2023.webp" [routerLink] = "['/productos']">
       <p>Nike Air Adjust Force 2023</p>
       <ion-fab>
         <ion-fab-button size="small">
@@ -72,7 +72,7 @@
         </ion-fab-list>
       </ion-fab>
     </swiper-slide>
-    <swiper-slide><img src="assets/Nike Dunk Hi retro Premiun.webp">
+    <swiper-slide><img src="assets/Nike Dunk Hi retro Premiun.webp" [routerLink] = "['/productos']">
       <p>Nike Dunk Hi retro Premiun</p>
       <ion-fab>
         <ion-fab-button size="small">

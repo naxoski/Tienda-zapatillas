@@ -7,11 +7,52 @@
     
   </ion-toolbar>
 </ion-header>
+<ion-content>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">CrearCuenta</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card>
+    <ion-card-header>
+      Creación de Cuenta
+    </ion-card-header>
+    
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input type="text" placeholder="Nombre" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="stacked">Apellido</ion-label>
+        <ion-input type="text" placeholder="Apellido" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="stacked">Fecha de Nacimiento</ion-label>
+        <ion-input type="date" required></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="stacked" required >Género</ion-label>
+        <mat-radio-group aria-label="Select an option">
+          <mat-radio-button value="1">Masculino</mat-radio-button>
+          <mat-radio-button value="2">Femenino</mat-radio-button>
+          <mat-radio-button value="2">Otro</mat-radio-button>
+        </mat-radio-group>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label position="stacked" required>Dirección</ion-label>
+        <ion-input type="text"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" required>Pregunta de seguridad</ion-label>
+        <ion-input type="text"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" required>Respuesta de seguridad</ion-label>
+        <ion-input type="text"></ion-input>
+      </ion-item>
+      
+      <ion-button expand="full" [routerLink] = "['/home']">Crear Cuenta</ion-button>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
