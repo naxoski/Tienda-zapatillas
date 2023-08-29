@@ -1,8 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Mi compra</ion-title>
+    <ion-title class="center-title" [routerLink]="['/principal']">Zhoes</ion-title>
+
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
+      <ion-menu-button></ion-menu-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -13,4 +15,13 @@
       <ion-title size="large">Carrito</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <h1 style="text-align: center;">Mis Compras</h1>
+  <ion-card>
+    <ion-img src="assets/carrito.jpg" alt="Imagen 1"></ion-img>
+    <h2> Aún no agregaste productos <br> a tu bolsa de compras </h2>
+  </ion-card>
+  <br>
+  <ion-button expand="block" color="medium" [routerLink]="['/principal']">Comprar</ion-button>
+
 </ion-content>
