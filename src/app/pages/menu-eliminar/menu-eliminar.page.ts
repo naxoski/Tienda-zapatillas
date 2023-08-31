@@ -16,6 +16,16 @@ export class MenuEliminarPage implements OnInit {
       cssClass: 'alert-button-confirm',
     },
   ];
+  public alertButtons1 = [
+    {
+      text: 'No',
+      cssClass: 'alert-button-cancel',
+    },
+    {
+      text: 'Si',
+      cssClass: 'alert-button-confirm',
+    },
+  ];
   constructor() { }
 
   ngOnInit() {
