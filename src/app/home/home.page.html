@@ -15,19 +15,18 @@
 
           <ion-card-content>
             <ion-item>
-              <ion-label  position="floating">Usuario</ion-label>
-              <ion-input type="text" name="username"></ion-input>
+              <ion-input label="Usuario" label-placement="floating" type="text" name="correo" placeholder=""[(ngModel)]="usu"></ion-input>
             </ion-item>
 
             <ion-item>
-              <ion-label position="floating">Contraseña</ion-label>
-              <ion-input type="password" name="password"></ion-input>
+              <ion-input label="Contraseña" label-placement="floating" [type]="MostrarCon  ? 'text' :'password'" name="contraseña" placeholder="" [(ngModel)]="claveu"></ion-input>
+              <ion-icon slot="end" [name]="OjoCon" (click)="EstadoContra()"></ion-icon>
             </ion-item>
             <mat-checkbox class="example-margin">Recordarme</mat-checkbox>
             <a mat-flat-button [routerLink] = "['/crear-cuenta']">Crear cuenta</a>
             <a mat-flat-button [routerLink] = "['/recuperar-contra']">¿Olvido su contraseña?</a>
 
-            <ion-button expand="full" (click)="inicioSesion()" class="custom-button">Iniciar Sesión</ion-button>
+            <ion-button expand="full" (click)="iniciar()" class="custom-button">Iniciar Sesión</ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>

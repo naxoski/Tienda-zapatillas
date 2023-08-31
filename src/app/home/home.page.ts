@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
-import { AlertController, ToastController,IonicSlides } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController, ToastController } from '@ionic/angular';
 
 
 @Component({
@@ -8,55 +8,58 @@ import { AlertController, ToastController,IonicSlides } from '@ionic/angular';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
-  user1: string = "";
-  nombreUsuario: string ="Nacho";
-  clave = "1234";
-  edad : number = 12;
-  lista : any = [
-    {
-      nombre : "ignacio",
-      apellido :"huerta",
-      edad : 19,
-      email: "ignaciohuerta8a@gmail.com"
+export class HomePage implements OnInit {
+ admin ="admin";
+ clave="admin";
+ cliente="ignacio";
+ Clave="1234";
+ usu: string| undefined;
+ claveu: string| undefined;
+
+ MostrarCon=false;
+ OjoCon='eye';
+
+
+
+  constructor(private router: Router, public toastController: ToastController, private alertController: AlertController) {}
+  EstadoContra(): void {
+    this.MostrarCon = !this.MostrarCon;
+
+    if (this.OjoCon == 'eye') {
+      this.OjoCon = 'eye-off';
+    } else {
+      this.OjoCon = 'eye';
     }
-  ]
-
-
-  constructor(private router:Router, private alertController: AlertController,private toastController: ToastController) {}
-
-  sumar(){
-  this.clave;
-  console.log("Mostrar mensajes por consola");
-  }
-  async presentAlert() {
-    const alert = await this.alertController.create({
-      header: 'Alert',
-      subHeader: 'Important message',
-      message: 'This is an alert!',
-      buttons: ['OK'],
-    });
-
-    await alert.present();
   }
 
-  inicioSesion(){
-    let navigationExtras : NavigationExtras ={
-      state : {
-        userEnviado: this.user1,
-        claveEnviada: this.clave
-      }
+  ngOnInit() {
+  }
+
+  async iniciar() {
+    if (!this.usu ||!this.claveu) {
+      const alert = await this.alertController.create({
+        header: 'Campos Incompletos',
+        message: 'Complete todos los campos',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
     }
-    this.presentToast();
-    this.router.navigate(['/principal'],navigationExtras);
-  }
-  async presentToast() {
-    const toast = await this.toastController.create({
-      message: 'Inicio de sesion correcto!',
-      duration: 1500,
-      position: "bottom",
-    });
 
-    await toast.present();
+    if (this.usu == this.cliente && this.claveu == this.Clave) {
+      this.router.navigate(['/principal']);
+    } else if (this.usu == this.admin && this.claveu == this.clave) {
+      this.router.navigate(['/principal']);
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Credenciales Incorrectas',
+        message: 'Usuario o contraseña incorrectos',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
+ 
+
+ 
 }
