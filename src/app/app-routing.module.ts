@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
   },
   {
     path: '',
@@ -13,42 +13,60 @@ const routes: Routes = [
   },
   {
     path: 'principal',
-    loadChildren: () => import('./pages/principal/principal.module').then( m => m.PrincipalPageModule)
+    loadChildren: () => import('./pages/principal/principal.module').then(m => m.PrincipalPageModule)
   },
   {
     path: 'perfil',
-    loadChildren: () => import('./pages/perfil/perfil.module').then( m => m.PerfilPageModule)
+    loadChildren: () => import('./pages/perfil/perfil.module').then(m => m.PerfilPageModule)
   },
   {
     path: 'recuperar-contra',
-    loadChildren: () => import('./pages/recuperar-contra/recuperar-contra.module').then( m => m.RecuperarContraPageModule)
+    loadChildren: () => import('./pages/recuperar-contra/recuperar-contra.module').then(m => m.RecuperarContraPageModule)
   },
   {
     path: 'crear-cuenta',
-    loadChildren: () => import('./pages/crear-cuenta/crear-cuenta.module').then( m => m.CrearCuentaPageModule)
+    loadChildren: () => import('./pages/crear-cuenta/crear-cuenta.module').then(m => m.CrearCuentaPageModule)
   },
- 
+
   {
     path: 'carrito',
-    loadChildren: () => import('./pages/carrito/carrito.module').then( m => m.CarritoPageModule)
+    loadChildren: () => import('./pages/carrito/carrito.module').then(m => m.CarritoPageModule)
   },
-  
+
   {
     path: 'productos',
-    loadChildren: () => import('./pages/productos/productos.module').then( m => m.ProductosPageModule)
+    loadChildren: () => import('./pages/productos/productos.module').then(m => m.ProductosPageModule)
   },
   {
     path: 'producto1',
-    loadChildren: () => import('./pages/producto1/producto1.module').then( m => m.Producto1PageModule)
+    loadChildren: () => import('./pages/producto1/producto1.module').then(m => m.Producto1PageModule)
   },
   {
     path: 'producto2',
-    loadChildren: () => import('./pages/producto2/producto2.module').then( m => m.Producto2PageModule)
+    loadChildren: () => import('./pages/producto2/producto2.module').then(m => m.Producto2PageModule)
+  },
+  {
+    path: 'menu-admin',
+    loadChildren: () => import('./pages/menu-admin/menu-admin.module').then(m => m.MenuAdminPageModule)
+  },
+  {
+    path: 'menu-editar',
+    loadChildren: () => import('./pages/menu-editar/menu-editar.module').then(m => m.MenuEditarPageModule)
+  },
+  {
+    path: 'menu-agregar',
+    loadChildren: () => import('./pages/menu-agregar/menu-agregar.module').then(m => m.MenuAgregarPageModule)
+  },
+  {
+    path: 'menu-eliminar',
+    loadChildren: () => import('./pages/menu-eliminar/menu-eliminar.module').then(m => m.MenuEliminarPageModule)
   },
   {
     path: '**',
-    loadChildren: () => import('./pages/not-found/not-found.module').then( m => m.NotFoundPageModule)
+    loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
   },
+
+
 
 
 
