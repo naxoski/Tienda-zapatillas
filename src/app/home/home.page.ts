@@ -47,8 +47,20 @@ export class HomePage implements OnInit {
     }
 
     if (this.usu == this.cliente && this.claveu == this.Clave) {
+      const alert = await this.alertController.create({
+        header: 'Bienvenido!',
+        message: 'Sesion iniciada correctamente',
+        buttons: ['OK']
+      });
+      await alert.present();
       this.router.navigate(['/principal']);
     } else if (this.usu == this.admin && this.claveu == this.clave) {
+      const alert = await this.alertController.create({
+        header: 'Bienvenido admin!',
+        message: 'Sesion iniciada correctamente',
+        buttons: ['OK']
+      });
+      await alert.present();
       this.router.navigate(['/principal']);
     } else {
       const alert = await this.alertController.create({
