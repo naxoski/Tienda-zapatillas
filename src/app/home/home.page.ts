@@ -61,7 +61,7 @@ export class HomePage implements OnInit {
         buttons: ['OK']
       });
       await alert.present();
-      this.router.navigate(['/principal']);
+      this.router.navigate(['/menu-admin']);
     } else {
       const alert = await this.alertController.create({
         header: 'Credenciales Incorrectas',
