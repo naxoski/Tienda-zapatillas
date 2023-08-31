@@ -13,9 +13,12 @@
           <div class="user-name">{{ x.nombre | uppercase }}</div>
           <div class="user-age">{{ x.edad | number }} años</div>
         </div>
-        <div class="user-details">
+        <div class="user-details" *ngIf="x.categoria === 'Alta'">
           <div class="user-detail">Nombre: {{ x.nombre }}</div>
           <div class="user-detail">Categoría: {{ x.categoria }}</div>
+        </div>
+        <div class="user-message" *ngIf="x.categoria !== 'Alta'">
+          Este usuario no tiene categoría alta.
         </div>
       </ion-label>
     </ion-item>

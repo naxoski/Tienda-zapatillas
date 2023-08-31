@@ -18,7 +18,7 @@ export class VerusuariosPage implements OnInit {
     {
       nombre : "Diego",
       apellido :"Espejo",
-      categoria: "Admin",
+      categoria: "Alta",
       edad : 20,
 
     }
