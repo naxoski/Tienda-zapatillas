@@ -19,7 +19,7 @@ export class VerusuariosPage implements OnInit {
       nombre : "Diego",
       apellido :"Espejo",
       categoria: "Alta",
-      edad : 20,
+      edad : 34,
 
     }
 
