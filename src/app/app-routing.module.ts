@@ -61,6 +61,11 @@ const routes: Routes = [
     path: 'menu-eliminar',
     loadChildren: () => import('./pages/menu-eliminar/menu-eliminar.module').then(m => m.MenuEliminarPageModule)
   },
+  
+  {
+    path: 'verusuarios',
+    loadChildren: () => import('./pages/verusuarios/verusuarios.module').then( m => m.VerusuariosPageModule)
+  },
   {
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)

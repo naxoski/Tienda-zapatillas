@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title class="center-title" [routerLink]="['/principal']">Zhoes</ion-title>
+    <ion-buttons slot="start"></ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="content">
+  <ion-list class="user-list">
+    <ion-item class="user-item" *ngFor="let x of lista">
+      <ion-label class="user-label">
+        <div class="user-info">
+          <div class="user-name">{{ x.nombre | uppercase }}</div>
+          <div class="user-age">{{ x.edad | number }} años</div>
+        </div>
+        <div class="user-details">
+          <div class="user-detail">Nombre: {{ x.nombre }}</div>
+          <div class="user-detail">Categoría: {{ x.categoria }}</div>
+        </div>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
