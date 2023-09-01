@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title class="center-title" [routerLink] = "['/principal']">Zhoes</ion-title>
+    <ion-title class="logo-title" [routerLink] = "['/principal']"><img src="assets/logitooo.png" alt="Logo" class="logo-image"></ion-title>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -29,6 +29,10 @@
         <ion-label position="stacked">Clave</ion-label>
         <ion-input name="apellido" type="password" placeholder="Clave" [(ngModel)]="clave"></ion-input>
       </ion-item>
+      <ion-item>
+        <ion-label position="stacked"> Repetir Clave</ion-label>
+        <ion-input name="apellido" type="password" placeholder="Repetir clave" [(ngModel)]="clave2"></ion-input>
+      </ion-item>
       
       <ion-item>
         <ion-label position="stacked">Fecha de Nacimiento</ion-label>
@@ -56,7 +60,10 @@
         <ion-label position="stacked" required>Respuesta de seguridad</ion-label>
         <ion-input name="respuesta" type="text" [(ngModel)]="respuesta"></ion-input>
       </ion-item>
-      
+      <ion-item>
+        <ion-label position="stacked"> Recibir notificaciones</ion-label>
+        <mat-slide-toggle>Activame!</mat-slide-toggle>
+      </ion-item>
       <ion-button expand="full"  (click)="crear()">Crear Cuenta</ion-button>
     </ion-card-content>
   </ion-card>

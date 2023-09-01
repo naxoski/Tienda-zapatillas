@@ -16,3 +16,18 @@ ion-card {
     
   
 }
+.logo-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px; /* Ajusta la altura según tus necesidades */
+  margin: 0;
+  padding: 0;
+}
+
+.logo-image {
+  max-height: 80%; /* Ajusta el tamaño de la imagen dentro del contenedor */
+  width: 50%; /* Permitir que el ancho de la imagen se ajuste automáticamente */
+  display: block; /* Centrar la imagen horizontalmente */
+  margin: 0 auto; /* Centrar la imagen horizontalmente */
+}

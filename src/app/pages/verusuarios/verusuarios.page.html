@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title class="center-title" [routerLink]="['/principal']">Zhoes</ion-title>
+    <ion-title class="logo-title" [routerLink]="['/menu-admin']"><img src="assets/logitooo.png" alt="Logo" class="logo-image"></ion-title>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -15,12 +15,12 @@
           <div class="user-name">{{ x.nombre | uppercase }}</div>
           <div class="user-age">{{ x.edad | number }} años</div>
         </div>
-        <div class="user-details" *ngIf="x.categoria === 'Alta'">
+        <div class="user-details" *ngIf="x.categoria !== 'Alta'">
           <div class="user-detail">Nombre: {{ x.nombre }}</div>
           <div class="user-detail">Categoría: {{ x.categoria }}</div>
         </div>
-        <div class="user-message" *ngIf="x.categoria !== 'Alta'">
-          Este usuario no tiene categoría alta.
+        <div class="user-message" *ngIf="x.categoria === 'Alta'">
+          Este usuario tiene categoría "admin".
         </div>
       </ion-label>
     </ion-item>
