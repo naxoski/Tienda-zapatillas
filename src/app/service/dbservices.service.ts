@@ -9,7 +9,26 @@ import { AlertController, ToastController } from '@ionic/angular';
 })
 export class DbservicesService {
   public database!: SQLiteObject;
-   tablaZapatillas: string="CREATE TABLE IF NOT EXISTS noticia(id  INTEGER PRIMARY KEY autoincrement, titulo VARCHAR (30) NOTNULL,texto VARCHAR(300) NOTNULL);";
+   Rol: string="CREATE TABLE IF NOT EXISTS noticia(id_rol  INTEGER PRIMARY KEY autoincrement, nombrerol VARCHAR (30) NOTNULL);";
+
+   Pregunta: string="CREATE TABLE IF NOT EXISTS noticia(id_pregunta  INTEGER PRIMARY KEY autoincrement, nombrePregunta VARCHAR (30) NOTNULL);";
+
+   Categoria: string="CREATE TABLE IF NOT EXISTS noticia(id_catego  INTEGER PRIMARY KEY autoincrement, nombreCategoria VARCHAR (30) NOTNULL);";
+
+   Producto: string="CREATE TABLE IF NOT EXISTS noticia(id_producto  INTEGER PRIMARY KEY autoincrement, nombreProducto VARCHAR (30) NOTNULL, descripcion VARCHAR (50) NOTNULL, precio INTEGER NOTNULL, stock INTEGER NOTNULL, foto IMAGE NOTNULL, categoria FOREIGN KEY);";
+   
+   Usuario: string="CREATE TABLE IF NOT EXISTS noticia(id_usuario  INTEGER PRIMARY KEY autoincrement, rut VARCHAR (30) NOTNULL, nombreUsuario VARCHAR (30) NOTNULL, apellidoUsuario VARCHAR (30) NOTNULL, f_nacimiento DATE  NOTNULL, telefono  INTEGER NOTNULL, foto IMAGE  NOTNULL, correo EMAIL  NOTNULL, clave VARCHAR (30) NOTNULL, respuesta VARCHAR (30) NOTNULL, pregunta VARCHAR (30) NOTNULL, rol FOREIGN KEY );";
+
+   Venta: string="CREATE TABLE IF NOT EXISTS noticia(id_venta  INTEGER PRIMARY KEY autoincrement, f_venta DATE NOTNULL, f_despacho DATE NOTNULL, estatus VARCHAR (30) NOTNULL, total VARCHAR (30) NOTNULL, carrito VARCHAR (30) NOTNULL, usuario FOREIGN KEY );";
+
+   Detalle: string="CREATE TABLE IF NOT EXISTS noticia(id_detalle  INTEGER PRIMARY KEY autoincrement, cantidad INTEGER NOTNULL, detalle VARCHAR (30) NOTNULL, producto FOREIGN KEY NOTNULL, venta FOREIGN KEY NOTNULL );";
+
+   Region: string="CREATE TABLE IF NOT EXISTS noticia(id_region  INTEGER PRIMARY KEY autoincrement, nombreRegion VARCHAR (30) NOTNULL);";
+
+   Direccion: string="CREATE TABLE IF NOT EXISTS noticia(id_direccion  INTEGER PRIMARY KEY autoincrement, calle VARCHAR (30) NOTNULL, numcasa INTEGER NOTNULL, codpostal INTEGER NOTNULL, comuna VARCHAR(30) NOTNULL, usuario FOREIGN KEY NOTNULL);";
+
+
+
 
    RegistroZapatillas: string="INSERT INTO OR IGNORE INTO noticia(id,titulo,texto) VALUES(1,'Soy un titulo'', 'Soy un texto');"
 
@@ -43,7 +62,16 @@ export class DbservicesService {
    async creaTablas(){
     try {
       //ejecutar la creacion de tablas
-       await this.database.executeSql(this.tablaZapatillas, []);
+      await this.database.executeSql(this.Rol, []);
+      await this.database.executeSql(this.Pregunta, []);
+      await this.database.executeSql(this.Categoria, []);
+      await this.database.executeSql(this.Producto, []);
+      await this.database.executeSql(this.Usuario, []);
+      await this.database.executeSql(this.Venta, []);
+      await this.database.executeSql(this.Detalle, []);
+      await this.database.executeSql(this.Region, []);
+      await this.database.executeSql(this.Detalle, []);
+
 
        await this.database.executeSql(this.RegistroZapatillas, []);
 
