@@ -67,9 +67,21 @@ const routes: Routes = [
     loadChildren: () => import('./pages/verusuarios/verusuarios.module').then( m => m.VerusuariosPageModule)
   },
   {
+    path: 'ver-productos',
+    loadChildren: () => import('./pages/ver-productos/ver-productos.module').then( m => m.VerProductosPageModule)
+  },
+  {
+    path: 'agregar-productos',
+    loadChildren: () => import('./pages/agregar-productos/agregar-productos.module').then( m => m.AgregarProductosPageModule)
+  },
+
+
+  {
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
   },
+ 
+ 
 
 
 

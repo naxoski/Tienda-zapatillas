@@ -3,7 +3,7 @@ import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AlertController, ToastController } from '@ionic/angular';
-import { Zapatillas } from '../services/zapatillas';
+import { Zapatillas } from './zapatillas';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class DbservicesService {
 
    Categoria: string="CREATE TABLE IF NOT EXISTS Categoria(id_catego  INTEGER PRIMARY KEY autoincrement, nombreCategoria VARCHAR (30) NOTNULL);";
 
-   Producto: string="CREATE TABLE IF NOT EXISTS  Producto(id_producto  INTEGER PRIMARY KEY autoincrement, nombreProducto VARCHAR (30) NOTNULL, descripcion VARCHAR (50) NOTNULL, precio INTEGER NOTNULL, stock INTEGER NOTNULL, foto IMAGE);";
+   Producto: string="CREATE TABLE IF NOT EXISTS  Producto(id_producto  INTEGER PRIMARY KEY autoincrement, nombreProducto VARCHAR (30) NOTNULL, descripcion VARCHAR (50) NOTNULL, precio INTEGER NOTNULL, stock INTEGER NOTNULL);";
    
    Usuario: string="CREATE TABLE IF NOT EXISTS Usuario(id_usuario  INTEGER PRIMARY KEY autoincrement, rut VARCHAR (30) NOTNULL, nombreUsuario VARCHAR (30) NOTNULL, apellidoUsuario VARCHAR (30) NOTNULL, f_nacimiento DATE  NOTNULL, telefono  INTEGER NOTNULL, foto IMAGE  NOTNULL, correo EMAIL  NOTNULL, clave VARCHAR (30) NOTNULL, respuesta VARCHAR (30) NOTNULL, pregunta VARCHAR (30) NOTNULL, rol FOREIGN KEY );";
 
@@ -31,7 +31,7 @@ export class DbservicesService {
 
 
 
-   RegistroZapatillas: string="INSERT INTO OR IGNORE INTO producto(id_producto,nombreproducto,descripcion, precio, stock, foto, categoria) VALUES(10,'Nike', 'Soy una descripcion','1500', '20', );"
+   RegistroZapatillas: string="INSERT INTO OR IGNORE INTO Producto(id_producto,nombreProducto,descripcion, precio, stock) VALUES(10,'Nike', 'Soy una descripcion','1500', '20');"
 
    listaZapatillas= new BehaviorSubject([]);
 
@@ -65,7 +65,7 @@ export class DbservicesService {
       this.listaZapatillas.next(items as any);
     })
   }
-  insertarZapatilla(nombreProducto:any, descripcion: any,precio:any,stock:any){
+  insertarZapatilla(nombreProducto:any, descripcion: any, precio:any, stock:any){
     return this.database.executeSql('INSERT INTO Producto(nombreProducto,descripcion,precio,stock) VALUES(?,?,?,?)',[nombreProducto, descripcion, precio, stock]).then(res=>{
       this.buscarZapatillas();
     })
