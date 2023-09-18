@@ -17,8 +17,6 @@ export class VerProductosPage implements OnInit {
       id_producto: '',
       nombreProducto: '',
       descripcion: '',
-      precio:'',
-      stock:''
     }
 
   ]
@@ -41,8 +39,6 @@ export class VerProductosPage implements OnInit {
           idEnviado:x.id_producto,
           nombreEnviado: x.nombreProducto,
           descripcionEnviada: x.descripcion,
-          precioEnviado: x.precio,
-          stockEnviado:x.stock
 
 
         }
