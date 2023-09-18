@@ -10,13 +10,11 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
 export class AgregarProductosPage implements OnInit {
   nombreProducto = "";
   descripcionProducto = "";
-  precioProducto = "";
-  stockProducto = "";
 
   constructor(public router:Router, private db: DbservicesService) { }
 
   insertar(){
-    this.db.insertarZapatilla(this.nombreProducto,this.descripcionProducto,this.precioProducto,this.stockProducto);
+    this.db.insertarZapatilla(this.nombreProducto,this.descripcionProducto);
     this.router.navigate(['/ver-productos']);
   }
   ngOnInit() {
