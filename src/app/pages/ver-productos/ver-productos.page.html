@@ -1,6 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Zapatillas</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -11,9 +14,9 @@
     </ion-toolbar>
   </ion-header>
 
-  <h2 class="ion-text-center">Listado de Noticias</h2>
+  <h2 class="ion-text-center">Listado de Zapatillas</h2>
 
-  <ion-searchbar placeholder="Buscar Noticia" ></ion-searchbar>
+  <ion-searchbar placeholder="Buscar Zapatillas" ></ion-searchbar>
   <ion-list>
     <ion-item-sliding *ngFor="let x of arregloZapatillas">      
   
