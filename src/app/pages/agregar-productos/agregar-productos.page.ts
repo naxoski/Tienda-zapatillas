@@ -8,14 +8,19 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
   styleUrls: ['./agregar-productos.page.scss'],
 })
 export class AgregarProductosPage implements OnInit {
-  nombreProducto = "";
+  nombreProductos = "";
   descripcionProducto = "";
 
   constructor(public router:Router, private db: DbservicesService) { }
 
   insertar(){
-    this.db.insertarZapatilla(this.nombreProducto,this.descripcionProducto);
+    try {
+    this.db.insertarZapatilla(this.nombreProductos,this.descripcionProducto);
+    this.db.presentAlert("Zapatillas Agregada");
     this.router.navigate(['/ver-productos']);
+    } catch (error) {
+      this.db.presentAlert("Zapatillas no agregada"); 
+    }
   }
   ngOnInit() {
   }

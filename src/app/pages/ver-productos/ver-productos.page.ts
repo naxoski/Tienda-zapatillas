@@ -16,22 +16,23 @@ export class VerProductosPage implements OnInit {
     {
       id_producto: '',
       nombreProducto: '',
-      descripcion: '',
+      descripcion: ''
     }
 
   ]
 
-  constructor(private bd: DbservicesService, private router: Router) { }
+  constructor(private db: DbservicesService, private router: Router) { }
 
   ngOnInit() {
      //subscribo al observable de la BD
-     this.bd.dbState().subscribe(res=>{
+     this.db.dbState().subscribe(res=>{
       if(res){
-        this.bd.fetchProducto().subscribe(datos=>{
+        this.db.fetchProducto().subscribe(datos=>{
           this.arregloZapatillas = datos;
         })
       }
      })
+
     }
     modificar(x:any){
       let navigationExtras: NavigationExtras = {
@@ -47,8 +48,8 @@ export class VerProductosPage implements OnInit {
     }
 
     eliminar(x:any){
-      this.bd.eliminarProducto(x.id_producto);
-      this.bd.presentAlert("Zapatilla Eliminada");
+      this.db.eliminarProducto(x.id_producto);
+      this.db.presentAlert("Zapatilla Eliminada");
     }
 
 }

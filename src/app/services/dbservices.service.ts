@@ -11,16 +11,15 @@ import { Zapatillas } from './zapatillas';
 export class DbservicesService {
   public database!: SQLiteObject;
 
-   Producto: string="CREATE TABLE IF NOT EXISTS  Producto(id_producto  INTEGER PRIMARY KEY autoincrement, nombreProducto VARCHAR(30) NOT NULL);";
+   producto: string= "CREATE TABLE IF NOT EXISTS  producto(id_producto INTEGER PRIMARY KEY autoincrement, nombreProducto VARCHAR(30) NOT NULL, descripcion VARCHAR(30) NOT NULL );";
 
-   RegistroZapatillas: string="INSERT INTO OR IGNORE INTO Producto(id_producto,nombreProducto) VALUES(10,'Nike', 'Soy una descripcion');"
+   registroZapatillas: string= "INSERT or IGNORE INTO producto(id_producto,nombreProducto,descripcion) VALUES (10,'Nike', 'Soy una descripcion');";
 
    listaZapatillas= new BehaviorSubject([]);
 
    private isDBReady :  BehaviorSubject<boolean> = new  BehaviorSubject(false);
    
-  alertController: any;
-  constructor(private sqlite : SQLite, private platform : Platform) {
+  constructor(private alertController: AlertController,private sqlite : SQLite, private platform : Platform) {
     this.crearBD();
   }
   dbState(){
@@ -31,7 +30,7 @@ export class DbservicesService {
     
   }
   buscarZapatillas(){
-    return this.database.executeSql('SELECT * FROM Producto',[]).then(res=>
+    return this.database.executeSql('SELECT * FROM producto',[]).then(res=>
     {
       let items: Zapatillas[] = [];
       if(res.rows.length > 0){
@@ -47,19 +46,25 @@ export class DbservicesService {
     })
   }
   insertarZapatilla(nombreProducto:any, descripcion: any){
-    return this.database.executeSql('INSERT INTO Producto(nombreProducto,descripcion) VALUES(?,?)',[nombreProducto, descripcion]).then(res=>{
+    return this.database.executeSql('INSERT INTO producto(nombreProducto,descripcion) VALUES (?,?)',[nombreProducto,descripcion]).then(res=>{
       this.buscarZapatillas();
+    }).catch(e=>{
+      this.presentAlert("error al insertar" + e);
     })
   }
   actualizarProducto(id_producto: any, nombreProducto:any, descripcion:any, precio:any, stock:any){
-    return this.database.executeSql('UPDATE Producto SET nombreProducto = ?, descripcion = ? WHERE id_producto = ?',[nombreProducto,descripcion]).then(res=>{
+    return this.database.executeSql('UPDATE producto SET nombreProducto = ?, descripcion = ? WHERE id_producto = ?',[nombreProducto,descripcion]).then(res=>{
       this.buscarZapatillas();
+    }).catch(e=>{
+      this.presentAlert("error al actualizar" + e);
     })
 
   }
   eliminarProducto(id_producto: any){
-    return this.database.executeSql('DELETE FROM Producto WHERE id_producto = ?',[id_producto]).then(res=>{
+    return this.database.executeSql('DELETE FROM producto WHERE id_producto = ?',[id_producto]).then(res=>{
       this.buscarZapatillas();
+    }).catch(e=>{
+      this.presentAlert("error al eliminar" + e);
     })
 
   }
@@ -79,7 +84,7 @@ export class DbservicesService {
         this.creaTablas();
       }).catch(e=>{
         //capturamos el error(poner una alerta)
-        this.presentAlert("error" + e);
+        this.presentAlert("error en crear bd" + e);
       })
     })
   }
@@ -87,17 +92,17 @@ export class DbservicesService {
    async creaTablas(){
     try {
       //ejecutar la creacion de tablas
-  await this.database.executeSql(this.Producto, []);
+      await this.database.executeSql(this.producto,[]);
   
 
-       await this.database.executeSql(this.RegistroZapatillas, []);
+       await this.database.executeSql(this.registroZapatillas,[]);
 
       this.isDBReady.next(true);
       this.buscarZapatillas();
       
     }catch (e) {
        //capturamos el error(poner una alerta)
-       this.presentAlert("error" + e);
+       this.presentAlert("error al crear tablas" + e);
     }
   }
 
