@@ -18,28 +18,16 @@
   <br>
   <h1 style="text-align: center;">Menú De Administración</h1>
 
-  <ion-row>
-    <ion-col>
-      <ion-button [routerLink]="['/menu-agregar']" color="success">Agregar</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button [routerLink]="['/menu-editar']" color="light">Editar</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button [routerLink]="['/menu-eliminar']" color="danger">Eliminar</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button [routerLink]="['/verusuarios']" color="danger">Ver Usuario</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button [routerLink]="['/ver-productos']" color="danger">Ver productos</ion-button>
-    </ion-col>
-    <ion-col>
-      <ion-button [routerLink]="['/agregar-productos']" color="danger">Agregar Productos</ion-button>
-    </ion-col>
-  </ion-row>
-
-  <!--
+  <swiper-container>
+    <swiper-slide><img src="assets/ver_productos.png" [routerLink] = "['/ver-productos']"> <p>Ver Productos</p></swiper-slide>
+    <swiper-slide><img src="assets/ver_usuarios.png" [routerLink] = "['/menu-admin']"><p>Ver Usuarios</p></swiper-slide>
+    <swiper-slide><img src="assets/agregar_usuarios.png" [routerLink] = "['/productos']"><p>Agregar Usuarios</p></swiper-slide>
+  </swiper-container>
+  <a [routerLink] = "['/agregar-productos']" class="clickable-image">
+    <img src="/assets/agregar_zapatillas.png" class="adjustable-image">
+    <button class="buy-button">Agregar Zapatillas</button>
+  </a>
+  
   <ion-footer class="footer">
     <ion-list class="footer-list">
       <ion-item lines="none">
@@ -72,5 +60,5 @@
       </ion-item>
     </ion-list>
   </ion-footer>
-  -->
+  
 </ion-content>

@@ -49,18 +49,6 @@ const routes: Routes = [
     path: 'menu-admin',
     loadChildren: () => import('./pages/menu-admin/menu-admin.module').then(m => m.MenuAdminPageModule)
   },
-  {
-    path: 'menu-editar',
-    loadChildren: () => import('./pages/menu-editar/menu-editar.module').then(m => m.MenuEditarPageModule)
-  },
-  {
-    path: 'menu-agregar',
-    loadChildren: () => import('./pages/menu-agregar/menu-agregar.module').then(m => m.MenuAgregarPageModule)
-  },
-  {
-    path: 'menu-eliminar',
-    loadChildren: () => import('./pages/menu-eliminar/menu-eliminar.module').then(m => m.MenuEliminarPageModule)
-  },
   
   {
     path: 'verusuarios',

@@ -10,12 +10,16 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
 export class AgregarProductosPage implements OnInit {
   nombreProductos = "";
   descripcionProducto = "";
+  precioProducto = "";
+  stockProducto = "";
+  fotoProducto = "";
+  categoriaProducto = "";
 
   constructor(public router:Router, private db: DbservicesService) { }
 
   insertar(){
     try {
-    this.db.insertarZapatilla(this.nombreProductos,this.descripcionProducto);
+    this.db.insertarZapatilla(this.nombreProductos,this.descripcionProducto,this.precioProducto,this.stockProducto,this.fotoProducto,this.categoriaProducto);
     this.db.presentAlert("Zapatillas Agregada");
     this.router.navigate(['/ver-productos']);
     } catch (error) {
