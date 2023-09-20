@@ -5,5 +5,5 @@ export class Zapatillas {
     precio = "";
     stock = "";
     foto = "";
-    categoria = "";
+    id_categoria = "";
 }
