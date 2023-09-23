@@ -30,7 +30,7 @@ export class DbservicesService {
 
    registroCategoria2: string = "INSERT OR IGNORE INTO categoria(idcategoria,nombrecategoria) VALUES (2,'mujer');";
 
-   registroZapatillas: string = "INSERT or IGNORE INTO producto(idproducto, nombreproducto, descripcion, precio, stock, foto, idcategoria) VALUES (100, 'Nike', 'Soy una descripción', 100000, 50, 'assets/air jordan 1.webp', 1);";
+   registroZapatillas: string = "INSERT or IGNORE INTO producto(idproducto, nombreproducto, descripcion, precio, stock, foto, idcategoria) VALUES (100, 'Nike', 'Soy una descripción', 100000, 50, 'assets/air jordan 1.webp', 'hombre');";
 
 
    listaZapatillas= new BehaviorSubject([]);

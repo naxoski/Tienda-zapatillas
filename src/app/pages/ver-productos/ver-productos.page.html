@@ -18,26 +18,17 @@
 
   <ion-searchbar placeholder="Buscar Zapatillas" ></ion-searchbar>
   <ion-list>
-    <ion-item-sliding *ngFor="let x of arregloZapatillas">      
-  
-      <ion-item>
-        <ion-label>
-          <h2>{{ x.nombreproducto }}</h2>
-          <p>{{ x.descripcion }}</p>
-        </ion-label>
-      </ion-item>
-  
-      <ion-item-options>
-        <ion-item-option (click)="modificar(x)">
-          <ion-icon slot="bottom" name="pencil-sharp"></ion-icon>
-          Modificar
-        </ion-item-option>
-        <ion-item-option color="danger" (click)="eliminar(x)">
-          <ion-icon slot="bottom" name="trash"></ion-icon>
-          Eliminar
-        </ion-item-option>
-      </ion-item-options>
-
-    </ion-item-sliding>
+    <ion-item *ngFor="let x of arregloZapatillas">
+      <ion-label>
+        <ion-img [src]="x.foto"></ion-img>
+        <h2>{{ x.nombreproducto }}</h2>
+        <p>Descripcion: {{ x.descripcion }}</p>
+        <p>Precio: {{ x.precio }}</p>
+        <p>Stock : {{ x.stock }}</p>
+        <p>Categoria: {{ x.idcategoria }}</p>
+        <ion-button expand="full" color="primary" (click)="modificar(x)">Modificar</ion-button>
+        <ion-button expand="full" color="danger" (click)="eliminar(x)">Eliminar</ion-button>
+      </ion-label>
+    </ion-item>
   </ion-list>
 </ion-content>

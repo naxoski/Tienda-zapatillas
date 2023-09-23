@@ -14,9 +14,14 @@ export class VerProductosPage implements OnInit {
 
   arregloZapatillas: any = [
     {
-      id_producto: '',
-      nombreProducto: '',
-      descripcion: ''
+      idproducto: '',
+      nombreproducto: '',
+      descripcion: '',
+      precio: '',
+      stock: '',
+      foto: '',
+      idcategoria: ''
+      
     }
 
   ]
@@ -37,9 +42,13 @@ export class VerProductosPage implements OnInit {
     modificar(x:any){
       let navigationExtras: NavigationExtras = {
         state: {
-          idEnviado:x.id_producto,
-          nombreEnviado: x.nombreProducto,
+          idEnviado:x.idproducto,
+          nombreEnviado: x.nombreproducto,
           descripcionEnviada: x.descripcion,
+          precioEnviado: x.precio,
+          stockEnviado: x.stock,
+          fotoEnviada : x.foto,
+          categoriaEnvidia: x.idcategoria
 
 
         }
