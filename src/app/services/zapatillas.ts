@@ -1,9 +1,9 @@
 export class Zapatillas {
-    id_producto = "";
-    nombreProducto= "";
+    idproducto = "";
+    nombreproducto= "";
     descripcion = "";
     precio = "";
     stock = "";
     foto = "";
-    id_categoria = "";
+    idcategoria = "";
 }

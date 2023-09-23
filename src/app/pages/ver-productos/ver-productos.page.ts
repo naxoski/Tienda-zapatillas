@@ -48,7 +48,7 @@ export class VerProductosPage implements OnInit {
     }
 
     eliminar(x:any){
-      this.db.eliminarProducto(x.id_producto);
+      this.db.eliminarProducto(x.idproducto);
       this.db.presentAlert("Zapatilla Eliminada");
     }
 
