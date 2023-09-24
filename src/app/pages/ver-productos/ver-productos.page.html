@@ -18,14 +18,14 @@
 
   <ion-searchbar placeholder="Buscar Zapatillas" ></ion-searchbar>
   <ion-list>
-    <ion-item *ngFor="let x of arregloZapatillas">
-      <ion-label>
-        <ion-img [src]="x.foto"></ion-img>
-        <h2>{{ x.nombreproducto }}</h2>
-        <p>Descripcion: {{ x.descripcion }}</p>
-        <p>Precio: {{ x.precio }}</p>
-        <p>Stock : {{ x.stock }}</p>
-        <p>Categoria: {{ x.idcategoria }}</p>
+    <ion-item *ngFor="let x of arregloZapatillas" class="product-card">
+      <ion-img [src]="x.foto" class="product-image"></ion-img>
+      <ion-label class="product-info">
+        <h2 class="product-name">{{ x.nombreproducto }}</h2>
+        <p class="product-description">Descripción: {{ x.descripcion }}</p>
+        <p class="product-price">Precio: {{ x.precio }}</p>
+        <p class="product-stock">Stock: {{ x.stock }}</p>
+        <p class="product-category">Categoría: {{ x.idcategoria }}</p>
         <ion-button expand="full" color="primary" (click)="modificar(x)">Modificar</ion-button>
         <ion-button expand="full" color="danger" (click)="eliminar(x)">Eliminar</ion-button>
       </ion-label>
