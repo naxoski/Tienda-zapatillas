@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Platform,AlertController } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Camera, CameraResultType } from '@capacitor/camera';
 
 import { Zapatillas } from './zapatillas';
 
@@ -146,5 +147,12 @@ export class DbservicesService {
     });
 
     await alert.present();
+  }
+  takePicture = async () => {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: true,
+      resultType: CameraResultType.Uri
+    });
   }
 }
