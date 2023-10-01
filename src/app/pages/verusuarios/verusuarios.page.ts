@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NavigationExtras} from '@angular/router';
+import { DbservicesService } from 'src/app/services/dbservices.service';
 
 @Component({
   selector: 'app-verusuarios',
@@ -7,29 +10,37 @@ import { Component, OnInit } from '@angular/core';
 })
 export class VerusuariosPage implements OnInit {
   
-  lista : any = [
+  arregloUsuario: any = [
     {
-      nombre : "Ignacio",
-      apellido :"Huerta",
-      categoria:"usuario",
-      edad : 20,
-
-    },
-    {
-      nombre : "Diego",
-      apellido :"Espejo",
-      categoria: "Alta",
-      edad : 34,
-
+      idusuario: '',
+      nombreusuario: '',
+      apellidousuario: '',
+      fnacimiento: '',
+      telefono: '',
+      correo: '',
+      clave: '',
+      respuesta: '',
+      idpregunta: '',
+      idrol: ''
+      
     }
 
   ]
 
-  constructor() { 
+  constructor(private db: DbservicesService, private router: Router) { 
 
   }
 
   ngOnInit() {
+      //subscribo al observable de la BD
+      this.db.dbState().subscribe(res=>{
+        if(res){
+          this.db.fetchUsuario().subscribe(datos=>{
+            this.arregloUsuario = datos;
+          })
+        }
+       })
   }
+
 
 }

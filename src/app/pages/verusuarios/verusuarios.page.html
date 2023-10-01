@@ -7,21 +7,25 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="content">
-  <ion-list class="user-list">
-    <ion-item class="user-item" *ngFor="let x of lista">
-      <ion-label class="user-label">
-        <div class="user-info">
-          <div class="user-name">{{ x.nombre | uppercase }}</div>
-          <div class="user-age">{{ x.edad | number }} años</div>
-        </div>
-        <div class="user-details" *ngIf="x.categoria !== 'Alta'">
-          <div class="user-detail">Nombre: {{ x.nombre }}</div>
-          <div class="user-detail">Categoría: {{ x.categoria }}</div>
-        </div>
-        <div class="user-message" *ngIf="x.categoria === 'Alta'">
-          Este usuario tiene categoría "admin".
-        </div>
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Usuarios</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <h2 class="ion-text-center">Listado de Usuarios!</h2>
+
+  <ion-searchbar placeholder="Buscar Usuarios" ></ion-searchbar>
+  <ion-list>
+    <ion-item *ngFor="let x of arregloUsuario" class="product-card">
+      <ion-img [src]="x.fotoperfil" class="product-image"></ion-img>
+      <ion-label class="product-info">
+        <h2 class="product-name">Nombre{{ x.nombreusuario }}</h2>
+        <p class="product-description">Apellido: {{ x.apellidousuario }}</p>
+        <p class="product-price">Rut: {{ x.rut }}</p>
+        <p class="product-stock">Fecha de nacimiento: {{ x.fnacimiento }}</p>
+        <p class="product-category">Teléfono: {{ x.telefono }}</p>
       </ion-label>
     </ion-item>
   </ion-list>
