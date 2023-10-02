@@ -1,0 +1,80 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>agregar Usuarios</ion-title>
+    <ion-buttons slot="start">
+
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Agregar Usuarios</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <h2 class="ion-text-center">Agrega un usuario!</h2>
+  <ion-item>
+    <ion-label position="floating">Nombre del usuario</ion-label>
+    <ion-input type="text" [(ngModel)]="nombreUsuario"></ion-input>
+  </ion-item>
+    <ion-item>
+    <ion-label position="floating">Apellido del usuario</ion-label>
+    <ion-input type="text" [(ngModel)]="apellidoUsuario"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Rut del usuario</ion-label>
+    <ion-input type="text" [(ngModel)]="rutUsuario"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Telefono</ion-label>
+    <ion-input type="number" [(ngModel)]="teleUsu"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Foto de perfil</ion-label>
+    <ion-input type="file" [(ngModel)]="fotoUsu"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Fecha de nacimiento del usuario</ion-label>
+    <ion-input type="date" [(ngModel)]="fechaNacimiento"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Correo del usuario</ion-label>
+    <ion-input type="text" [(ngModel)]="correoUsuario"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Clave del usuario</ion-label>
+    <ion-input type="text" [(ngModel)]="claveUsuario"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Pregunta de seguridad</ion-label>
+    <ion-select [(ngModel)]="preguntaUsuario">
+      <ion-select-option value="¿Tienes mascotas?">¿Tienes mascotas?</ion-select-option>
+      <ion-select-option value="¿Tienes hermanos?">¿Tienes hermanos?</ion-select-option>
+      <ion-select-option value="¿Tienes pareja?">¿Tienes pareja?</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">Respuesta de seguridad del usuario</ion-label>
+    <ion-input type="text" [(ngModel)]="respuestaUsuario"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="floating">rolu usuario</ion-label>
+    <ion-select [(ngModel)]="rolUsuario">
+      <ion-select-option value="Usuario">Usuario</ion-select-option>
+      <ion-select-option value="Admin">Admin</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-button shape="block" (click)="insertarUsu()">Guardar Cambio</ion-button>
+
+
+  
+
+</ion-content>

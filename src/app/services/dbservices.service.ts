@@ -18,7 +18,7 @@ export class DbservicesService {
   pregunta: string= "CREATE TABLE IF NOT EXISTS pregunta(idpregunta INTEGER PRIMARY KEY autoincrement, nombrepregunta VARCHAR(30) NOT NULL);";
   categoria: string= "CREATE TABLE IF NOT EXISTS  categoria(idcategoria INTEGER PRIMARY KEY autoincrement, nombrecategoria VARCHAR(30) NOT NULL);";
   producto: string= "CREATE TABLE IF NOT EXISTS  producto(idproducto INTEGER PRIMARY KEY autoincrement, nombreproducto VARCHAR(30) NOT NULL, descripcion VARCHAR(30) NOT NULL, precio INTEGER NOT NULL, stock INTEGER NOT NULL, foto BLOB NOT NULL,idcategoria INTEGER NOT NULL,  FOREIGN KEY(idcategoria) REFERENCES categoria(idcategoria) );";
-  usuario: string="CREATE TABLE IF NOT EXISTS usuario(idusuario INTEGER PRIMARY KEY autoincrement, rut VARCHAR(20) NOT NULL, nombreusuario VARCHAR(30) NOT NULL, apellidousuario VARCHAR(30) NOT NULL, fnacimiento DATE, telefono INTEGER , fotoperfil BLOB NOT NULL, correo VARCHAR(30) NOT NULL, clave VARCHAR(10) NOT NULL, respuesta VARCHAR(30) NOT NULL, idpregunta INTEGER NOT NULL, idrol INTEGER NOT NULL,FOREIGN KEY(idpregunta) REFERENCES pregunta(idpregunta), FOREIGN KEY(idrol) REFERENCES rol(idrol) );";
+  usuario: string="CREATE TABLE IF NOT EXISTS usuario(idusuario INTEGER PRIMARY KEY autoincrement, rut VARCHAR(20) NOT NULL, nombreusuario VARCHAR(30) NOT NULL, apellidousuario VARCHAR(30) NOT NULL, fnacimiento DATE, telefono INTEGER , fotoperfil BLOB, correo VARCHAR(30) NOT NULL, clave VARCHAR(10) NOT NULL, respuesta VARCHAR(30) NOT NULL, idpregunta INTEGER NOT NULL, idrol INTEGER NOT NULL,FOREIGN KEY(idpregunta) REFERENCES pregunta(idpregunta), FOREIGN KEY(idrol) REFERENCES rol(idrol) );";
   venta: string = "CREATE TABLE IF NOT EXISTS venta(idventa INTEGER PRIMARY KEY autoincrement, fventa DATE, fdespacho DATE, estatus VARCHAR(30) NOT NULL, total VARCHAR(30) NOT NULL , carrito VARCHAR(30) NOT NULL, idusuario INTEGER NOT NULL, FOREIGN KEY(idusuario) REFERENCES usuario(idusuario) );";
   detalle: string = "CREATE TABLE IF NOT EXISTS detalle(iddetalle INTEGER PRIMARY KEY autoincrement, cantidad INTEGER NOT NULL , detalle VARCHAR(30), idproducto INTEGER NOT NULL, idventa INTEGER NOT NULL,FOREIGN KEY (idproducto) REFERENCES producto(idproducto),  FOREIGN KEY(idventa) REFERENCES venta(idventa) );";
   region: string = "CREATE TABLE IF NOT EXISTS region(idregion INTEGER PRIMARY KEY autoincrement, nombreregion VARCHAR(30) );";
@@ -34,9 +34,9 @@ export class DbservicesService {
 
    registroCategoria2: string = "INSERT or IGNORE INTO categoria(idcategoria,nombrecategoria) VALUES (2,'mujer');";
    
-   registroRol: string="INSERT or IGNORE INTO rol(idrol,nombrerol) VALUES(10, 'usuario');";
+   registroRol: string="INSERT or IGNORE INTO rol(idrol,nombrerol) VALUES(10,'usuario');";
 
-   registroRol2: string="INSERT or IGNORE INTO rol(idrol,nombrerol) VALUES(20, 'admin');";
+   registroRol2: string="INSERT or IGNORE INTO rol(idrol,nombrerol) VALUES(20,'admin');";
 
    registroPregunta: string="INSERT or IGNORE INTO pregunta(idpregunta,nombrepregunta) VALUES(30, '¿Tienes mascotas?');";
 
@@ -44,7 +44,8 @@ export class DbservicesService {
 
    registroPregunta3: string="INSERT or IGNORE INTO pregunta(idpregunta,nombrepregunta) VALUES(50, '¿Tienes pareja?');";
 
-   registroUsuario: string="INSERT or IGNORE INTO usuario(idusuario,rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES(500, '21.475.570-k','ignacio', 'huerta', '05/01/2004','assets/chad.webp','ignaciohuerta8a@gmail.com','claveprueba123','si',40,10);"
+   registroUsuario: string="INSERT or IGNORE INTO usuario(idusuario,rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES(500, '21.475.570-k','ignacio', 'huerta', '2004-01-05',123456789,'assets/chad.webp','ignaciohuerta8a@gmail.com','claveprueba123','si','¿Tienes pareja?','usuario');"
+   
 
 
 
@@ -67,7 +68,7 @@ export class DbservicesService {
     return this.listaZapatillas.asObservable();
     
   }
-  fetchUsuario():Observable<Usuario[]>{
+  fetchUsuario(): Observable<Usuario[]>{
     return this.listaUsuario.asObservable();
   }
   buscarZapatillas(){
@@ -118,7 +119,7 @@ export class DbservicesService {
     return this.database.executeSql('INSERT INTO producto(nombreproducto,descripcion,precio,stock,foto,idcategoria) VALUES (?,?,?,?,?,?)',[nombreproducto,descripcion,precio,stock,foto,idcategoria ]).then(res=>{
       this.buscarZapatillas();
     }).catch(e=>{
-      this.presentAlert("error al insertar" + e);
+      this.presentAlert("error al insertar zapatilla" + e);
     })
   }
   actualizarProducto(idproducto: any, nombreproducto:any, descripcion:any, precio:any, stock:any, foto: any ,categoria: any){
@@ -136,6 +137,13 @@ export class DbservicesService {
       this.presentAlert("error al eliminar" + e);
     })
 
+  }
+  insertarUsuario(nombreusuario:any, apellidousuario: any, rut : any, fnacimiento: any , telefono: any , fotoperfil: any,correo: any,clave: any,respuesta: any,idpregunta: any,idrol: any){
+    return this.database.executeSql('INSERT INTO usuario(rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES (?,?,?,?,?,?,?,?,?,?,?)',[rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol]).then(res=>{
+      this.buscarUsuarios();
+    }).catch(e=>{
+      this.presentAlert("error al insertar usuario" + e);
+    })
   }
 
 
@@ -165,40 +173,32 @@ export class DbservicesService {
 
       await this.database.executeSql(this.pregunta,[]);
 
+      await this.database.executeSql(this.usuario,[]);
+
       await this.database.executeSql(this.categoria,[]);
 
       await this.database.executeSql(this.producto,[]);
 
-      await this.database.executeSql(this.usuario,[]);
-
-      await this.database.executeSql(this.venta,[]);
-
-      await this.database.executeSql(this.detalle,[]);
-
-      await this.database.executeSql(this.region,[]);
-
-      await this.database.executeSql(this.comuna,[]);
-
-      await this.database.executeSql(this.direccion,[]);
 
 
      
       
      
 
-      await this.database.executeSql(this.registroCategoria,[]);
-      await this.database.executeSql(this.registroCategoria2,[]);
 
       await this.database.executeSql(this.registroRol,[]);
       await this.database.executeSql(this.registroRol2,[]);
-
       await this.database.executeSql(this.registroPregunta,[]);
       await this.database.executeSql(this.registroPregunta2,[]);
       await this.database.executeSql(this.registroPregunta3,[]);
+      await this.database.executeSql(this.registroUsuario,[]);
+
+      await this.database.executeSql(this.registroCategoria,[]);
+      await this.database.executeSql(this.registroCategoria2,[]);
+
+      
 
       await this.database.executeSql(this.registroZapatillas,[]);
-
-      await this.database.executeSql(this.registroUsuario,[]);
 
 
   

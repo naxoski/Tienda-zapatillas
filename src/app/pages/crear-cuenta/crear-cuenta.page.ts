@@ -15,10 +15,6 @@ export class CrearCuentaPage implements OnInit {
   direccion: string| undefined;
   pregunta: string| undefined;
   respuesta: string| undefined;
-  camposvali=false;
-  nombrevali =false;
-  apellidovali=false;
-  clavevali=false;
 
 
   constructor(private router: Router, public toastController: ToastController, private alertController: AlertController) { }

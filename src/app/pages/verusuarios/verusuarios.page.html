@@ -19,15 +19,21 @@
   <ion-searchbar placeholder="Buscar Usuarios" ></ion-searchbar>
   <ion-list>
     <ion-item *ngFor="let x of arregloUsuario" class="product-card">
-      <ion-img [src]="x.fotoperfil" class="product-image"></ion-img>
-      <ion-label class="product-info">
-        <h2 class="product-name">Nombre{{ x.nombreusuario }}</h2>
+      <div class="product-image">
+        <ion-img [src]="x.fotoperfil"></ion-img>
+      </div>
+      <div class="product-info">
+        <h2 class="product-name">Nombre: {{ x.nombreusuario }}</h2>
         <p class="product-description">Apellido: {{ x.apellidousuario }}</p>
         <p class="product-price">Rut: {{ x.rut }}</p>
-        <p class="product-stock">Fecha de nacimiento: {{ x.fnacimiento }}</p>
+        <p class="product-stock">Fecha de nacimiento: {{ x.fnacimiento | date:'dd/MM/yyyy' }}</p>
         <p class="product-category">Teléfono: {{ x.telefono }}</p>
-      </ion-label>
+        <p class="product-category">Pregunta de seguridad: {{ x.idpregunta }}</p>
+        <p class="product-category">Respuesta de seguridad: {{ x.respuesta }}</p>
+        <p class="product-category">Rol del usuario: {{ x.idrol }}</p>
+      </div>
     </ion-item>
   </ion-list>
+  
 </ion-content>
 
