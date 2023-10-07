@@ -45,6 +45,8 @@ export class DbservicesService {
    registroPregunta3: string="INSERT or IGNORE INTO pregunta(idpregunta,nombrepregunta) VALUES(50, '¿Tienes pareja?');";
 
    registroUsuario: string="INSERT or IGNORE INTO usuario(idusuario,rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES(500, '21.475.570-k','ignacio', 'huerta', '2004-01-05',123456789,'assets/chad.webp','ignaciohuerta8a@gmail.com','claveprueba123','si','¿Tienes pareja?','usuario');"
+
+   registroUsuario2: string="INSERT or IGNORE INTO usuario(idusuario,rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES(600, '21.475.571-k','ignacio', 'huerta', '2004-01-05',123456789,'assets/chad.webp','administrador@gmail.com','claveprueba123','si','¿Tienes pareja?','admin');"
    
 
 
@@ -115,6 +117,38 @@ export class DbservicesService {
       this.listaUsuario.next(items as any);
     })
   }
+
+
+
+
+
+  buscarUsu(correo: any, clave: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.database.executeSql('SELECT correo, clave, idrol FROM usuario WHERE correo = ? AND clave = ?', [correo, clave])
+        .then((res) => {
+          // Si la consulta se ejecuta con éxito, verifica si se encontraron datos
+          if (res.rows.length > 0) {
+            // Si se encontraron datos, resuelve la promesa con los resultados
+            resolve(res.rows.item(0)); // Devuelve el primer resultado encontrado
+          } else {
+            // Si no se encontraron datos, resuelve la promesa con un objeto nulo o un mensaje indicando la falta de coincidencias
+            resolve(null); // O puedes enviar un mensaje específico: resolve({ mensaje: 'No se encontraron coincidencias' });
+          }
+        })
+        .catch((error) => {
+          // Si hay un error en la consulta, rechaza la promesa con el error
+          reject('Error al ejecutar la consulta: ' + JSON.stringify(error));
+        });
+    });
+  }
+  
+
+
+
+
+
+
+
   insertarZapatilla(nombreproducto:any, descripcion: any, precio : any, stock: any , foto: any , idcategoria: any){
     return this.database.executeSql('INSERT INTO producto(nombreproducto,descripcion,precio,stock,foto,idcategoria) VALUES (?,?,?,?,?,?)',[nombreproducto,descripcion,precio,stock,foto,idcategoria ]).then(res=>{
       this.buscarZapatillas();
@@ -192,6 +226,7 @@ export class DbservicesService {
       await this.database.executeSql(this.registroPregunta2,[]);
       await this.database.executeSql(this.registroPregunta3,[]);
       await this.database.executeSql(this.registroUsuario,[]);
+      await this.database.executeSql(this.registroUsuario2,[]);
 
       await this.database.executeSql(this.registroCategoria,[]);
       await this.database.executeSql(this.registroCategoria2,[]);
