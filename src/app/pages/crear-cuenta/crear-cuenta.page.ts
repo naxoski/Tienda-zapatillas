@@ -20,6 +20,20 @@ export class CrearCuentaPage implements OnInit {
   clave2= "";
   respuesta= "";
   pregunta= "";
+  mensajeErrorNombre: string = '';
+  mensajeErrorApellido: string = '';
+  mensajeErrorContra2: string = '';
+  errores: string[] = [];
+
+  Validador1 = false;
+  Validador2 = false;
+  Validador3 = false;
+  Validador4 = false;
+  Validador5 = false;
+  Validador6 = false;
+  Validador7 = false;
+  Validador8 = false;
+
 
   
 
@@ -27,26 +41,25 @@ export class CrearCuentaPage implements OnInit {
   constructor(private router: Router, public toastController: ToastController, private alertController: AlertController, private db: DbservicesService) { }
   async crear() {
 
+    this.errores = [];
+    this.mensajeErrorApellido = "";
+    this.mensajeErrorNombre = "";
+    this.mensajeErrorContra2 = "";
 
     // Validación de números en nombre y apellido
     if (/[0-9]/.test(this.nombre)) {
-      const alert = await this.alertController.create({
-        header: 'Campos Incorrectos',
-        message: 'No se permiten números en el nombre',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.mensajeErrorNombre = 'No se permiten números en el nombre';
+      this.Validador1 = false;
+    }
+    else{
+      this.Validador1 = true;
     }
 
     if (/[0-9]/.test(this.apellido)) {
-      const alert = await this.alertController.create({
-        header: 'Campos Incorrectos',
-        message: 'No se permiten números en el apellido',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.mensajeErrorApellido = 'No se permiten números en el apellido';
+      this.Validador2 = false;
+    }else{
+      this.Validador2 = true;
     }
 
 
@@ -61,13 +74,10 @@ export class CrearCuentaPage implements OnInit {
 
     /*VALIDA QUE LA CONTRASEÑA TENGA AL MENOS UN NÚMERO*/
     if (!this.clave || !/[0-9]/.test(this.clave)) {
-    const alert = await this.alertController.create({
-    header: 'Campos Incorrectos',
-    message: 'La contraseña debe contener al menos un número.',
-    buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.errores.push('La contraseña debe tener al menos 1 número');
+      this.Validador3 = false;
+    }else{
+      this.Validador3 = true;
     }
 
 
@@ -76,13 +86,10 @@ export class CrearCuentaPage implements OnInit {
 
      /*VALIDA QUE LA CONTRASEÑA TENGA AL MENOS 8 CARACTERES*/
     if (!this.clave || this.clave.length <= 8) {
-      const alert = await this.alertController.create({
-        header: 'Contraseña Inválida',
-        message: 'La contraseña debe tener más de 8 caracteres.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.errores.push('La contraseña debe tener al menos 8 caracteres');
+      this.Validador4 = false;
+    }else{
+      this.Validador4 = true;
     }
 
 
@@ -90,39 +97,30 @@ export class CrearCuentaPage implements OnInit {
 
      /*VALIDA QUE LA CONTRASEÑA SEA IGUAL A LA QUE SE REPITE*/
     if (!this.clave || !this.clave2 || this.clave !== this.clave2) {
-      const alert = await this.alertController.create({
-        header: 'Contraseñas No Coinciden',
-        message: 'Las contraseñas deben coincidir.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.mensajeErrorContra2 = 'Las contraseñas deben ser iguales';
+      this.Validador5 = false;
+    }else{
+      this.Validador5 = true;
     }
 
 
 
      /*VALIDA QUE LA CONTRASEÑA TENGA AL MENOS UNA LETRA MINUSCULA*/
     if (!this.clave || !/[a-z]/.test(this.clave)) {
-      const alert = await this.alertController.create({
-        header: 'Contraseña Inválida',
-        message: 'La contraseña debe contener al menos una letra minúscula.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.errores.push('La contraseña debe tener al menos una letra minúcula');
+      this.Validador6 = false;
+    }else{
+      this.Validador6 = true;
     }
 
 
 
      /*VALIDA QUE LA CONTRASEÑA TENGA AL MENOS UNA LETRA MAYUSCULA*/
     if (!this.clave || !/[A-Z]/.test(this.clave)) {
-      const alert = await this.alertController.create({
-        header: 'Contraseña Inválida',
-        message: 'La contraseña debe contener al menos una letra mayúscula.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.errores.push('La contraseña debe tener al menos una letra mayúcula');
+      this.Validador7 = false;
+    }else{
+      this.Validador7 = true;
     }
 
 
@@ -130,29 +128,39 @@ export class CrearCuentaPage implements OnInit {
 
      /*VALIDA QUE LA CONTRASEÑA TENGA AL MENOS UN CARACTER ESPECIAL*/
     if (!this.clave || !/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/\-=|]/.test(this.clave)) {
-      const alert = await this.alertController.create({
-        header: 'Contraseña Inválida',
-        message: 'La contraseña debe contener al menos un carácter especial.',
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      this.errores.push('La contraseña debe tener al menos 1 caracter especial');
+      this.Validador8 = false;
+    }else{
+      this.Validador8 = true;
     }
+  
 
 
   // Si todas las validaciones pasan:
-  try{
-    this.db.insertarUsuario(this.rut,this.nombre,this.apellido,this.fnacimiento,this.telefono,this.fotoperfil,this.correo,this.clave,this.respuesta,this.pregunta,"usuario");
+  if( this.Validador1 == true,this.Validador2 == true,this.Validador3 == true,this.Validador4 == true,this.Validador5 == true,this.Validador6 == true,this.Validador7 == true,this.Validador8 == true){
+    try{
+      this.db.insertarUsuario(this.rut,this.nombre,this.apellido,this.fnacimiento,this.telefono,this.fotoperfil,this.correo,this.clave,this.respuesta,this.pregunta,"usuario");
+      const successAlert = await this.alertController.create({
+        header: 'Registro Exitoso',
+        message: 'Su registro ha sido completado con éxito.',
+        buttons: ['OK']
+      });
+      await successAlert.present();
+      this.router.navigate(['/home']);
+    }catch(error){
+      this.db.presentAlert("Usuario no agregado"); 
+    }
+  }else{
     const successAlert = await this.alertController.create({
-      header: 'Registro Exitoso',
-      message: 'Su registro ha sido completado con éxito.',
+      header: 'Registro Fallido',
+      message: 'Revise sus credenciales.',
       buttons: ['OK']
+      
     });
     await successAlert.present();
-    this.router.navigate(['/home']);
-  }catch(error){
-    this.db.presentAlert("Usuario no agregado"); 
+    return;
   }
+ 
   }
   ngOnInit() {
   }
