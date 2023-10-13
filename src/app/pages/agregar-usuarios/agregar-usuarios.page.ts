@@ -121,7 +121,7 @@ export class AgregarUsuariosPage implements OnInit {
       await successAlert.present();
       this.router.navigate(['/home']);
     }catch(error){
-      this.db.presentAlert("Usuario no agregado"); 
+      this.db.presentAlert("Usuario no agregado");
     }
   }else{
     const successAlert = await this.alertController.create({
@@ -133,7 +133,6 @@ export class AgregarUsuariosPage implements OnInit {
     await successAlert.present();
     return;
   }
-    
 
 
   }
