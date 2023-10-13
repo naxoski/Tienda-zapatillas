@@ -62,13 +62,7 @@ export class CrearCuentaPage implements OnInit {
       this.Validador2 = true;
     }
 
-
-
-
-
     /* VALIDACIONES DE LA CONTRASEÑA */
-
-
 
 
 
@@ -167,7 +161,6 @@ export class CrearCuentaPage implements OnInit {
 
 }
 
- /* VALIDACIONES DE LA CONTRASEÑA */
 
 
 

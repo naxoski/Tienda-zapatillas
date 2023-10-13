@@ -19,6 +19,7 @@
         <ion-label position="stacked">Rut</ion-label>
         <ion-input required  name="nombre" type="text" placeholder="Rut"  [(ngModel)]="rut" ></ion-input>
       </ion-item>
+
       <ion-item>
         <ion-label position="stacked">Nombre</ion-label>
         <ion-input required  name="nombre" type="text" placeholder="Nombre"  [(ngModel)]="nombre" ></ion-input>
@@ -60,6 +61,7 @@
           <li *ngFor="let error of errores">{{ error }}</li>
         </ul>
       </div>
+      
       <ion-item>
         <ion-label position="stacked"> Repetir Clave</ion-label>
         <ion-input required  name="apellido" type="password" placeholder="Repetir clave" [(ngModel)]="clave2"></ion-input>
