@@ -41,6 +41,10 @@ export class VerusuariosPage implements OnInit {
         }
        })
   }
+  eliminar(x:any){
+    this.db.eliminarUsuario(x.idusuario);
+    this.db.presentAlert("Usuario Eliminado");
+  }
 
 
 }

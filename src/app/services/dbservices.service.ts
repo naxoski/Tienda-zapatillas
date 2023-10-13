@@ -172,6 +172,14 @@ export class DbservicesService {
     })
 
   }
+  eliminarUsuario(idusuario: any){
+    return this.database.executeSql('DELETE FROM usuario WHERE idusuario = ?',[idusuario]).then(res=>{
+      this.buscarUsuarios();
+    }).catch(e=>{
+      this.presentAlert("error al eliminar" + e);
+    })
+
+  }
   insertarUsuario(nombreusuario:any, apellidousuario: any, rut : any, fnacimiento: any , telefono: any , fotoperfil: any,correo: any,clave: any,respuesta: any,idpregunta: any,idrol: any){
     return this.database.executeSql('INSERT INTO usuario(rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES (?,?,?,?,?,?,?,?,?,?,?)',[rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol]).then(res=>{
       this.buscarUsuarios();
