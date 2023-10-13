@@ -109,10 +109,14 @@ export class AgregarUsuariosPage implements OnInit {
       this.Validador8 = true;
     }
 
+    
+
+
+
 // Si todas las validaciones pasan:
   if( this.Validador1 == true,this.Validador2 == true,this.Validador3 == true,this.Validador4 == true,this.Validador5 == true,this.Validador6 == true,this.Validador7 == true,this.Validador8 == true){
     try{
-      this.db.insertarUsuario(this.rutUsuario,this.nombreUsuario,this.apellidoUsuario,this.fechaNacimiento,this.teleUsu,this.fotoUsu,this.correoUsuario,this.claveUsuario,this.preguntaUsuario,this.preguntaUsuario,"usuario");
+      this.db.insertarUsuario(this.rutUsuario,this.nombreUsuario,this.apellidoUsuario,this.fechaNacimiento,this.teleUsu,this.fotoUsu,this.correoUsuario,this.claveUsuario,this.preguntaUsuario,this.respuestaUsuario,"usuario");
       const successAlert = await this.alertController.create({
         header: 'Registro Exitoso',
         message: 'Su registro ha sido completado con éxito.',
@@ -121,7 +125,7 @@ export class AgregarUsuariosPage implements OnInit {
       await successAlert.present();
       this.router.navigate(['/home']);
     }catch(error){
-      this.db.presentAlert("Usuario no agregado");
+      this.db.presentAlert("LOL no agregado");
     }
   }else{
     const successAlert = await this.alertController.create({
