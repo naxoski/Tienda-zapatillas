@@ -17,7 +17,11 @@
     <ion-card-content>
       <ion-item>
         <ion-label position="stacked">Rut</ion-label>
-        <ion-input required  name="nombre" type="text" placeholder="Rut"  [(ngModel)]="rut" ></ion-input>
+        <ion-input required  name="nombre" type="text" placeholder="rut"  [(ngModel)]="rut" ></ion-input>
+        <ion-input label="rut: (si es k presione 0 dos veces)" type="text" label-placement="floating" fill="outline" placeholder="11.111.111-1"
+              name="rut" required [(ngModel)]="rut" (keydown)="valiRut($event)"
+              inputmode="decimal">
+            </ion-input>  
       </ion-item>
 
       <ion-item>
@@ -77,10 +81,12 @@
           <ion-select-option value="¿Tienes pareja?">¿Tienes pareja?</ion-select-option>
         </ion-select>
       </ion-item>
+
       <ion-item>
         <ion-label position="stacked" required>Respuesta de seguridad</ion-label>
         <ion-input required  name="respuesta" type="text" [(ngModel)]="respuesta"></ion-input>
       </ion-item>
+
       <ion-item>
         <ion-label position="stacked"> Recibir notificaciones</ion-label>
         <mat-slide-toggle>Activame!</mat-slide-toggle>

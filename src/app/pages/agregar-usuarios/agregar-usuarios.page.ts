@@ -35,7 +35,34 @@ export class AgregarUsuariosPage implements OnInit {
   Validador8 = false;
 
   constructor(public router:Router, private db: DbservicesService, public toastController: ToastController, private alertController: AlertController) { }
-
+  
+  valiRut(event: KeyboardEvent) {
+    const input = event.key;
+  
+    // Verifica si el input es un número o una 'k' (puede ser minúscula o mayúscula)
+    const regex = /^[0-9kK]$/i;
+  
+    if (!regex.test(input) && input !== 'Backspace') {
+      event.preventDefault(); // No permite caracteres no válidos excepto Backspace
+    } else if (input !== 'Backspace') {
+      if (input.match(/[0-9kK]/i)) {
+        if (this.rutUsuario.length === 2 || this.rutUsuario.length === 6) {
+          this.rutUsuario = this.rutUsuario + '.';
+        } else if (this.rutUsuario.length === 10) {
+          this.rutUsuario = this.rutUsuario + '-';
+        }
+  
+        if (this.rutUsuario.length > 11) {
+          event.preventDefault(); // No permite más caracteres después de la posición 11
+        }
+        if (this.rutUsuario.length === 12 && input === '0') {
+          this.rutUsuario = this.rutUsuario.slice(0, -1) + 'k';
+          event.preventDefault(); 
+        }
+      }
+    }
+  }
+  
   insertarUsu(){
     try {
     this.db.insertarUsuario(this.rutUsuario,this.nombreUsuario,this.apellidoUsuario,this.fechaNacimiento,this.teleUsu,this.fotoUsu,this.correoUsuario,this.claveUsuario,this.respuestaUsuario,this.preguntaUsuario,this.rolUsuario);
