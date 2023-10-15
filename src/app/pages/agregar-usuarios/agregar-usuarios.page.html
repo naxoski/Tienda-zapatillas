@@ -34,7 +34,10 @@
   <ion-item>
     <ion-label position="floating">Rut del usuario</ion-label>
     <ion-input required  type="text" [(ngModel)]="rutUsuario"></ion-input>
-
+    <ion-input label="rut: (si es k presione 0 dos veces)" type="text" label-placement="floating" fill="outline" placeholder="11.111.111-1"
+              name="rut" required [(ngModel)]="rutUsuario" (keydown)="valiRut($event)"
+              inputmode="decimal">
+            </ion-input>  
   </ion-item>
 
   <ion-item>
@@ -63,7 +66,7 @@
   </ion-item>
   <div *ngIf="errores.length > 0" class="error-messages">
     <ul>
-      <li *ngFor="let error of errores">{{ errores }}</li>
+      <li *ngFor="let error of errores">{{ error }}</li>
     </ul>
   </div>
 

@@ -35,10 +35,36 @@ export class CrearCuentaPage implements OnInit {
   Validador8 = false;
 
 
-  
+ 
 
 
   constructor(private router: Router, public toastController: ToastController, private alertController: AlertController, private db: DbservicesService) { }
+  valiRut(event: KeyboardEvent) {
+    const input = event.key;
+  
+    // Verifica si el input es un número o una 'k' (puede ser minúscula o mayúscula)
+    const regex = /^[0-9kK]$/i;
+  
+    if (!regex.test(input) && input !== 'Backspace') {
+      event.preventDefault(); // No permite caracteres no válidos excepto Backspace
+    } else if (input !== 'Backspace') {
+      if (input.match(/[0-9kK]/i)) {
+        if (this.rut.length === 2 || this.rut.length === 6) {
+          this.rut = this.rut + '.';
+        } else if (this.rut.length === 10) {
+          this.rut = this.rut + '-';
+        }
+  
+        if (this.rut.length > 11) {
+          event.preventDefault(); // No permite más caracteres después de la posición 11
+        }
+        if (this.rut.length === 12 && input === '0') {
+          this.rut = this.rut.slice(0, -1) + 'k';
+          event.preventDefault(); 
+        }
+      }
+    }
+  }
   async crear() {
 
     this.errores = [];
@@ -128,6 +154,8 @@ export class CrearCuentaPage implements OnInit {
       this.Validador8 = true;
     }
   
+    
+
 
 
   // Si todas las validaciones pasan:
