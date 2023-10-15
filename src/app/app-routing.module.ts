@@ -79,6 +79,10 @@ const routes: Routes = [
     path: 'modificar-productos',
     loadChildren: () => import('./pages/modificar-productos/modificar-productos.module').then( m => m.ModificarProductosPageModule)
   },
+  {
+    path: 'usocamara',
+    loadChildren: () => import('./pages/usocamara/usocamara.module').then( m => m.UsocamaraPageModule)
+  },
 
   
 
