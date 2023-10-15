@@ -6,12 +6,16 @@ import { Camera, CameraResultType } from '@capacitor/camera';
 
 import { Zapatillas } from './zapatillas';
 import { Usuario } from './usuario';
+import { Venta } from './venta';
+import { Detalle } from './detalle';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DbservicesService {
   public database!: SQLiteObject;
+  private carrito: Zapatillas[] = [];
+  private carritoSubject = new BehaviorSubject<Zapatillas[]>(this.carrito);
 
   //TABLAS
   rol: string= "CREATE TABLE IF NOT EXISTS rol(idrol INTEGER PRIMARY KEY autoincrement,nombrerol VARCHAR(30) NOT NULL);";
@@ -58,6 +62,10 @@ export class DbservicesService {
 
    listaUsuario= new BehaviorSubject([]);
 
+   listaVenta= new BehaviorSubject([]);
+
+   listaDetalle = new BehaviorSubject([]);
+
    private isDBReady :  BehaviorSubject<boolean> = new  BehaviorSubject(false);
    
   constructor(private alertController: AlertController,private sqlite : SQLite, private platform : Platform) {
@@ -73,6 +81,15 @@ export class DbservicesService {
   fetchUsuario(): Observable<Usuario[]>{
     return this.listaUsuario.asObservable();
   }
+  
+  fetchVenta(): Observable<Venta[]>{
+    return this.listaVenta.asObservable();
+  }
+
+  fetchDetalle(): Observable<Detalle[]>{
+    return this.listaDetalle.asObservable();
+  }
+
   buscarZapatillas(){
     return this.database.executeSql('SELECT * FROM producto',[]).then(res=>
     {
@@ -118,6 +135,43 @@ export class DbservicesService {
     })
   }
 
+  buscarDetalle(){
+    return this.database.executeSql('SELECT * FROM detalle',[]).then(res=>{
+      let items: Detalle[] = [];
+      if(res.rows.length > 0){
+        for(var i=0; i<res.rows.length; i++){
+          items.push({
+            iddetalle: res.rows.item(i).iddetalle,
+            cantidad: res.rows.item(i).cantidad,
+            detalle: res.rows.item(i).detalle,
+            idproducto: res.rows.item(i).idproducto,
+            idventa : res.rows.item(i).idventa,
+          })
+        }
+      }
+      this.listaDetalle.next(items as any);
+    })
+  }
+
+  buscarVenta(){
+    return this.database.executeSql('SELECT * FROM venta ',[]).then(res=>{
+      let items: Venta[] = [];
+      if(res.rows.length > 0){
+        for(var i=0; i<res.rows.length; i++){
+          items.push({
+            idventa: res.rows.item(i).idventa,
+            fventa: res.rows.item(i).fventa,
+            estatus: res.rows.item(i).estatus,
+            total: res.rows.item(i).total,
+            carrito : res.rows.item(i).total,
+            idusuario: res.rows.item(i).idusuario,
+          })
+        }
+      }
+      this.listaVenta.next(items as any);
+    })
+  }
+
 
 
 
@@ -141,8 +195,55 @@ export class DbservicesService {
         });
     });
   }
+   async obtenerProducto(idproducto: any): Promise<any>{
+    return new Promise((resolve, reject)=>{
+      this.database.executeSql('SELECT * FROM producto WHERE idproducto = ?', [idproducto]).then((res)=>{
+        if (res.rows.length > 0){
+          resolve(res.rows.item(0));
+        }else{
+          resolve(null);
+        }
+      }).catch((error)=>{
+        reject('Error al obtener el producto' + JSON.stringify(error));
+      });
+    });
+
+   }
+
+   async obtenerUsuario(idusuario :any): Promise<any>{
+    return new Promise((resolve, reject)=>{
+      this.database.executeSql('SELECT * FROM usuario WHERE idusuario = ?', [idusuario]).then((res)=>{
+        if (res.rows.length > 0){
+          resolve(res.rows.item(0));
+        }else{
+          resolve(null);
+        }
+      }).catch((error)=>{
+        reject('Error al obtener el usuario' + JSON.stringify(error));
+      });
+    });
+
+   }
+   agregarAlCarrito(producto: Zapatillas) {
+    this.carrito.push(producto);
+    this.carritoSubject.next(this.carrito);
+  }
+  obtenerCarrito() {
+    return this.carritoSubject.asObservable();
+  }
+
+ 
+
+
+
   
 
+
+ 
+
+
+
+  
 
 
 

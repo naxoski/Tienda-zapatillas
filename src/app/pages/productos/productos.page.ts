@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { DbservicesService} from 'src/app/services/dbservices.service';
+import { Zapatillas } from 'src/app/services/zapatillas';
 
 @Component({
   selector: 'app-productos',
@@ -6,10 +9,38 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./productos.page.scss'],
 })
 export class ProductosPage implements OnInit {
+  private idsuario : any;
 
-  constructor() { }
+  arregloZapatillas: any = [
+    {
+      idproducto: '',
+      nombreproducto: '',
+      descripcion: '',
+      precio: '',
+      stock: '',
+      foto: '',
+      idcategoria: ''
+      
+    }
+
+  ]
+
+
+  constructor(private db: DbservicesService, private router: Router) { }
 
   ngOnInit() {
+      //subscribo al observable de la BD
+      this.db.dbState().subscribe(res=>{
+        if(res){
+          this.db.fetchProducto().subscribe(datos=>{
+            this.arregloZapatillas = datos;
+          })
+        }
+       })
   }
+  agregarAlCarrito(producto : Zapatillas){
+    this.db.agregarAlCarrito(this.arregloZapatillas);
+  }
+
 
 }

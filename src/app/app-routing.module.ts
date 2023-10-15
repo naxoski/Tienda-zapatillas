@@ -66,15 +66,11 @@ const routes: Routes = [
     path: 'agregar-usuarios',
     loadChildren: () => import('./pages/agregar-usuarios/agregar-usuarios.module').then( m => m.AgregarUsuariosPageModule)
   },
-
-
   {
-    path: '**',
-    loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
-  },  {
     path: 'modificar-usuario',
     loadChildren: () => import('./pages/modificar-usuario/modificar-usuario.module').then( m => m.ModificarUsuarioPageModule)
   },
+  
   {
     path: 'modificar-productos',
     loadChildren: () => import('./pages/modificar-productos/modificar-productos.module').then( m => m.ModificarProductosPageModule)
@@ -83,6 +79,13 @@ const routes: Routes = [
     path: 'usocamara',
     loadChildren: () => import('./pages/usocamara/usocamara.module').then( m => m.UsocamaraPageModule)
   },
+
+
+  {
+    path: '**',
+    loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
+  },
+ 
 
   
 
