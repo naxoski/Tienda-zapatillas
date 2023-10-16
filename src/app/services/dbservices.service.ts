@@ -14,8 +14,6 @@ import { Detalle } from './detalle';
 })
 export class DbservicesService {
   public database!: SQLiteObject;
-  private carrito: Zapatillas[] = [];
-  private carritoSubject = new BehaviorSubject<Zapatillas[]>(this.carrito);
 
   //TABLAS
   rol: string= "CREATE TABLE IF NOT EXISTS rol(idrol INTEGER PRIMARY KEY autoincrement,nombrerol VARCHAR(30) NOT NULL);";
@@ -224,13 +222,13 @@ export class DbservicesService {
     });
 
    }
-   agregarAlCarrito(producto: Zapatillas) {
-    this.carrito.push(producto);
-    this.carritoSubject.next(this.carrito);
-  }
-  obtenerCarrito() {
-    return this.carritoSubject.asObservable();
-  }
+
+   // CARRITO DE COMPRAS
+
+   agregarAlcarrito(){
+    
+   }
+ 
 
  
 

@@ -38,9 +38,6 @@ export class ProductosPage implements OnInit {
         }
        })
   }
-  agregarAlCarrito(producto : Zapatillas){
-    this.db.agregarAlCarrito(this.arregloZapatillas);
-  }
 
 
 }
