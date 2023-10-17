@@ -16,12 +16,22 @@
     </ion-toolbar>
   </ion-header>
 
-  <h1 style="text-align: center;">Mis Compras</h1>
-  <ion-card>
-    <ion-img src="assets/carrito.jpg" alt="Imagen 1"></ion-img>
-    <h2> Aún no agregaste productos <br> a tu bolsa de compras </h2>
-  </ion-card>
-  <br>
+  <ion-list *ngIf="detallesVenta.length > 0">
+    <ion-item *ngFor="let detalle of detallesVenta">
+      {{ detalle.cantidad }} x {{ detalle.detalle }}
+    </ion-item>
+  </ion-list>
+  
+  <div *ngIf="detallesVenta.length > 0 && (informacionVenta | async) as venta">
+    <div>Fecha de Venta: {{ detallesVenta[0].fventa }}</div>
+    <div>Total: {{ detallesVenta[0].total }}</div>
+    <!-- Otros campos de la venta que quieras mostrar -->
+  </div>
+  
+  <div *ngIf="detallesVenta.length === 0 && !(informacionVenta | async)">
+    No hay detalles de la venta.
+  </div>
+  
   <ion-button expand="block" color="medium" [routerLink]="['/principal']">Comprar</ion-button>
 
 </ion-content>

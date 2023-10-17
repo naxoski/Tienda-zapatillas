@@ -26,6 +26,7 @@
         <p class="product-price">Precio: {{ x.precio }}</p>
         <p class="product-stock">Stock: {{ x.stock }}</p>
         <p class="product-category">Categoría: {{ x.idcategoria }}</p>
+        <ion-button (click)="agregarAlCarrito(x.idproducto)">Agregar al carrito</ion-button>
       </div>
     </ion-item>
   </ion-list>
