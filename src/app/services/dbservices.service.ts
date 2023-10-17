@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Platform,AlertController } from '@ionic/angular';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { Zapatillas } from './zapatillas';
 import { Usuario } from './usuario';
@@ -226,136 +227,9 @@ export class DbservicesService {
 
    }
 
-   // CARRITO DE COMPRAS
+ 
 
-   // Método para verificar la existencia de una venta activa para un usuario
-  verificarVentaActiva(idUsuario: number): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.sqlite.create({
-        name: 'dbzapatillas.db',
-        location: 'default'
-      }).then((db: SQLiteObject) => {
-        db.executeSql('SELECT * FROM venta WHERE idusuario = ? AND estatus = "ACTIVO"', [idUsuario])
-          .then(res => {
-            if (res.rows.length > 0) {
-              // Ya existe una venta activa
-              resolve(true);
-            } else {
-              // No existe una venta activa
-              resolve(false);
-            }
-          })
-          .catch(err => reject(err));
-      }).catch(err => reject(err));
-    });
-  }
 
-  // Método para crear una nueva venta
-  crearNuevaVenta(idUsuario: number): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-      this.sqlite.create({
-        name: 'dbzapatillas.db',
-        location: 'default'
-      }).then((db: SQLiteObject) => {
-        const fventa = new Date().toISOString(); // Fecha actual
-        const fdespacho = new Date().toISOString(); // Fecha actual
-        const estatus = 'ACTIVO';
-        const total = '0'; // El total se inicializa en cero al crear una nueva venta
-        const carrito = ''; // El carrito se inicializa como una cadena vacía
-
-        db.executeSql('INSERT INTO venta (fventa,fdespacho, estatus, total, carrito, idusuario) VALUES (?, ?, ?, ?, ?,?)',
-          [fventa,fdespacho, estatus, total, carrito, idUsuario])
-          .then(res => {
-            // Obtén el ID de la nueva venta creada
-            const idVenta = res.insertId;
-            resolve(idVenta);
-          })
-          .catch(err => reject(err));
-      }).catch(err => reject(err));
-    });
-  }
-
-  // Método para agregar un producto al detalle de una venta
-  agregarProductoAlDetalle(idventa: number, idproducto: number, cantidad: number): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.sqlite.create({
-        name: 'dbzapatillas.db',
-        location: 'default'
-      }).then((db: SQLiteObject) => {
-        db.executeSql('INSERT INTO detalle (cantidad, idproducto, idventa) VALUES (?, ?, ?)',
-          [cantidad, idproducto, idventa])
-          .then(res => {
-            resolve();
-          })
-          .catch(err => reject(err));
-      }).catch(err => reject(err));
-    });
-  }
-
-  // Función principal para manejar la lógica de agregar productos al carrito
-  agregarAlCarrito(idusuario: number, idproducto: number, cantidad: number): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.verificarVentaActiva(idusuario).then(existeVentaActiva => {
-        if (existeVentaActiva) {
-          // Ya existe una venta activa, obtenemos su ID
-          this.crearNuevaVenta(idusuario).then(idVenta => {
-            // Creamos una nueva venta y obtenemos su ID
-            this.agregarProductoAlDetalle(idVenta, idproducto, cantidad).then(() => {
-              // Agregamos el producto al detalle de la venta
-              resolve();
-            }).catch(err => reject(err));
-          }).catch(err => reject(err));
-        } else {
-          // No existe una venta activa, creamos una nueva venta y obtenemos su ID
-          this.crearNuevaVenta(idusuario).then(idVenta => {
-            // Agregamos el producto al detalle de la venta
-            this.agregarProductoAlDetalle(idVenta, idproducto, cantidad).then(() => {
-              resolve();
-            }).catch(err => reject(err));
-          }).catch(err => reject(err));
-        }
-      }).catch(err => reject(err));
-    });
-  }
-
-  obtenerDetallesVenta(idVenta: number): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-      this.sqlite.create({
-        name: 'dbzapatillas.db.db',
-        location: 'default'
-      }).then((db: SQLiteObject) => {
-        db.executeSql('SELECT * FROM detalle WHERE idventa = ?', [idVenta])
-          .then(res => {
-            let detallesVenta = [];
-            for (let i = 0; i < res.rows.length; i++) {
-              detallesVenta.push(res.rows.item(i));
-            }
-            resolve(detallesVenta);
-          })
-          .catch(err => reject(err));
-      }).catch(err => reject(err));
-    });
-  }
-  obtenerVenta(idVenta: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.sqlite.create({
-        name: 'dbzapatillas.db.db',
-        location: 'default'
-      }).then((db: SQLiteObject) => {
-        db.executeSql('SELECT * FROM venta WHERE idventa = ?', [idVenta])
-          .then(res => {
-            if (res.rows.length > 0) {
-              resolve(res.rows.item(0));
-            } else {
-              reject('No se encontró la venta con el ID proporcionado.');
-            }
-          })
-          .catch(err => reject(err));
-      }).catch(err => reject(err));
-    });
-  }
-
-  //////////////////////
 
   
 
