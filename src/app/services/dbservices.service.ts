@@ -9,6 +9,8 @@ import { Zapatillas } from './zapatillas';
 import { Usuario } from './usuario';
 import { Venta } from './venta';
 import { Detalle } from './detalle';
+import { Detallecomprado } from './detallecomprado';
+import { Detallesventa } from './detallesventa';
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +26,7 @@ export class DbservicesService {
   usuario: string="CREATE TABLE IF NOT EXISTS usuario(idusuario INTEGER PRIMARY KEY autoincrement, rut VARCHAR(20) NOT NULL, nombreusuario VARCHAR(30) NOT NULL, apellidousuario VARCHAR(30) NOT NULL, fnacimiento DATE, telefono INTEGER , fotoperfil BLOB, correo VARCHAR(30) NOT NULL, clave VARCHAR(10) NOT NULL, respuesta VARCHAR(30) NOT NULL, idpregunta INTEGER NOT NULL, idrol INTEGER NOT NULL,FOREIGN KEY(idpregunta) REFERENCES pregunta(idpregunta), FOREIGN KEY(idrol) REFERENCES rol(idrol) );";
   venta: string = "CREATE TABLE IF NOT EXISTS venta(idventa INTEGER PRIMARY KEY autoincrement, fventa DATE, fdespacho DATE, estatus VARCHAR(30) NOT NULL, total VARCHAR(30) NOT NULL , carrito VARCHAR(30) NOT NULL, idusuario INTEGER NOT NULL, FOREIGN KEY(idusuario) REFERENCES usuario(idusuario) );";
   detalle: string = "CREATE TABLE IF NOT EXISTS detalle(iddetalle INTEGER PRIMARY KEY autoincrement, cantidad INTEGER NOT NULL , detalle VARCHAR(30), idproducto INTEGER NOT NULL, idventa INTEGER NOT NULL,FOREIGN KEY (idproducto) REFERENCES producto(idproducto),  FOREIGN KEY(idventa) REFERENCES venta(idventa) );";
-  region: string = "CREATE TABLE IF NOT EXISTS region(idregion INTEGER PRIMARY KEY autoincrement, nombreregion VARCHAR(30) );";
-  comuna: string = "CREATE TABLE IF NOT EXISTS comuna(idcomuna INTEGER PRIMARY KEY autoincrement, nombrecomuna VARCHAR(30), idregion INTEGER NOT NULL, FOREIGN KEY (idregion) REFERENCES region(idregion) );";
-  direccion: string = "CREATE TABLE IF NOT EXISTS direccion(iddireccion INTEGER PRIMARY KEY, calle VARCHAR(30) numcasa INTEGER NOT NULL, codpostal INTEGER NOT NULL, idcomuna INTEGER NOT NULL, idusuario INTEGER NOT NULL,FOREIGN KEY(idcomuna) REFERENCES comuna(idcomuna), FOREIGN KEY(idusuario) REFERENCES usuario(idusuario) );";
+  detalleComprado: string ="CREATE TABLE IF NOT EXISTS detallecomprado(iddetallec INTEGER PRIMARY KEY AUTOINCREMENT, nombreprodc TEXT NOT NULL, fotoprodc TEXT NOT NULL, cantidadc INTEGER NOT NULL, subtotalc INTEGER NOT NULL, ventac INTEGER NOT NULL, FOREIGN KEY (ventac) REFERENCES venta(idventa) );";
 
   
 
@@ -64,8 +64,13 @@ export class DbservicesService {
    listaVenta= new BehaviorSubject([]);
 
    listaDetalle = new BehaviorSubject([]);
+   listaDetalleComprado = new BehaviorSubject([]);
+
+   listaDetallesVenta = new BehaviorSubject([]);
 
    private isDBReady :  BehaviorSubject<boolean> = new  BehaviorSubject(false);
+   private flag: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
    
   constructor(private alertController: AlertController,private sqlite : SQLite, private platform : Platform) {
     this.crearBD();
@@ -88,6 +93,10 @@ export class DbservicesService {
   fetchDetalle(): Observable<Detalle[]>{
     return this.listaDetalle.asObservable();
   }
+  fetchDetalleComprado(): Observable<Detallecomprado[]>{
+    return this.listaDetalleComprado.asObservable();
+  }
+
 
   buscarZapatillas(){
     return this.database.executeSql('SELECT * FROM producto',[]).then(res=>
@@ -153,13 +162,34 @@ export class DbservicesService {
   }
 
   buscarVenta(){
-    return this.database.executeSql('SELECT * FROM venta ',[]).then(res=>{
+    return this.database.executeSql("SELECT * FROM venta; ",[]).then(res=>{
       let items: Venta[] = [];
       if(res.rows.length > 0){
         for(var i=0; i<res.rows.length; i++){
           items.push({
             idventa: res.rows.item(i).idventa,
             fventa: res.rows.item(i).fventa,
+            fdespacho: res.rows.item(i).fdespacho,
+            estatus: res.rows.item(i).estatus,
+            total: res.rows.item(i).total,
+            carrito : res.rows.item(i).carrito,
+            idusuario: res.rows.item(i).idusuario
+          })
+        }
+      }
+      this.listaVenta.next(items as any);
+    })
+  }
+  
+  buscarVentas(idventa : any){
+    return this.database.executeSql('SELECT * FROM venta WHERE idventa = ? ',[idventa]).then(res=>{
+      let items: Venta[] = [];
+      if(res.rows.length > 0){
+        for(var i=0; i<res.rows.length; i++){
+          items.push({
+            idventa: res.rows.item(i).idventa,
+            fventa: res.rows.item(i).fventa,
+            fdespacho: res.rows.item(i).fdespacho,
             estatus: res.rows.item(i).estatus,
             total: res.rows.item(i).total,
             carrito : res.rows.item(i).total,
@@ -170,6 +200,236 @@ export class DbservicesService {
       this.listaVenta.next(items as any);
     })
   }
+  buscarVentaCarrito(usuario: any, estado: any): Observable<Venta[]> {
+    console.log("ID del usuario que recibio la busqueda del carrito: "+usuario);
+    return new Observable<Venta[]>(observer => {
+      this.database.executeSql("SELECT * FROM venta WHERE idusuario = ? AND estatus = ?;", [usuario, estado]).then(res => {
+        let items: Venta[] = [];
+  
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            items.push({
+              idventa: res.rows.item(i).idventa,
+              fventa: res.rows.item(i).fventa,
+              fdespacho: res.rows.item(i).fdespacho,
+              estatus: res.rows.item(i).estatus,
+              total: res.rows.item(i).total,
+              carrito : res.rows.item(i).total,
+              idusuario: res.rows.item(i).idusuario,
+            });
+          }
+        }
+  
+        observer.next(items);
+        observer.complete();
+        this.listaVenta.next(items as any);
+      });
+    });
+  }
+  buscarCompras(estado: any): Observable<Venta[]> {
+    return new Observable<Venta[]>(observer => {
+      this.database.executeSql("SELECT * FROM venta WHERE estatus = ?;", [estado]).then(res => {
+        let items: Venta[] = [];
+  
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            items.push({
+              idventa: res.rows.item(i).idventa,
+            fventa: res.rows.item(i).fventa,
+            fdespacho: res.rows.item(i).fdespacho,
+            estatus: res.rows.item(i).estatus,
+            total: res.rows.item(i).total,
+            carrito : res.rows.item(i).total,
+            idusuario: res.rows.item(i).idusuario,
+            });
+          }
+        }
+  
+        observer.next(items);
+        observer.complete();
+        this.listaVenta.next(items as any);
+      });
+    });
+  }
+
+  buscarDetalles(iddetalle: any){
+    return this.database.executeSql('SELECT * FROM detalle',[iddetalle]).then(res=>{
+      let items: Detalle[] = [];
+      if(res.rows.length > 0){
+        for(var i=0; i<res.rows.length; i++){
+          items.push({
+            iddetalle: res.rows.item(i).iddetalle,
+            cantidad: res.rows.item(i).cantidad,
+            detalle: res.rows.item(i).detalle,
+            idproducto: res.rows.item(i).idproducto,
+            idventa : res.rows.item(i).idventa,
+          })
+        }
+      }
+      this.listaDetalle.next(items as any);
+    })
+  }
+  buscarDetalleProd(prod: any, venta: any): Observable<Detalle[]> {
+    return new Observable<Detalle[]>(observer => {
+      this.database.executeSql("SELECT * FROM detalle WHERE idproducto = ? AND idventa = ?;", [prod, venta]).then(res => {
+        let items: Detalle[] = [];
+  
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            items.push({
+            iddetalle: res.rows.item(i).iddetalle,
+            cantidad: res.rows.item(i).cantidad,
+            detalle: res.rows.item(i).detalle,
+            idproducto: res.rows.item(i).idproducto,
+            idventa : res.rows.item(i).idventa,
+            });
+          }
+        }
+  
+        observer.next(items);
+        observer.complete();
+      });
+    });
+  }
+  buscarDetallesVenta(venta: any): Observable<Detallesventa[]> {
+    return new Observable<Detallesventa[]>(observer => {
+      this.database.executeSql("SELECT d.iddetalle, d.cantidad, d.detalle, d.idproducto ,d.idventa, p.nombreproducto, p.precio, p.stock, p.foto FROM detalle d JOIN producto p ON(d.idproducto = p.idproducto) WHERE idventa = ?;", [venta]).then(res => {
+        let items: Detallesventa[] = [];
+  
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            items.push({
+              iddetalle: res.rows.item(i).iddetalle,
+              cantidad: res.rows.item(i).cantidad,
+              detalle: res.rows.item(i).detalle,
+              idventa: res.rows.item(i).idventa,
+              idproducto: res.rows.item(i).idproducto,
+              nombreproducto: res.rows.item(i).nombreproducto,
+              precio: res.rows.item(i).precio,
+              stock: res.rows.item(i).stock,
+              foto: res.rows.item(i).foto
+            });
+          }
+        }
+  
+        observer.next(items);
+        observer.complete();
+      });
+    });
+  }
+  
+  buscarDetallesVentaPorD(id: any): Observable<Detallesventa[]> {
+    return new Observable<Detallesventa[]>(observer => {
+      this.database.executeSql("SELECT d.iddetalle, d.cantidad, d.detalle, d.idventa ,d.idproducto, p.nombreproducto, p.precio, p.stock, p.foto FROM detalle d JOIN producto p ON(d.idproducto = p.idproducto) WHERE d.iddetalle = ?;", [id]).then(res => {
+        let items: Detallesventa[] = [];
+  
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            items.push({
+              iddetalle: res.rows.item(i).iddetalle,
+              cantidad: res.rows.item(i).cantidad,
+              detalle: res.rows.item(i).detalle,
+              idventa: res.rows.item(i).idventa,
+              idproducto: res.rows.item(i).idproducto,
+              nombreproducto: res.rows.item(i).nombreproducto,
+              precio: res.rows.item(i).precio,
+              stock: res.rows.item(i).stock,
+              foto: res.rows.item(i).foto
+            });
+          }
+        }
+  
+        observer.next(items);
+        observer.complete();
+      });
+    });
+  }
+  buscarDetallesCompra(){
+    return this.database.executeSql("SELECT * FROM detallecomprado;",[]).then(res =>{
+      //todo bien
+      let items: Detallecomprado[] = [];
+      //Validar cantidad registros
+      if(res.rows.length > 0){
+        //Recorrer los datos
+        for(var i = 0; i < res.rows.length; i++ ){
+          //Guardando los datos
+          items.push({ 
+            iddetallec: res.rows.item(i).iddetallec,
+            nombreprodc: res.rows.item(i).nombreprodc,
+            fotoprodc: res.rows.item(i).fotoProdc,
+            cantidadc: res.rows.item(i).cantidadc,
+            subtotalc: res.rows.item(i).subtotalc,
+            ventac: res.rows.item(i).ventac
+           });
+        }
+      }
+      this.listaDetalle.next(items as any);
+
+    })
+  }
+  buscarDetallesCompraVenta(venta: any): Observable<Detallecomprado[]> {
+    return new Observable<Detallecomprado[]>(observer => {
+      this.database.executeSql("SELECT * FROM detallecomprado WHERE ventac = ?;", [venta]).then(res => {
+        let items: Detallecomprado[] = [];
+  
+        // Validar cantidad de registros
+        if (res.rows.length > 0) {
+          // Recorrer los datos
+          for (var i = 0; i < res.rows.length; i++) {
+            // Guardando los datos
+            items.push({ 
+              iddetallec: res.rows.item(i).iddetallec,
+              nombreprodc: res.rows.item(i).nombreprodc,
+              fotoprodc: res.rows.item(i).fotoprodc,
+              cantidadc: res.rows.item(i).cantidadc,
+              subtotalc: res.rows.item(i).subtotalc,
+              ventac: res.rows.item(i).ventac
+            });
+          }
+        }
+  
+        observer.next(items);
+        observer.complete();
+      });
+    });
+  }
+  restarStock(id: any, stock: any){  
+    console.log("Stock recibido: "+stock);
+    return this.database.executeSql("UPDATE producto SET stock = ? WHERE idproducto = ?",[stock, id]).then(res =>{
+      this.buscarZapatillas();
+    })
+  }
+   //Venta/carrito
+   modificarEstadoVenta(id: any, fecha: any){  
+    return this.database.executeSql("UPDATE venta SET estatus = ? WHERE idventa = ?",[fecha, id]).then(res =>{
+      this.buscarVenta();
+    })
+  }
+  modificarFechaEntrega(id: any, estado: any){  
+    return this.database.executeSql("UPDATE venta SET fdespacho = ? WHERE idventa = ?",[estado, id]).then(res =>{
+      this.buscarVenta();
+    })
+  }
+  modificarEntrega(id: any, entrega: any){  
+    return this.database.executeSql("UPDATE venta SET fdespacho = ? WHERE idventa = ?",[entrega, id]).then(res =>{
+      this.buscarVenta();
+    })
+  }
+  modificarTotal(id: any, total: any){  
+    return this.database.executeSql("UPDATE venta SET total = ? WHERE idventa = ?",[total, id]).then(res =>{
+      this.buscarVenta();
+    })
+  }
+  modificarDetalle(id: any, detalle: any, cantidad: any){  
+    console.log("Id del detalle que se quiere modificar"+id);
+    console.log("Subtotal nuevo del detalle: "+detalle);
+    console.log("Cantidad nueva del detalle: "+cantidad);
+    return this.database.executeSql("UPDATE detalle SET detalle = ?, cantidad = ? WHERE iddetalle = ?",[detalle, cantidad, id]).then(res =>{
+      this.buscarDetalle();
+    })
+  }
+
+
 
 
 
@@ -243,6 +503,20 @@ export class DbservicesService {
       this.presentAlert("error al insertar zapatilla" + e);
     })
   }
+  insertarVenta(fventa:any,fdespacho:any, estatus: any, total : any, carrito: any , idusuario: any ){
+    return this.database.executeSql('INSERT INTO venta(fventa,fdespacho,estatus,total,carrito,idusuario) VALUES (?,?,?,?,?,?)',[fventa,fdespacho,estatus,total,carrito,idusuario ]).then(res=>{
+      this.buscarVenta();
+    }).catch(e=>{
+      this.presentAlert("error al insertar Venta" + e);
+    })
+  }
+  agregarDetalle(cantidad: any, detalle: any, idventa: any, idproducto: any){  
+    return this.database.executeSql("INSERT INTO detalle(cantidad, detalle, idproducto, idventa) VALUES(?, ?, ?, ?)",[cantidad, detalle,idproducto,idventa]).then(res=> {
+      this.buscarDetalle(); 
+    }).catch(e=>{
+      this.presentAlert("error al insertar detalle" + e);
+    })
+  }
   actualizarProducto(idproducto: any, nombreproducto:any, descripcion:any, precio:any, stock:any, foto: any ,categoria: any){
     return this.database.executeSql('UPDATE producto SET nombreproducto = ?, descripcion = ? WHERE id_producto = ?',[nombreproducto,descripcion]).then(res=>{
       this.buscarZapatillas();
@@ -311,6 +585,10 @@ export class DbservicesService {
 
       await this.database.executeSql(this.detalle,[]);
 
+      await this.database.executeSql(this.detalleComprado,[]);
+
+
+
 
 
      
@@ -332,6 +610,8 @@ export class DbservicesService {
       
 
       await this.database.executeSql(this.registroZapatillas,[]);
+
+      this.flag.next(true);
 
 
   
