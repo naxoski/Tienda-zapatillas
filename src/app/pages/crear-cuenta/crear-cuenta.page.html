@@ -50,6 +50,10 @@
         <ion-label position="stacked">Correo</ion-label>
         <ion-input required  name="nombre" type="text" placeholder="Correo"  [(ngModel)]="correo" ></ion-input>
       </ion-item>
+      <div id="container">
+        <ion-button (click)="takePicture()">Toma Foto</ion-button>
+        <img *ngIf="imageSource" [src]="imageSource" alt="image" style="width: 100%;max-width: 250px;">
+      </div>
 
       <ion-item>
         <ion-label position="stacked">Clave</ion-label>
