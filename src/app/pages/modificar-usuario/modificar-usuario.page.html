@@ -19,6 +19,10 @@
     <ion-label position="floating">Nuevo email</ion-label>
     <ion-input [(ngModel)]="nuevoEmail"></ion-input>
   </ion-item>
+  <div id="container">
+    <ion-button (click)="takePicture()">Toma Foto</ion-button>
+    <img *ngIf="imageSource" [src]="imageSource" alt="image" style="width: 100%;max-width: 250px;">
+  </div>
 
   <ion-button expand="full" (click)="modificarUsuario()">Modificar Usuario</ion-button>
 </ion-content>
