@@ -16,7 +16,7 @@ interface DetalleVenta {
   styleUrls: ['./carrito.page.scss'],
 })
 export class CarritoPage implements OnInit {
-  detalle: any = [{iddetalle: '', cantidad: '',detalle:'',idproducto:'',idventa:''}];
+  detalle: any = [];
 
 
   constructor(private db: DbservicesService, private router: Router, private navCtrl: NavController, private route: ActivatedRoute, public toastController: ToastController, private alertController: AlertController) {}

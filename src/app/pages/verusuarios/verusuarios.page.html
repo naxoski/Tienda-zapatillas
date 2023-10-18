@@ -23,9 +23,9 @@
         <ion-img [src]="x.fotoperfil"></ion-img>
       </div>
       <div class="product-info">
-        <h2 class="product-name">Nombre: {{ x.nombreusuario }}</h2>
-        <p class="product-description">Apellido: {{ x.apellidousuario }}</p>
         <p class="product-price">Rut: {{ x.rut }}</p>
+        <p class="product-name">Nombre: {{ x.nombreusuario }}<p>
+        <p class="product-description">Apellido: {{ x.apellidousuario }}</p>
         <p class="product-stock">Fecha de nacimiento: {{ x.fnacimiento | date:'dd/MM/yyyy' }}</p>
         <p class="product-category">Teléfono: {{ x.telefono }}</p>
         <p class="product-category">Pregunta de seguridad: {{ x.idpregunta }}</p>

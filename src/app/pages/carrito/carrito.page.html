@@ -17,10 +17,10 @@
   </ion-header>
   <ion-list>
     <ion-item *ngFor="let x of detalle" class="product-container">
-      <ion-img [src]="x.foto" class="product-image"></ion-img>
+      <ion-img [src]="x.fotoprodc" class="product-image"></ion-img>
       <div class="product-details">
-        <h2 class="product-name">{{ x.cantidad }}</h2>
-        <p class="product-description">Descripción: {{ x.detalle }}</p>
+        <h2 class="product-name">Cantidad que llevas:{{ x.cantidad }}</h2>
+        <p class="product-description">total: {{ x.detalle }}</p>
       </div>
     </ion-item>
   </ion-list>
