@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Platform,AlertController } from '@ionic/angular';
-import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom, from, of, throwError } from 'rxjs';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -97,6 +97,13 @@ export class DbservicesService {
     return this.listaDetalleComprado.asObservable();
   }
 
+  promiseDetalle(): Promise<Detalle[]> {
+    return firstValueFrom(this.listaDetalle);
+  }
+  
+  promiseVenta(): Promise<Venta[]> {
+    return firstValueFrom(this.listaVenta);
+  }
 
   buscarZapatillas(){
     return this.database.executeSql('SELECT * FROM producto',[]).then(res=>
@@ -162,7 +169,7 @@ export class DbservicesService {
   }
 
   buscarVenta(){
-    return this.database.executeSql("SELECT * FROM venta; ",[]).then(res=>{
+    return this.database.executeSql('SELECT * FROM venta ',[]).then(res=>{
       let items: Venta[] = [];
       if(res.rows.length > 0){
         for(var i=0; i<res.rows.length; i++){
@@ -222,7 +229,6 @@ export class DbservicesService {
   
         observer.next(items);
         observer.complete();
-        this.listaVenta.next(items as any);
       });
     });
   }
@@ -247,7 +253,6 @@ export class DbservicesService {
   
         observer.next(items);
         observer.complete();
-        this.listaVenta.next(items as any);
       });
     });
   }
@@ -504,13 +509,24 @@ export class DbservicesService {
     })
   }
   insertarVenta(fventa:any,fdespacho:any, estatus: any, total : any, carrito: any , idusuario: any ){
+    console.log("Fecha despascho ingresada: "+fventa);
+    console.log("Fecha despascho ingresada: "+fdespacho);
+    console.log("Fecha despascho ingresada: "+estatus);
+    console.log("Fecha despascho ingresada: "+total);
+    console.log("Fecha despascho ingresada: "+carrito);
+    console.log("Fecha despascho ingresada: "+idusuario);
     return this.database.executeSql('INSERT INTO venta(fventa,fdespacho,estatus,total,carrito,idusuario) VALUES (?,?,?,?,?,?)',[fventa,fdespacho,estatus,total,carrito,idusuario ]).then(res=>{
       this.buscarVenta();
     }).catch(e=>{
       this.presentAlert("error al insertar Venta" + e);
     })
   }
-  agregarDetalle(cantidad: any, detalle: any, idventa: any, idproducto: any){  
+  agregarDetalle(cantidad: any, detalle: any, idventa: any, idproducto: any){ 
+    console.log("cantidad: "+cantidad);
+    console.log("detalle: "+detalle);
+    console.log("idproducto: "+idproducto);
+    console.log("idventa: "+idventa);
+  
     return this.database.executeSql("INSERT INTO detalle(cantidad, detalle, idproducto, idventa) VALUES(?, ?, ?, ?)",[cantidad, detalle,idproducto,idventa]).then(res=> {
       this.buscarDetalle(); 
     }).catch(e=>{
