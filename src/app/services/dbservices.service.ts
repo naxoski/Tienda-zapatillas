@@ -64,6 +64,7 @@ export class DbservicesService {
    listaVenta= new BehaviorSubject([]);
 
    listaDetalle = new BehaviorSubject([]);
+   
    listaDetalleComprado = new BehaviorSubject([]);
 
    listaDetallesVenta = new BehaviorSubject([]);

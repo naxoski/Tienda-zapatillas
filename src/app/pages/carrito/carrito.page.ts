@@ -16,15 +16,25 @@ interface DetalleVenta {
   styleUrls: ['./carrito.page.scss'],
 })
 export class CarritoPage implements OnInit {
-  detalle: any = [];
+  detalles: any = [];
+  idUser: any =0;
+  venta: any =  [];
+
 
 
   constructor(private db: DbservicesService, private router: Router, private navCtrl: NavController, private route: ActivatedRoute, public toastController: ToastController, private alertController: AlertController) {}
 
   ngOnInit() {
-    this.db.fetchDetalle().subscribe(datos => {
-      this.detalle = datos;
+    this.idUser = localStorage.getItem('idusuario')
+
+    this.db.buscarVentaCarrito(this.idUser, "Activo").subscribe(datos => {
+      this.venta = datos[0];
+      this.db.buscarDetallesVenta(this.venta.idventa).subscribe(dato => {
+        this.detalles = dato;
+      });
     });
+    
+    
   }
 
 
