@@ -10,22 +10,7 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
 })
 export class VerusuariosPage implements OnInit {
   
-  arregloUsuario: any = [
-    {
-      idusuario: '',
-      nombreusuario: '',
-      apellidousuario: '',
-      fnacimiento: '',
-      telefono: '',
-      correo: '',
-      clave: '',
-      respuesta: '',
-      idpregunta: '',
-      idrol: ''
-      
-    }
-
-  ]
+  usuario: any = {idusuario: '', rut: '', nombreusuario: '', apellidousuario: '',fnacimiento: '', telefono: '', fotoperfil: '' ,correo: '',clave: '', respuesta: '',idpregunta:'',idrol:''};
 
   constructor(private db: DbservicesService, private router: Router) { 
 
@@ -36,7 +21,7 @@ export class VerusuariosPage implements OnInit {
       this.db.dbState().subscribe(res=>{
         if(res){
           this.db.fetchUsuario().subscribe(datos=>{
-            this.arregloUsuario = datos;
+            this.usuario = datos;
           })
         }
        })
@@ -44,6 +29,22 @@ export class VerusuariosPage implements OnInit {
   eliminar(x:any){
     this.db.eliminarUsuario(x.idusuario);
     this.db.presentAlert("Usuario Eliminado");
+  }
+  modificarUsuario(x: any){
+    let navigationExtras: NavigationExtras = {
+      state:{
+      idEnviado: x.idusuario,
+      rutusu:x.rut,
+      nuevoNombre: x.nombreusuario,
+      nuevoapellido:x.apellidousuario,
+      nuevotelefono:x.telefono,
+      imageSource:x.fotoperfil ,
+      nuevoEmail:x.correo,
+      
+
+      }
+    }
+    this.router.navigate(['/modificar-usuario'],navigationExtras);
   }
 
 

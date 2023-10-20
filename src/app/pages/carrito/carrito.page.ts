@@ -16,9 +16,25 @@ interface DetalleVenta {
   styleUrls: ['./carrito.page.scss'],
 })
 export class CarritoPage implements OnInit {
-  detalles: any = [];
   idUser: any =0;
-  venta: any =  [];
+  hayprod: boolean = true;
+  idproducto: number = 0;
+  arregloZapatillas: any = [{idproducto:'',nombreproducto:'',descripcion:'',precio:'',stock:'',foto:'',idcategoria:''}];
+  permisoStorage: any = 0;
+  permiso: any = 0;
+  correoUser: any = "";
+  usuario: any = {idusuario: '', rut: '', nombreusuario: '', apellidousuario: '',fnacimiento: '', telefono: '', fotoperfil: '' ,correo: '',clave: '', respuesta: '',idpregunta:'',idrol:''};
+  venta: any =[{idventa:'',fventa:'',fdespacho:'',estatus:'',total:'',carrito:'',idusuario:''}];
+  fechaActual = new Date();
+  diasSumar = 7;
+  fdespacho = new Date(this.fechaActual);
+  detalle: any = [{iddetalle: '', cantidad: '',detalle:'',idproducto:'',idventa:''}];
+  detalles:any =[{iddetalle:'',cantidad:'',detalle:'',idproducto:'',idventa:'',nombreproducto:'', precio:'',stock:'',foto:''}];
+  stock: number = 0;
+  carrito: any = {};
+  
+  
+ 
 
 
 
@@ -37,8 +53,31 @@ export class CarritoPage implements OnInit {
     
   }
 
+  async Pagar(){
+    this.fdespacho.setDate(this.fechaActual.getDate() + this.diasSumar);
+
+    this.db.modificarFechaEntrega(this.carrito.idventa, this.fdespacho);
+    this.db.modificarEstadoVenta(this.carrito.idventa, 'Comprado');
+
+    //Restar del stock
+    for(let x of this.detalles){
+
+      this.stock = x.stock - x.cantidad;
+      console.log("Stock del producto: "+x.stock);
+      console.log("Cantidad del detalle:"+x.cantidad);
+      console.log("ID del producto: "+x.idproducto);
+      this.db.restarStock(x.idproducto, this.stock);
+      await this.db.buscarCompras(x.idproducto);
+
+      this.db.fetchProducto().subscribe(item => {
+        this.arregloZapatillas = item[0];
+      })
+
+    }
 
 
+
+}
 }
 
 

@@ -63,6 +63,7 @@ export class ProductosPage implements OnInit {
             console.log("  Se está modificando el detalle ya previamente existente");
             console.log("-------------------------------------");
             console.log("Se usó el del detalle que ya existe aaaaaaaaaaaaaaa");
+            this.presentToast('Producto agregado al carrito.');
           } else {
             this.detalle = this.db.agregarDetalle(1, precio, this.venta.idventa, idprod);
             this.db.modificarTotal(this.venta.idventa, this.venta.total + precio);
@@ -70,11 +71,13 @@ export class ProductosPage implements OnInit {
             console.log("-------------------------------------");
             console.log("Se está agregando un nuevo detalle");
             console.log("-------------------------------------");
+            this.presentToast('Producto agregado al carrito.');
           }
         });
 
       } else {
         this.fdespacho.setDate(this.fechaActual.getDate() + this.diasSumar);
+        this.presentToast('Producto agregado al carrito.');
 
         await this.db.insertarVenta(this.fechaActual,this.fdespacho, 'Activo', precio, 'C', this.idUser);
 
@@ -89,6 +92,14 @@ export class ProductosPage implements OnInit {
         
       }
     });
+  }
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000, // Duración del mensaje en milisegundos
+      position: 'bottom' // Posición del mensaje (arriba, abajo, centro)
+    });
+    toast.present();
   }
 
   ngOnInit() {

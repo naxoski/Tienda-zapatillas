@@ -7,18 +7,24 @@
 
   <ion-item>
     <ion-label position="floating">Nombre del producto</ion-label>
-    <ion-input [(ngModel)]="nombreProducto"></ion-input>
+    <ion-input  [(ngModel)]="nombreEnviado"></ion-input>
   </ion-item>
-
   <ion-item>
-    <ion-label position="floating">Nuevo precio</ion-label>
-    <ion-input type="number" [(ngModel)]="nuevoPrecio"></ion-input>
+    <ion-label position="floating">Descripción</ion-label>
+    <ion-input [(ngModel)]="descripcionEnviada"></ion-input>
   </ion-item>
-
   <ion-item>
-    <ion-label position="floating">Nuevo stock</ion-label>
-    <ion-input type="number" [(ngModel)]="nuevoStock"></ion-input>
+    <ion-label position="floating">Precio</ion-label>
+    <ion-input [(ngModel)]="precioEnviado"></ion-input>
   </ion-item>
+  <ion-item>
+    <ion-label position="floating">Stock</ion-label>
+    <ion-input [(ngModel)]="stockEnviado"></ion-input>
+  </ion-item>
+  <div id="container">
+    <ion-button (click)="takePicture()">Foto del producto</ion-button>
+    <img *ngIf="fotoEnviada" [src]="fotoEnviada" alt="image" style="width: 100%;max-width: 250px;" [(ngModel)]="fotoEnviada">
+  </div>
 
   <ion-button expand="full" (click)="modificarProducto()">Modificar Producto</ion-button>
 </ion-content>

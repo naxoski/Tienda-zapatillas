@@ -43,17 +43,14 @@
         <ion-input required  name="nombre" type="text" placeholder="Teléfono"  [(ngModel)]="telefono" ></ion-input>
       </ion-item>
       <ion-item>
-        <ion-label position="stacked">Foto Perfil</ion-label>
-        <ion-input required  name="nombre" type="file" placeholder="Foto de Perfil"  [(ngModel)]="fotoperfil" ></ion-input>
+        <ion-button (click)="takePicture()">Foto de perfil</ion-button>
+        <img *ngIf="imageSource" [src]="imageSource" alt="image" style="width: 100%;max-width: 250px;"  [(ngModel)]="fotoperfil">
       </ion-item>
+     
       <ion-item>
         <ion-label position="stacked">Correo</ion-label>
         <ion-input required  name="nombre" type="text" placeholder="Correo"  [(ngModel)]="correo" ></ion-input>
       </ion-item>
-      <div id="container">
-        <ion-button (click)="takePicture()">Toma Foto</ion-button>
-        <img *ngIf="imageSource" [src]="imageSource" alt="image" style="width: 100%;max-width: 250px;">
-      </div>
 
       <ion-item>
         <ion-label position="stacked">Clave</ion-label>

@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { AlertController, ToastController } from '@ionic/angular';
+import { DbservicesService } from 'src/app/services/dbservices.service';
 
 @Component({
   selector: 'app-modificar-usuario',
@@ -7,32 +10,38 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
   styleUrls: ['modificar-usuario.page.scss'],
 })
 export class ModificarUsuarioPage {
-  nombreUsuario: string = '';
-  nuevoNombre: string = '';
-  nuevoEmail: string = '';
+  idusuario = '';
+  rutusu = '';
+  nuevoNombre = '';
+  nuevoapellido = '';
+  nuevoEmail = '';
+  imageSource: any;
+  nuevotelefono= '';
+  clave= '';
+  respuesta= '';
+  pregunta= '';
+  idrol= '';
+  fechadenacimiento= '';
 
-  usuarios: any[] = [
+  constructor(public router:Router, private db: DbservicesService, public toastController: ToastController, private alertController: AlertController,private activedRouter: ActivatedRoute) {
 
-];
+    this.activedRouter.queryParams.subscribe(res => {
+      if (this.router.getCurrentNavigation()?.extras.state) {
+        this.idusuario = this.router.getCurrentNavigation()?.extras?.state?.['idEnviado'];
 
-  imageSource: any ;
+        this.rutusu = this.router.getCurrentNavigation()?.extras?.state?.['rutusu'];
 
-  modificarUsuario() {
-    for (let usuario of this.usuarios) {
-      if (usuario.nombreUsuario === this.nombreUsuario) {
-        usuario.nombre = this.nuevoNombre;
-        usuario.email = this.nuevoEmail;
-        
-        console.log(`Usuario '${this.nombreUsuario}' modificado con éxito.`);
-        break;
+        this.nuevoNombre = this.router.getCurrentNavigation()?.extras?.state?.['nuevoNombre'];
+        this.nuevoapellido = this.router.getCurrentNavigation()?.extras?.state?.['nuevoapellido'];
+        this.nuevotelefono = this.router.getCurrentNavigation()?.extras?.state?.['nuevotelefono'];
+        this.imageSource = this.router.getCurrentNavigation()?.extras?.state?.['imageSource'];
+        this.nuevoEmail = this.router.getCurrentNavigation()?.extras?.state?.['nuevoEmail'];
       }
-    
-    }
+    })
   }
   takePicture = async () => {
     const image = await Camera.getPhoto({
       quality: 90, //Este es la calidad, el 90 significa el 90% de calidad
-      allowEditing: true,
       //Este es para que edite directamente
       resultType: CameraResultType.DataUrl, //El como quiero guardarla, como quiero configurarla. Lo mejor que haremos con la url es que la guardemos como data, para que cuando la veamos en la pagina salga en la url
       source: CameraSource.Prompt  //Esto es para pdamos elegir el tipo de camera 
@@ -47,4 +56,19 @@ export class ModificarUsuarioPage {
     // Can be set to the src of an image now
     //imageElement.src = imageUrl;
   };
+  modificarUsuario() {
+    try {
+    this.db.modificarUsuario(this.idusuario,this.rutusu,this.nuevoNombre,this.nuevoapellido,this.nuevotelefono,this.imageSource,this.nuevoEmail)
+    this.db.presentAlert("Usuario modificado");
+    this.router.navigate(['/verusuarios']);
+      
+    } catch (error) {
+      this.db.presentAlert("error al insertar usuario" + + JSON.stringify(error));
+      
+    }
+
+  }
+  ngOnInit() {
+  }
+
 }

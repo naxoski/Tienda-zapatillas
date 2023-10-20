@@ -15,7 +15,7 @@
       <ion-title size="large">Carrito</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-list>
+  <ion-list *ngIf="detalles && detalles.length > 0">
     <ion-item *ngFor="let x of detalles" class="product-container">
       <ion-img [src]="x.foto" class="product-image"></ion-img>
       <div class="product-details">
@@ -29,7 +29,13 @@
       </div>
     </ion-item>
   </ion-list>
+  <ion-list *ngIf="!detalles || detalles.length === 0">
+    <div class="empty-cart-message">
+      No hay productos en el carrito.
+    </div>
+  </ion-list>
   
-  <ion-button expand="block" color="medium" [routerLink]="['/principal']">Comprar</ion-button>
+  <ion-button expand="block" color="medium" (click)="Pagar()" [routerLink]="['/principal']">Comprar</ion-button>
+  
 
 </ion-content>

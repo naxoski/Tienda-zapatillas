@@ -48,12 +48,11 @@ export class VerProductosPage implements OnInit {
           precioEnviado: x.precio,
           stockEnviado: x.stock,
           fotoEnviada : x.foto,
-          categoriaEnvidia: x.idcategoria
 
 
         }
       }
-      this.router.navigate(['/modificar'],navigationExtras);
+      this.router.navigate(['/modificar-productos'],navigationExtras);
     }
 
     eliminar(x:any){

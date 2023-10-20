@@ -70,6 +70,7 @@ export class DbservicesService {
    listaDetallesVenta = new BehaviorSubject([]);
 
    private isDBReady :  BehaviorSubject<boolean> = new  BehaviorSubject(false);
+
    private flag: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
    
@@ -208,6 +209,25 @@ export class DbservicesService {
       this.listaVenta.next(items as any);
     })
   }
+  buscarProducto(idproducto : any){
+    return this.database.executeSql('SELECT * FROM producto WHERE idproducto = ? ',[idproducto]).then(res=>{
+      let items: Zapatillas[] = [];
+      if(res.rows.length > 0){
+        for(var i=0; i<res.rows.length; i++){
+          items.push({
+            idproducto: res.rows.item(i).idproducto,
+            nombreproducto: res.rows.item(i).nombreproducto,
+            descripcion: res.rows.item(i).descripcion,
+            precio: res.rows.item(i).precio,
+            stock: res.rows.item(i).stock,
+            foto:res.rows.item(i).foto,
+            idcategoria: res.rows.item(i).idcategoria,
+          })
+        }
+      }
+      this.listaZapatillas.next(items as any);
+    })
+  }
   buscarVentaCarrito(usuario: any, estado: any): Observable<Venta[]> {
     console.log("ID del usuario que recibio la busqueda del carrito: "+usuario);
     return new Observable<Venta[]>(observer => {
@@ -233,6 +253,7 @@ export class DbservicesService {
       });
     });
   }
+
   buscarCompras(estado: any): Observable<Venta[]> {
     return new Observable<Venta[]>(observer => {
       this.database.executeSql("SELECT * FROM venta WHERE estatus = ?;", [estado]).then(res => {
@@ -406,13 +427,13 @@ export class DbservicesService {
     })
   }
    //Venta/carrito
-   modificarEstadoVenta(id: any, fecha: any){  
-    return this.database.executeSql("UPDATE venta SET estatus = ? WHERE idventa = ?",[fecha, id]).then(res =>{
+   modificarEstadoVenta(id: any, estado: any){  
+    return this.database.executeSql("UPDATE venta SET estatus = ? WHERE idventa = ?",[estado, id]).then(res =>{
       this.buscarVenta();
     })
   }
-  modificarFechaEntrega(id: any, estado: any){  
-    return this.database.executeSql("UPDATE venta SET fdespacho = ? WHERE idventa = ?",[estado, id]).then(res =>{
+  modificarFechaEntrega(id: any, fecha: any){  
+    return this.database.executeSql("UPDATE venta SET fdespacho = ? WHERE idventa = ?",[fecha, id]).then(res =>{
       this.buscarVenta();
     })
   }
@@ -432,6 +453,34 @@ export class DbservicesService {
     console.log("Cantidad nueva del detalle: "+cantidad);
     return this.database.executeSql("UPDATE detalle SET detalle = ?, cantidad = ? WHERE iddetalle = ?",[detalle, cantidad, id]).then(res =>{
       this.buscarDetalle();
+    })
+  }
+  modificarVentaCarrito(estatus:any ,id: any ){
+    return this.database.executeSql("UPDATE venta SET estatus = ? WHERE idventa = ?",[estatus, id]).then(res=>{
+      this.buscarDetalle();
+    })
+  }
+  modificarUsuario(idusuario:any,rut:any,nombreusuario:any,apellidousuario:any,telefono:any,fotoperfil:any,correo:any){
+    console.log("Id "+idusuario);
+    console.log("Rut: "+rut);
+    console.log("Nombre:  "+nombreusuario);
+    console.log("Apellido: "+apellidousuario);
+    console.log("Teléfono:  "+telefono);
+    console.log("Fotoperfil:  "+fotoperfil);
+    console.log("Correo:  "+correo);
+    return this.database.executeSql('UPDATE usuario SET  rut = ?, nombreusuario = ? , apellidousuario = ?  , telefono = ?, fotoperfil = ?, correo = ? WHERE idusuario = ?',[rut,nombreusuario,apellidousuario,telefono,fotoperfil,correo,idusuario]).then(res=>{
+      this.buscarUsuarios();
+    })
+  }
+  modificarProducto(idproducto: any, nombreproducto: any, descripcion: any, precio: any , stock: any , foto: any ){
+    console.log("Id "+idproducto);
+    console.log("Nombre producto "+nombreproducto);
+    console.log("Descripciom  "+descripcion);
+    console.log("Precio "+precio);
+    console.log("Stock  "+stock);
+    console.log("Foto:  "+foto);
+    return this.database.executeSql('UPDATE producto SET nombreproducto = ? , descripcion = ?, precio = ?, stock = ?, foto = ? WHERE idproducto = ?',[nombreproducto,descripcion,precio,stock,foto,idproducto]).then(res=>{
+      this.buscarZapatillas();
     })
   }
 
@@ -566,7 +615,7 @@ export class DbservicesService {
     })
 
   }
-  insertarUsuario(nombreusuario:any, apellidousuario: any, rut : any, fnacimiento: any , telefono: any , fotoperfil: any,correo: any,clave: any,respuesta: any,idpregunta: any,idrol: any){
+  insertarUsuario(rut : any, nombreusuario:any, apellidousuario: any, fnacimiento: any , telefono: any , fotoperfil: any,correo: any,clave: any,respuesta: any,idpregunta: any,idrol: any){
     return this.database.executeSql('INSERT INTO usuario(rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES (?,?,?,?,?,?,?,?,?,?,?)',[rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol]).then(res=>{
       this.buscarUsuarios();
     }).catch(e=>{
