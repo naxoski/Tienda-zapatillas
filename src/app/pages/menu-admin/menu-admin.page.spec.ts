@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MenuAdminPage } from './menu-admin.page';
+import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 
 describe('MenuAdminPage', () => {
   let component: MenuAdminPage;
@@ -9,6 +10,10 @@ describe('MenuAdminPage', () => {
     fixture = TestBed.createComponent(MenuAdminPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    await TestBed.configureTestingModule({
+      providers: [SQLite]
+    }).compileComponents();
   });
 
   it('should create', () => {
