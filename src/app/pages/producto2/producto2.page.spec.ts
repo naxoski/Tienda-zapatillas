@@ -5,11 +5,11 @@ describe('Producto2Page', () => {
   let component: Producto2Page;
   let fixture: ComponentFixture<Producto2Page>;
 
-  beforeEach(async(() => {
+  beforeEach(async() => {
     fixture = TestBed.createComponent(Producto2Page);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
