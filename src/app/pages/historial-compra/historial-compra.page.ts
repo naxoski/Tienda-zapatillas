@@ -9,7 +9,7 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
   styleUrls: ['./historial-compra.page.scss'],
 })
 export class HistorialCompraPage implements OnInit {
-  idUser: any =0;
+  idUser: any ;
   venta: any =[{idventa:'',fventa:'',fdespacho:'',estatus:'',total:'',carrito:'',idusuario:''}];
   detalles:any =[{iddetalle:'',cantidad:'',detalle:'',idproducto:'',idventa:'',nombreproducto:'', precio:'',stock:'',foto:''}];
 
@@ -17,6 +17,9 @@ export class HistorialCompraPage implements OnInit {
 
   ngOnInit() {
     this.idUser = localStorage.getItem('idusuario')
+    this.db.fetchDetalleComprado().subscribe(datos => {
+      this.detalles = datos;
+    });
 
    
   }
@@ -33,9 +36,6 @@ export class HistorialCompraPage implements OnInit {
       console.log("Stock: "+x.stock);
       await this.db.obtenerHistorial(x.idUser);
 
-      this.db.fetchDetalleComprado().subscribe(datos => {
-        this.detalles = datos;
-      });
 
     }
   }

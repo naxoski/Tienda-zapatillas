@@ -8,8 +8,8 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
   styleUrls: ['./perfil.page.scss'],
 })
 export class PerfilPage implements OnInit {
-  idUser: any =0;
-  arregloUsuario: any = [
+  idUser: any ;
+  usuario : any = [
     {
       idusuario: '',
       nombreusuario: '',
@@ -28,17 +28,23 @@ export class PerfilPage implements OnInit {
   ]
 
   ngOnInit() {
-    this.idUser = localStorage.getItem('idusuario')
+    this.idUser = localStorage.getItem('idusuario');
 
-    this.db.buscarUsuariosPorid(this.idUser)
+    if (this.idUser) {
+      this.db.buscarUsuariosPorid(this.idUser).then(() => {
+        this.db.dbState().subscribe(res => {
+          if (res) {
+            this.db.fetchUsuario().subscribe(datos => {
+              this.usuario  = datos[0];
+            });
+          }
+        });
+      });
+    } else {
+      // Manejar el caso en que no haya un 'idusuario' en el localStorage
+      console.error('No se encontró un idusuario en el localStorage');
+    }
 
-    this.db.dbState().subscribe(res=>{
-      if(res){
-        this.db.fetchUsuario().subscribe(datos=>{
-          this.arregloUsuario = datos[0];
-        })
-      }
-    })
    
   }
 
