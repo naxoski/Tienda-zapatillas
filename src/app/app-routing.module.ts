@@ -75,9 +75,10 @@ const routes: Routes = [
     path: 'modificar-productos',
     loadChildren: () => import('./pages/modificar-productos/modificar-productos.module').then( m => m.ModificarProductosPageModule)
   },
+
   {
-    path: 'usocamara',
-    loadChildren: () => import('./pages/usocamara/usocamara.module').then( m => m.UsocamaraPageModule)
+    path: 'historial-compra',
+    loadChildren: () => import('./pages/historial-compra/historial-compra.module').then( m => m.HistorialCompraPageModule)
   },
 
 
@@ -85,6 +86,8 @@ const routes: Routes = [
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
   },
+ 
+
  
 
   

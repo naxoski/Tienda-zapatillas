@@ -152,6 +152,31 @@ export class DbservicesService {
     })
   }
 
+  buscarUsuariosPorid(idusuario : any){
+    return this.database.executeSql('SELECT * FROM usuario where idusuario = ? ',[idusuario]).then(res=>{
+      let items: Usuario[] = [];
+      if(res.rows.length > 0){
+        for(var i=0; i<res.rows.length; i++){
+          items.push({
+            idusuario: res.rows.item(i).idusuario,
+            rut: res.rows.item(i).rut,
+            nombreusuario: res.rows.item(i).nombreusuario,
+            apellidousuario: res.rows.item(i).apellidousuario,
+            fnacimiento: res.rows.item(i).fnacimiento,
+            telefono: res.rows.item(i).telefono,
+            fotoperfil: res.rows.item(i).fotoperfil,
+            correo: res.rows.item(i).correo,
+            clave: res.rows.item(i).clave,
+            respuesta: res.rows.item(i).respuesta,
+            idpregunta: res.rows.item(i).idpregunta,
+            idrol: res.rows.item(i).idrol,
+          })
+        }
+      }
+      this.listaUsuario.next(items as any);
+    })
+  }
+
   buscarDetalle(){
     return this.database.executeSql('SELECT * FROM detalle',[]).then(res=>{
       let items: Detalle[] = [];
@@ -571,6 +596,23 @@ export class DbservicesService {
       this.presentAlert("error al insertar Venta" + e);
     })
   }
+
+  async obtenerHistorial(idusuario :any): Promise<any>{
+    return new Promise((resolve, reject)=>{
+      this.database.executeSql('SELECT * FROM venta WHERE idusuario = ?', [idusuario]).then((res)=>{
+        if (res.rows.length > 0){
+          resolve(res.rows.item(0));
+        }else{
+          resolve(null);
+        }
+      }).catch((error)=>{
+        reject('Error al obtener el venta' + JSON.stringify(error));
+      });
+    });
+
+   }
+
+
   agregarDetalle(cantidad: any, detalle: any, idventa: any, idproducto: any){ 
     console.log("cantidad: "+cantidad);
     console.log("detalle: "+detalle);

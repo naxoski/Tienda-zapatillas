@@ -1,0 +1,47 @@
+.logo-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px; /* Ajusta la altura según tus necesidades */
+    margin: 0;
+    padding: 0;
+  }
+  
+  .logo-image {
+    max-height: 80%; /* Ajusta el tamaño de la imagen dentro del contenedor */
+    width: 50%; /* Permitir que el ancho de la imagen se ajuste automáticamente */
+    display: block; /* Centrar la imagen horizontalmente */
+    margin: 0 auto; /* Centrar la imagen horizontalmente */
+  }
+
+  .product-container {
+    display: flex;
+    border: 1px solid #f0f0f0; /* Color del borde más claro y difuminado */
+    border-radius: 10px; /* Borde redondeado */
+    margin: 10px;
+    width: 80%; /* Ancho del contenedor del producto, ajustado para dispositivos móviles */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra para un efecto de elevación */
+  }
+  
+  .product-image {
+    width: 200px; /* Ancho de la imagen del producto */
+    height: 200px; /* Altura de la imagen del producto */
+    object-fit: cover;
+    border-radius: 10px 0 0 10px; /* Borde redondeado solo en la esquina superior izquierda */
+  }
+  
+  .product-details {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .product-details h2 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .product-details p {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }

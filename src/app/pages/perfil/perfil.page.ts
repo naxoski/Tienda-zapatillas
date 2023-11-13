@@ -8,6 +8,7 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
   styleUrls: ['./perfil.page.scss'],
 })
 export class PerfilPage implements OnInit {
+  idUser: any =0;
   arregloUsuario: any = [
     {
       idusuario: '',
@@ -15,6 +16,7 @@ export class PerfilPage implements OnInit {
       apellidousuario: '',
       fnacimiento: '',
       telefono: '',
+      fotoperfil: '',
       correo: '',
       clave: '',
       respuesta: '',
@@ -25,16 +27,23 @@ export class PerfilPage implements OnInit {
 
   ]
 
-  constructor(private db: DbservicesService, private router: Router) { }
-
   ngOnInit() {
+    this.idUser = localStorage.getItem('idusuario')
+
+    this.db.buscarUsuariosPorid(this.idUser)
+
     this.db.dbState().subscribe(res=>{
       if(res){
         this.db.fetchUsuario().subscribe(datos=>{
-          this.arregloUsuario = datos;
+          this.arregloUsuario = datos[0];
         })
       }
     })
+   
   }
+
+  constructor(private db: DbservicesService, private router: Router) { }
+
+ 
 
 }
