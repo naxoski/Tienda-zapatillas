@@ -37,14 +37,7 @@ const routes: Routes = [
     path: 'productos',
     loadChildren: () => import('./pages/productos/productos.module').then(m => m.ProductosPageModule)
   },
-  {
-    path: 'producto1',
-    loadChildren: () => import('./pages/producto1/producto1.module').then(m => m.Producto1PageModule)
-  },
-  {
-    path: 'producto2',
-    loadChildren: () => import('./pages/producto2/producto2.module').then(m => m.Producto2PageModule)
-  },
+  
   {
     path: 'menu-admin',
     loadChildren: () => import('./pages/menu-admin/menu-admin.module').then(m => m.MenuAdminPageModule)
@@ -80,12 +73,18 @@ const routes: Routes = [
     path: 'historial-compra',
     loadChildren: () => import('./pages/historial-compra/historial-compra.module').then( m => m.HistorialCompraPageModule)
   },
+  {
+    path: 'validacion-correo',
+    loadChildren: () => import('./pages/validacion-correo/validacion-correo.module').then( m => m.ValidacionCorreoPageModule)
+  },
 
 
   {
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
   },
+ 
+
  
 
  

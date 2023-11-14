@@ -537,6 +537,28 @@ export class DbservicesService {
         });
     });
   }
+  buscarCorreo(correo: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.database.executeSql('SELECT correo FROM usuario WHERE correo = ?', [correo])
+        .then((res) => {
+          // Si la consulta se ejecuta con éxito, verifica si se encontraron datos
+          if (res.rows.length > 0) {
+            // Obtiene el primer resultado encontrado
+            const usuario = res.rows.item(0);
+            
+            // Resuelve la promesa con el objeto de usuario
+            resolve(usuario);
+          } else {
+            // Si no se encontraron datos, resuelve la promesa con null o un mensaje indicando la falta de coincidencias
+            resolve(null); // O puedes enviar un mensaje específico: resolve({ mensaje: 'No se encontraron coincidencias' });
+          }
+        })
+        .catch((error) => {
+          // Si hay un error en la consulta, rechaza la promesa con el error
+          reject('Error al ejecutar la consulta: ' + JSON.stringify(error));
+        });
+    });
+  }
    async obtenerProducto(idproducto: any): Promise<any>{
     return new Promise((resolve, reject)=>{
       this.database.executeSql('SELECT * FROM producto WHERE idproducto = ?', [idproducto]).then((res)=>{
