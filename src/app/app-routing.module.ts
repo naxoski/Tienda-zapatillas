@@ -77,12 +77,18 @@ const routes: Routes = [
     path: 'validacion-correo',
     loadChildren: () => import('./pages/validacion-correo/validacion-correo.module').then( m => m.ValidacionCorreoPageModule)
   },
+  {
+    path: 'cambiarcontra',
+    loadChildren: () => import('./pages/cambiarcontra/cambiarcontra.module').then( m => m.CambiarcontraPageModule)
+  },
+
 
 
   {
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
   },
+ 
  
 
  
