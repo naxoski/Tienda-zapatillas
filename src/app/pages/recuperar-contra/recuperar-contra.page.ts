@@ -19,6 +19,8 @@ export class RecuperarContraPage implements OnInit {
   credenciales: any=[
    {
      correo: '',
+     pregunta: '',
+     respuesta: '',
    }
   ]
 
