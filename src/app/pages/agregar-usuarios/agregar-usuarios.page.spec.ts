@@ -5,15 +5,22 @@ import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 describe('AgregarUsuariosPage', () => {
   let component: AgregarUsuariosPage;
   let fixture: ComponentFixture<AgregarUsuariosPage>;
+  let sqliteService: SQLite; // Agregamos una variable para el servicio SQLite
 
-  beforeEach(async() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [AgregarUsuariosPage],
+      providers: [SQLite]
+    }).compileComponents();
+
+    // Obtenemos una referencia al servicio SQLite
+    sqliteService = TestBed.inject(SQLite);
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(AgregarUsuariosPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    await TestBed.configureTestingModule({
-      providers: [SQLite]
-    }).compileComponents();
   });
 
   it('should create', () => {

@@ -5,15 +5,15 @@ describe('ValidacionCorreoPage', () => {
   let component: ValidacionCorreoPage;
   let fixture: ComponentFixture<ValidacionCorreoPage>;
 
-  /*
-  beforeEach(async(() => {
+  
+  beforeEach(async() => {
     fixture = TestBed.createComponent(ValidacionCorreoPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  */
+
 });

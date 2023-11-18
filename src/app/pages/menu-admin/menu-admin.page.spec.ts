@@ -6,14 +6,15 @@ describe('MenuAdminPage', () => {
   let component: MenuAdminPage;
   let fixture: ComponentFixture<MenuAdminPage>;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [MenuAdminPage],
+      providers: [SQLite]
+    }).compileComponents();
+
     fixture = TestBed.createComponent(MenuAdminPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    await TestBed.configureTestingModule({
-      providers: [SQLite]
-    }).compileComponents();
   });
 
   it('should create', () => {
