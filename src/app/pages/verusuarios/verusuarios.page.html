@@ -17,26 +17,27 @@
   <h2 class="ion-text-center">Listado de Usuarios!</h2>
 
   <ion-searchbar placeholder="Buscar Usuarios" ></ion-searchbar>
-  <ion-list>
-    <ion-item *ngFor="let x of usuario" class="product-card">
-      <div class="product-image">
-        <ion-img [src]="x.fotoperfil"></ion-img>
-      </div>
-      <div class="product-info">
-        <h1>Datos del Usuario:</h1>
-        <p class="product-price">Rut{{ x.rut }}</p>
-        <p class="product-description">Nombre:{{ x.nombreusuario }}<p>
-        <p class="product-description">Apellido: {{ x.apellidousuario }}</p>
-        <p class="product-stock">Fecha de nacimiento: {{ x.fnacimiento | date:'dd/MM/yyyy' }}</p>
-        <p class="product-category">Teléfono: {{ x.telefono }}</p>
-        <p class="product-category">Pregunta de seguridad: {{ x.idpregunta }}</p>
-        <p class="product-category">Respuesta de seguridad: {{ x.respuesta }}</p>
-        <p class="product-category">Rol del usuario: {{ x.idrol }}</p>
-        <ion-button expand="full" color="danger" (click)="eliminar(x)">Eliminar</ion-button>
-        <ion-button expand="full" color="danger" (click)="modificarUsuario(x)">Modificar</ion-button>
-      </div>
-    </ion-item>
-  </ion-list>
+<ion-list>
+  <ion-item *ngFor="let keyValue of usuario | keyvalue" class="product-card">
+    <div class="product-image">
+      <ion-img [src]="keyValue.value.fotoperfil"></ion-img>
+    </div>
+    <div class="product-info">
+      <h1>Datos del Usuario:</h1>
+      <p class="product-price">Rut{{ keyValue.value.rut }}</p>
+      <p class="product-description">Nombre:{{ keyValue.value.nombreusuario }}<p>
+      <p class="product-description">Apellido: {{ keyValue.value.apellidousuario }}</p>
+      <p class="product-stock">Fecha de nacimiento: {{ keyValue.value.fnacimiento | date:'dd/MM/yyyy' }}</p>
+      <p class="product-category">Teléfono: {{ keyValue.value.telefono }}</p>
+      <p class="product-category">Pregunta de seguridad: {{ keyValue.value.idpregunta }}</p>
+      <p class="product-category">Respuesta de seguridad: {{ keyValue.value.respuesta }}</p>
+      <p class="product-category">Rol del usuario: {{ keyValue.value.idrol }}</p>
+      <ion-button expand="full" color="danger" (click)="eliminar(keyValue.value)">Eliminar</ion-button>
+      <ion-button expand="full" color="danger" (click)="modificarUsuario(keyValue.value)">Modificar</ion-button>
+    </div>
+  </ion-item>
+</ion-list>
+
   
 </ion-content>
 

@@ -5,8 +5,15 @@ describe('ValidacionCorreoPage', () => {
   let component: ValidacionCorreoPage;
   let fixture: ComponentFixture<ValidacionCorreoPage>;
 
-  
-  beforeEach(async() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ValidacionCorreoPage],
+      // Agrega aquí los imports, providers y otros módulos necesarios para la prueba
+      // Por ejemplo:
+      // imports: [ OtrosMódulosQuePuedenSerNecesarios ],
+      // providers: [ OtrosProvidersQuePuedenSerNecesarios ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ValidacionCorreoPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -15,5 +22,4 @@ describe('ValidacionCorreoPage', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
 });

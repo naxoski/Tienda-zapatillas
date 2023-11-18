@@ -6,14 +6,15 @@ describe('ProductosPage', () => {
   let component: ProductosPage;
   let fixture: ComponentFixture<ProductosPage>;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [SQLite],
+      declarations: [ProductosPage], // Agrega tu componente a las declaraciones
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ProductosPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    await TestBed.configureTestingModule({
-      providers: [SQLite]
-    }).compileComponents();
   });
 
   it('should create', () => {

@@ -6,14 +6,15 @@ describe('CrearCuentaPage', () => {
   let component: CrearCuentaPage;
   let fixture: ComponentFixture<CrearCuentaPage>;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [CrearCuentaPage],
+      providers: [SQLite],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(CrearCuentaPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    await TestBed.configureTestingModule({
-      providers: [SQLite]
-    }).compileComponents();
   });
 
   it('should create', () => {

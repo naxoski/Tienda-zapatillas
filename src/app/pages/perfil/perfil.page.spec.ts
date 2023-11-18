@@ -6,14 +6,15 @@ describe('PerfilPage', () => {
   let component: PerfilPage;
   let fixture: ComponentFixture<PerfilPage>;
 
-  beforeEach(async() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      providers: [SQLite],
+      declarations: [PerfilPage], // Agrega tu componente a las declaraciones
+    }).compileComponents();
+
     fixture = TestBed.createComponent(PerfilPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  
-    await TestBed.configureTestingModule({
-      providers: [SQLite]
-    }).compileComponents();
   });
 
   it('should create', () => {
