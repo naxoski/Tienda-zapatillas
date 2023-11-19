@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ModificarUsuarioPage } from './modificar-usuario.page';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
@@ -7,29 +7,30 @@ import { of } from 'rxjs';
 describe('ModificarUsuarioPage', () => {
   let component: ModificarUsuarioPage;
   let fixture: ComponentFixture<ModificarUsuarioPage>;
-  let sqliteService: SQLite; // Variable para el servicio SQLite
+  let activatedRoute: ActivatedRoute;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       declarations: [ModificarUsuarioPage],
       providers: [
+        SQLite,
         {
           provide: ActivatedRoute,
           useValue: {
-            paramMap: of(convertToParamMap({ id: '500' })), // Proporciona un valor para paramMap
+            queryParams: of(convertToParamMap({ id: '500' })),
+            snapshot: {
+              paramMap: convertToParamMap({ id: '500' }),
+            },
           },
         },
-        SQLite,
       ],
     }).compileComponents();
-
-    // Obtenemos una referencia al servicio SQLite
-    sqliteService = TestBed.inject(SQLite);
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ModificarUsuarioPage);
     component = fixture.componentInstance;
+    activatedRoute = TestBed.inject(ActivatedRoute);
     fixture.detectChanges();
   });
 
@@ -37,4 +38,6 @@ describe('ModificarUsuarioPage', () => {
     expect(component).toBeTruthy();
   });
 });
+
+
 
