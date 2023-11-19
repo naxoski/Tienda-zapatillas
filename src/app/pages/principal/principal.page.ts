@@ -1,5 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { CurrencyService } from 'src/app/services/currency.service';
 import { register } from 'swiper/element/bundle';
+import { catchError, tap } from 'rxjs/operators';
+
 register();
 
 @Component({
@@ -11,8 +14,8 @@ export class PrincipalPage implements OnInit {
 
   @ViewChild('resultado', { static: false }) resultadoElement!: ElementRef;
 
-  constructor() { }
-
+  constructor(private exchangeRatesService: CurrencyService) { }
+  tasasDeCambio: any; // Variable para almacenar las tasas de cambio
   ngOnInit() {
     // No necesitas inicializar resultadoElement aquí si no lo vas a usar en ngOnInit
   }
@@ -26,6 +29,16 @@ export class PrincipalPage implements OnInit {
       this.resultadoElement.nativeElement.textContent = 'ID de Usuario: ' + idUsuario;
     } else if (this.resultadoElement) {
       this.resultadoElement.nativeElement.textContent = 'No se encontró ningún ID de usuario en el localStorage.';
+    }
+  }
+  async obtenerTasas(baseCurrency: string) {
+    try {
+      const response = await this.exchangeRatesService.obtenerTasasDeCambio(baseCurrency);
+      // Filtrar las tasas de cambio solo para CLP y USD
+      this.tasasDeCambio = Object.entries(response.data.rates)
+        .filter(([moneda]) => moneda === 'CLP' || moneda === 'USD');
+    } catch (error) {
+      console.error(error);
     }
   }
 }

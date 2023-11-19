@@ -103,6 +103,23 @@
       </ion-item>
     </ion-list>
   </div>
+  <div>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>
+          Tasas de Cambio
+        </ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-list *ngIf="tasasDeCambio">
+      <ion-item *ngFor="let tasa of tasasDeCambio">
+        <ion-label>{{ tasa[0] }}</ion-label>
+        <ion-note slot="end">{{ tasa[1] }}</ion-note>
+      </ion-item>
+    </ion-list>
+  
+    <ion-button (click)="obtenerTasas('USD')">Obtener Tasas</ion-button>
+</div>
   
   <ion-footer class="footer">
     <ion-list class="footer-list">
