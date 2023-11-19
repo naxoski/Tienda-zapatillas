@@ -46,7 +46,7 @@ export class RecuperarContraPage implements OnInit {
             buttons: ['OK']
           });
           await alert.present();
-          this.router.navigate(['/home']);
+          this.router.navigate(['/cambiarcontra']);
         
       } else {
         // Si las credenciales no son válidas, muestra un mensaje indicando credenciales incorrectas

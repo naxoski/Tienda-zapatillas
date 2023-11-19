@@ -451,6 +451,12 @@ export class DbservicesService {
       this.buscarZapatillas();
     })
   }
+  CambiarContra(clave: any, pregunta:any, respuesta:any, correo: any){
+    return this.database.executeSql("UPDATE usuario SET clave = ? WHERE correo = ? AND respuesta = ? AND idpregunta = ?",[clave,correo,respuesta,pregunta]).then(res=>{
+      this.buscarUsuarios();
+    })
+
+  }
    //Venta/carrito
    modificarEstadoVenta(id: any, estado: any){  
     return this.database.executeSql("UPDATE venta SET estatus = ? WHERE idventa = ?",[estado, id]).then(res =>{
@@ -568,7 +574,9 @@ export class DbservicesService {
           if (res.rows.length > 0) {
             // Obtiene el primer resultado encontrado
             const usuario = res.rows.item(0);
-            
+            localStorage.setItem('correo', usuario.correo.toString());
+            localStorage.setItem('idpregunta', usuario.idpregunta.toString());
+            localStorage.setItem('respuesta', usuario.respuesta.toString());
             // Resuelve la promesa con el objeto de usuario
             resolve(usuario);
           } else {
