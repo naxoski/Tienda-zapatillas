@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { DbservicesService } from './dbservices.service';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 class SQLiteMock {
@@ -8,6 +7,7 @@ class SQLiteMock {
     return 'Resultado simulado de la consulta';
   }
 }
+
 describe('DbservicesService', () => {
   let service: DbservicesService;
 
@@ -23,5 +23,6 @@ describe('DbservicesService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
-  });
-});
+  });}
+  
+);

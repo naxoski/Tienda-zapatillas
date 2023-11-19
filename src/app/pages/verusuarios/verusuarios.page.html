@@ -18,14 +18,14 @@
 
   <ion-searchbar placeholder="Buscar Usuarios" ></ion-searchbar>
   <ion-list>
-    <ion-item *ngFor="let x of usuario" class="product-card">
+    <ion-item *ngFor="let x of usuario| keyvalue" class="product-card">
       <div class="product-image">
         <ion-img [src]="x.fotoperfil"></ion-img>
       </div>
       <div class="product-info">
         <h1>Datos del Usuario:</h1>
         <p class="product-price">Rut{{ x.rut }}</p>
-        <p class="product-description">Nombre:{{ x.nombreusuario }}<p>
+        <p class="product-description">Nombre:{{ x.nombreusuario }}</p>
         <p class="product-description">Apellido: {{ x.apellidousuario }}</p>
         <p class="product-stock">Fecha de nacimiento: {{ x.fnacimiento | date:'dd/MM/yyyy' }}</p>
         <p class="product-category">Teléfono: {{ x.telefono }}</p>

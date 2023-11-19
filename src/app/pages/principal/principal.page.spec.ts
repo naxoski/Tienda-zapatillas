@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PrincipalPage } from './principal.page';
 import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('PrincipalPage', () => {
   let component: PrincipalPage;
@@ -10,6 +11,7 @@ describe('PrincipalPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PrincipalPage],
+      imports: [HttpClientModule],
       providers: [SQLite]
     }).compileComponents();
 
