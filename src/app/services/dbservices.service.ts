@@ -514,7 +514,13 @@ export class DbservicesService {
       this.buscarZapatillas();
     })
   }
-
+  insertarDetalleComprado(nombreproducto: string, fotoproducto: string, cantidad: number, subtotal: number, idventa: number) {
+    return this.database.executeSql("INSERT INTO detallecomprado (nombreprodc, fotoprodc, cantidadc, subtotalc, ventac) VALUES (?, ?, ?, ?, ?);",[nombreproducto, fotoproducto, cantidad, subtotal, idventa]);
+  }
+  eliminarDetallesVenta(idVenta: any) {
+    return this.database.executeSql("DELETE FROM detalle WHERE idventa = ?;", [idVenta]).then(res => {
+    });
+  }
 
 
 
@@ -620,6 +626,30 @@ export class DbservicesService {
     });
 
    }
+   buscarHistorialCompras(idUsuario: any): Observable<Detallecomprado[]> {
+    console.log("ID del usuario para historial de compras:", idUsuario);
+    return new Observable<Detallecomprado[]>(observer => {
+      this.database.executeSql("SELECT * FROM detallecomprado dc JOIN venta v ON(dc.ventac = v.idventa) WHERE v.idusuario = ?;", [idUsuario]).then(res => {
+        let items: Detallecomprado[] = [];
+  
+        if (res.rows.length > 0) {
+          for (let i = 0; i < res.rows.length; i++) {
+            items.push({
+              iddetallec: res.rows.item(i).iddetallec,
+              nombreprodc: res.rows.item(i).nombreprodc,
+              fotoprodc: res.rows.item(i).fotoprodc,
+              cantidadc: res.rows.item(i).cantidadc,
+              subtotalc: res.rows.item(i).subtotalc,
+              ventac: res.rows.item(i).ventac
+            });
+          }
+        }
+  
+        observer.next(items);
+        observer.complete();
+      });
+    });
+  }
 
  
 

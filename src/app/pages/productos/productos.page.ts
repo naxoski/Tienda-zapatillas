@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DbservicesService } from 'src/app/services/dbservices.service';
 import { Detalle } from 'src/app/services/detalle';
 import { ToastController } from '@ionic/angular';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-productos',
@@ -46,73 +47,72 @@ export class ProductosPage implements OnInit {
     this.redireccion();
     
   }
-  async comprar(precio:any ,idprod: any) {
-    this.db.buscarVentaCarrito(this.idUser, 'Activo').subscribe(async ventas => {
-      if (ventas.length === 1) {
+  async comprar(precio: any, idprod: any) {
+    try {
+      const ventas = await this.db.buscarVentaCarrito(this.idUser, 'Activo').toPromise();
+  
+      if (ventas && ventas.length === 1) {
         this.venta = ventas[0];
   
-        this.db.buscarDetalleProd(idprod, this.venta.idventa).subscribe(detalles => {
-          if (detalles.length === 1) {
-            this.detalle = detalles[0];
-            console.log("ID DEL DETALLE ENCONTRADO: " + this.detalle.iddetalle);
-            this.db.modificarDetalle(this.detalle.iddetalle, this.detalle.detalle + precio, this.detalle.cantidad + 1);
-            console.log("Cantidad:"+this.detalle.cantidad);
-            console.log("Cantidad:"+this.detalle.cantidad+1);
-            this.db.modificarTotal(this.venta.idventa, this.venta.total + precio);
-            console.log("-------------------------------------");
-            console.log("  Se está modificando el detalle ya previamente existente");
-            console.log("-------------------------------------");
-            console.log("Se usó el del detalle que ya existe aaaaaaaaaaaaaaa");
-            this.presentToast('Producto agregado al carrito.');
-          } else {
-            this.detalle = this.db.agregarDetalle(1, precio, this.venta.idventa, idprod);
-            this.db.modificarTotal(this.venta.idventa, this.venta.total + precio);
-            console.log("ID DEL DETALLE CREADO: " + this.detalle.iddetalle);
-            console.log("-------------------------------------");
-            console.log("Se está agregando un nuevo detalle");
-            console.log("-------------------------------------");
-            this.presentToast('Producto agregado al carrito.');
-          }
-        });
-
+        const detalles = await this.db.buscarDetalleProd(idprod, this.venta.idventa).toPromise();
+  
+        if (detalles && detalles.length === 1) {
+          this.detalle = detalles[0];
+          console.log("ID DEL DETALLE ENCONTRADO: " + this.detalle.iddetalle);
+          this.db.modificarDetalle(this.detalle.iddetalle, this.detalle.detalle + precio, this.detalle.cantidad + 1);
+          console.log("Cantidad: " + this.detalle.cantidad);
+          console.log("Cantidad: " + (this.detalle.cantidad + 1));
+          this.db.modificarTotal(this.venta.idventa, this.venta.total + precio);
+          console.log("-------------------------------------");
+          console.log("  Se está modificando el detalle ya previamente existente");
+          console.log("-------------------------------------");
+          console.log("Se usó el del detalle que ya existe aaaaaaaaaaaaaaa");
+          this.presentToast('Producto agregado al carrito.');
+        } else {
+          this.detalle = this.db.agregarDetalle(1, precio, this.venta.idventa, idprod);
+          this.db.modificarTotal(this.venta.idventa, this.venta.total + precio);
+          console.log("ID DEL DETALLE CREADO: " + this.detalle.iddetalle);
+          console.log("-------------------------------------");
+          console.log("Se está agregando un nuevo detalle");
+          console.log("-------------------------------------");
+          this.presentToast('Producto agregado al carrito.');
+        }
       } else {
         this.fdespacho.setDate(this.fechaActual.getDate() + this.diasSumar);
         this.presentToast('Producto agregado al carrito.');
-
-        await this.db.insertarVenta(this.fechaActual,this.fdespacho, 'Activo', precio, 'C', this.idUser);
-
-        this.db.fetchVenta().subscribe(venta2 => {
-          this.venta = venta2[venta2.length + 1];
-          console.log("ID de la venta que se generó: "+this.venta.idventa);
+  
+        await this.db.insertarVenta(this.fechaActual, this.fdespacho, 'Activo', precio, 'C', this.idUser);
+  
+        const venta2 = await this.db.fetchVenta().toPromise();
+  
+        if (venta2 && venta2.length > 0) {
+          this.venta = venta2[venta2.length - 1];
+          console.log("ID de la venta que se generó: " + this.venta.idventa);
           this.db.agregarDetalle(1, precio, this.venta.idventa, idprod);
-
-        })
-        
-        
-        
+        } else {
+          console.error('No se encontró ninguna venta después de insertarla.');
+        }
       }
-    });
+    } catch (error) {
+      console.error('Error al comprar:', error);
+      this.presentToast('Error al agregar el producto al carrito. Por favor, intenta nuevamente.');
+    }
   }
+  
   async presentToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
-      duration: 2000, // Duración del mensaje en milisegundos
-      position: 'bottom' // Posición del mensaje (arriba, abajo, centro)
+      duration: 2000,
+      position: 'bottom'
     });
     toast.present();
   }
-
-  ngOnInit() {
   
-    this.db.fetchProducto().subscribe(datos => {
-      this.arregloZapatillas = datos;
-    });
-
-    this.idUser = localStorage.getItem('idusuario')
-  }
+ ngOnInit() {
+  this.db.fetchProducto().subscribe(datos => {
+    this.arregloZapatillas = datos;
+  });
+  this.idUser = localStorage.getItem('idusuario')
 
 }
-
-
- 
-
+}

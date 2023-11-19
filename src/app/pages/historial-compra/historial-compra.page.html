@@ -10,25 +10,30 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Historial de compras</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-list>
-    <ion-item *ngFor="let x of detalles" class="product-container">
-      <ion-img [src]="x.foto" class="product-image"></ion-img>
-      <div class="product-details">
-        <h2 class="product-description">Nombre Producto: {{ x.nombreproducto }}</h2>
-        <p class="product-name">Cantidad que llevas:{{ x.cantidad }}</p>
-        <p class="product-description">Precio unitario: {{ x.precio }}</p>
-        <p class="product-description">Total: {{ x.detalle }}</p>
-
-
-        
-      </div>
-      <ion-button expand="block" color="medium" (click)="Historial()">Reiniciar Historial</ion-button>
-  
-    </ion-item>
+  <ng-container *ngIf="(historialCompras$ | async) as historialCompras; else emptyHistorial">
+    <ion-list *ngIf="historialCompras.length > 0">
+      <ion-item *ngFor="let compra of historialCompras" class="historial-item">
+        <ion-img [src]="compra.fotoprodc" class="historial-image"></ion-img>
+        <div class="historial-details">
+          <h2 class="historial-product-name">{{ compra.nombreprodc }}</h2>
+          <p class="historial-cantidad">Cantidad: {{ compra.cantidadc }}</p>
+          <p class="historial-subtotal">Subtotal: {{ compra.subtotalc }}</p>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ion-list *ngIf="emptyHistorial || historialCompras.length === 0">
+    <div class="empty-historial-message">
+      No hay historial de compras.
+    </div>
   </ion-list>
 </ion-content>
+
+<ng-template #emptyHistorial>
+  <!-- Contenido que se muestra cuando no hay historial de compras -->
+  <ion-list>
+    <div class="empty-historial-message">
+      No hay historial de compras.
+    </div>
+  </ion-list>
+</ng-template>
