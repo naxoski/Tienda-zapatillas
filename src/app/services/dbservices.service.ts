@@ -612,6 +612,20 @@ export class DbservicesService {
 
    }
 
+    async ObtenerCategoria(idcategoria:any){
+    return new Promise((resolve, reject)=>{
+      this.database.executeSql('SELECT * FROM producto WHERE idcategoria = ?', [idcategoria]).then((res)=>{
+        if (res.rows.length > 0){
+          resolve(res.rows.item(0));
+        }else{
+          resolve(null);
+        }
+      }).catch((error)=>{
+        reject('Error al obtener el producto' + JSON.stringify(error));
+      });
+    });
+   }
+
    async obtenerUsuario(idusuario :any): Promise<any>{
     return new Promise((resolve, reject)=>{
       this.database.executeSql('SELECT * FROM usuario WHERE idusuario = ?', [idusuario]).then((res)=>{

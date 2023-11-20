@@ -16,20 +16,22 @@
     </ion-toolbar>
   </ion-header>
   <h1 style="text-align: center;">Zapatillas de hombre</h1>
-  
   <ion-list>
-    <ion-item *ngFor="let x of arregloZapatillas" class="product-container">
-      <ion-img [src]="x.foto" class="product-image"></ion-img>
-      <div class="product-details">
-        <h2 class="product-name">{{ x.nombreproducto }}</h2>
-        <p class="product-description">Descripción: {{ x.descripcion }}</p>
-        <p class="product-price">Precio: {{ x.precio }}</p>
-        <p class="product-stock">Stock: {{ x.stock }}</p>
-        <p class="product-category">Categoría: {{ x.idcategoria }}</p>
-        <ion-button expand="full" (click)="comprar(x.precio,x.idproducto)" class="custom-button">Agregar al carrito</ion-button>
-      </div>
-    </ion-item>
-  </ion-list>
+      <ion-item *ngFor="let x of arregloZapatillas" class="product-card">
+        <ion-img [src]="x.foto" class="product-image"></ion-img>
+        <ion-label class="product-info">
+          <h2 class="product-name">{{ x.nombreproducto }}</h2>
+          <p class="product-description">Descripción: {{ x.descripcion }}</p>
+          <p class="product-price">Precio: {{ x.precio }}</p>
+          <p class="product-stock">Stock: {{ x.stock }}</p>
+          <p class="product-category">Categoría: {{ x.idcategoria }}</p>
+          <ion-button expand="full" (click)="comprar(x.precio,x.idproducto)">Agregar</ion-button>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+      
+  
   
   
   

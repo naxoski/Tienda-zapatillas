@@ -25,6 +25,7 @@ export class ModificarProductosPage {
 
     this.activedRouter.queryParams.subscribe(res => {
       if (this.router.getCurrentNavigation()?.extras.state) {
+        this.idEnviado = this.router.getCurrentNavigation()?.extras?.state?.['idEnviado'];
         this.nombreEnviado = this.router.getCurrentNavigation()?.extras?.state?.['nombreEnviado'];
 
         this.descripcionEnviada = this.router.getCurrentNavigation()?.extras?.state?.['descripcionEnviada'];
@@ -63,6 +64,8 @@ export class ModificarProductosPage {
       
     }
 
+  }
+  ngOnInit() {
   }
 
 

@@ -18,7 +18,7 @@
 
   <ion-searchbar placeholder="Buscar Usuarios" ></ion-searchbar>
   <ion-list>
-    <ion-item *ngFor="let x of usuario| keyvalue" class="product-card">
+    <ion-item *ngFor="let x of usuario" class="product-card">
       <div class="product-image">
         <ion-img [src]="x.fotoperfil"></ion-img>
       </div>
@@ -29,8 +29,6 @@
         <p class="product-description">Apellido: {{ x.apellidousuario }}</p>
         <p class="product-stock">Fecha de nacimiento: {{ x.fnacimiento | date:'dd/MM/yyyy' }}</p>
         <p class="product-category">Teléfono: {{ x.telefono }}</p>
-        <p class="product-category">Pregunta de seguridad: {{ x.idpregunta }}</p>
-        <p class="product-category">Respuesta de seguridad: {{ x.respuesta }}</p>
         <p class="product-category">Rol del usuario: {{ x.idrol }}</p>
         <ion-button expand="full" color="danger" (click)="eliminar(x)">Eliminar</ion-button>
         <ion-button expand="full" color="danger" (click)="modificarUsuario(x)">Modificar</ion-button>

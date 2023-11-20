@@ -38,10 +38,12 @@
     <ion-button (click)="takePicture()">Foto de perfil</ion-button>
     <img *ngIf="fotoProducto" [src]="fotoProducto" alt="image" style="width: 100%;max-width: 250px;" [(ngModel)]="fotoProducto">
   </div>
-
   <ion-item>
-    <ion-label position="floating">categoria producto</ion-label>
-    <ion-input required type="text" [(ngModel)]="categoriaProducto" ></ion-input>
+    <ion-label position="floating">Categoria Producto de seguridad</ion-label>
+    <ion-select required   [(ngModel)]="categoriaProducto">
+      <ion-select-option value="Hombre">Hombre</ion-select-option>
+      <ion-select-option value="Mujer">Mujer</ion-select-option>
+    </ion-select>
   </ion-item>
 
   <ion-button shape="block" (click)="insertar()">Guardar Cambio</ion-button>
