@@ -117,13 +117,16 @@ export class CrearCuentaPage implements OnInit {
 
 
 
-     /*VALIDA QUE LA CONTRASEÑA SEA IGUAL A LA QUE SE REPITE*/
-    if (!this.clave || !this.clave2 || this.clave !== this.clave2) {
-      this.mensajeErrorContra2 = 'Las contraseñas deben ser iguales';
-      this.Validador5 = false;
-    }else{
-      this.Validador5 = true;
-    }
+   /* VALIDA QUE LA CONTRASEÑA SEA IGUAL A LA QUE SE REPITE */
+if (!this.clave || !this.clave2) {
+  this.mensajeErrorContra2 = 'Ambas contraseñas son requeridas';
+  this.Validador5 = false;
+} else if (this.clave !== this.clave2) {
+  this.mensajeErrorContra2 = 'Las contraseñas deben ser iguales';
+  this.Validador5 = false;
+} else {
+  this.Validador5 = true;
+}
 
 
 
@@ -161,7 +164,7 @@ export class CrearCuentaPage implements OnInit {
 
 
   // Si todas las validaciones pasan:
-  if( this.Validador1 == true,this.Validador2 == true,this.Validador3 == true,this.Validador4 == true,this.Validador5 == true,this.Validador6 == true,this.Validador7 == true,this.Validador8 == true){
+  if( this.Validador1 == true && this.Validador2 == true && this.Validador3 == true && this.Validador4 == true && this.Validador5 == true && this.Validador6 == true && this.Validador7 == true&& this.Validador8 == true){
     try{
       this.db.insertarUsuario(this.rut,this.nombre,this.apellido,this.fnacimiento,this.telefono,this.fotoperfil,this.correo,this.clave,this.respuesta,this.pregunta,"usuario");
       const successAlert = await this.alertController.create({
