@@ -81,13 +81,17 @@ const routes: Routes = [
     path: 'cambiarcontra',
     loadChildren: () => import('./pages/cambiarcontra/cambiarcontra.module').then( m => m.CambiarcontraPageModule)
   },
-
-
+  {
+    path: 'modificar-perfil',
+    loadChildren: () => import('./pages/modificar-perfil/modificar-perfil.module').then( m => m.ModificarPerfilPageModule)
+  },
 
   {
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then(m => m.NotFoundPageModule)
   },
+
+
  
  
 
