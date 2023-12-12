@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { DbservicesService } from 'src/app/services/dbservices.service';
+import { AlertController, NavController, ToastController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-perfil',
@@ -8,6 +10,14 @@ import { DbservicesService } from 'src/app/services/dbservices.service';
   styleUrls: ['./perfil.page.scss'],
 })
 export class PerfilPage implements OnInit {
+  constructor(
+    public router: Router,
+    public navCtrl: NavController, 
+    private db: DbservicesService,
+    public toastController: ToastController,
+    private alertController: AlertController,
+    private activedRouter: ActivatedRoute
+  ) { }
   idUser: any ;
   usuario : any = [
     {
@@ -26,6 +36,7 @@ export class PerfilPage implements OnInit {
     }
 
   ]
+
 
   ngOnInit() {
     this.idUser = localStorage.getItem('idusuario');
@@ -47,8 +58,23 @@ export class PerfilPage implements OnInit {
 
    
   }
+  modificarUsuario() {
+    let navigationExtras: NavigationExtras = {
+      state: {
+        idEnviado: this.usuario.idusuario,
+        nuevoNombre: this.usuario.nombreusuario,
+        nuevoapellido: this.usuario.apellidousuario,
+        fechanacimiento: this.usuario.fnacimiento,
+        nuevotelefono: this.usuario.telefono,
+        imageSource: this.usuario.fotoperfil,
+        nuevoEmail: this.usuario.correo,
+      },
+    };
+    console.log('Datos a enviar:', navigationExtras.state);
+    this.router.navigate(['/modificar-perfil'], navigationExtras);
+  }
 
-  constructor(private db: DbservicesService, private router: Router) { }
+
 
  
 

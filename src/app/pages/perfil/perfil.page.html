@@ -33,8 +33,9 @@
         <ion-label position="stacked">Correo</ion-label>
         <ion-input readonly placeholder="{{ usuario.correo }}"></ion-input>
       </ion-item>
-      <ion-button expand="full">Modificar Perfil</ion-button>
+     
     </ion-card-content>
+    <ion-button  expand="full" color="danger" (click)="modificarUsuario()">Modificar Perfil</ion-button>
   </ion-card>
 </ion-content>
 

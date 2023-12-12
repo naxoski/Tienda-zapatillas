@@ -514,6 +514,11 @@ export class DbservicesService {
       this.buscarZapatillas();
     })
   }
+  modificarPerfil(idusuario:any,nombreusuario:any,apellidousuario:any,fnacimiento:any,telefono:any,fotoperfil:any,correo:any){
+    return this.database.executeSql('UPDATE usuario SET  nombreusuario = ? , apellidousuario = ? , fnacimiento = ? , telefono = ?, fotoperfil = ?, correo = ? WHERE idusuario = ?',[nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,idusuario]).then(res=>{
+      this.buscarUsuarios();
+    })
+  }
   insertarDetalleComprado(nombreproducto: string, fotoproducto: string, cantidad: number, subtotal: number, idventa: number) {
     return this.database.executeSql("INSERT INTO detallecomprado (nombreprodc, fotoprodc, cantidadc, subtotalc, ventac) VALUES (?, ?, ?, ?, ?);",[nombreproducto, fotoproducto, cantidad, subtotal, idventa]);
   }

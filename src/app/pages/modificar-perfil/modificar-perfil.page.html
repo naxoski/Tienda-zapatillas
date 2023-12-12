@@ -9,31 +9,31 @@
 <ion-content>
   <ion-card class="profile-card">
     <ion-card-content>
-      <ion-avatar class="profile-avatar">
-        <img  [(ngModel)]="imagenUsu" alt="Avatar">
-      </ion-avatar>
-  
       <ion-item>
-        <ion-label position="stacked">Nombre</ion-label>
-        <ion-input   [(ngModel)]="nombreUsu"></ion-input>
+        <ion-button (click)="takePicture()">Foto de perfil</ion-button>
+        <img *ngIf="imageSource" [src]="imageSource" alt="image" style="width: 100%;max-width: 250px;" [(ngModel)]="imageSource">
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Nombre de usuario</ion-label>
+        <ion-input required type="text" [(ngModel)]="nuevoNombre"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="stacked">Apellido</ion-label>
-        <ion-input  [(ngModel)]="apellidoUsu"></ion-input>
+        <ion-input required type="text"  [(ngModel)]="nuevoapellido"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="stacked">Fecha de Nacimiento</ion-label>
-        <ion-input  [(ngModel)]="fechaUsu"></ion-input>
+        <ion-input required type="date"  [(ngModel)]="fechanacimiento"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="stacked">Teléfono</ion-label>
-        <ion-input  [(ngModel)]="telefonoUsu"></ion-input>
+        <ion-input required type="number"  [(ngModel)]="nuevotelefono"></ion-input>
       </ion-item>
       <ion-item>
         <ion-label position="stacked">Correo</ion-label>
-        <ion-input  [(ngModel)]="correoUsu"></ion-input>
+        <ion-input required type="text" [(ngModel)]="nuevoEmail"></ion-input>
       </ion-item>
-      <ion-button expand="full">Modificar Perfil</ion-button>
+      <ion-button expand="full" color="danger" (click)="modificar()">Modificar Perfil</ion-button>
     </ion-card-content>
   </ion-card>
 </ion-content>

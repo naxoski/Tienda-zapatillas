@@ -11,25 +11,28 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 })
 export class ModificarPerfilPage implements OnInit {
   idusuario : any;
-  nombreUsu = '';
-  apellidoUsu = '';
-  fechaUsu = '';
-  imagenUsu: any;
-  telefonoUsu= '';
+  nuevoNombre = '';
+  nuevoapellido = '';
+  fechanacimiento = '';
+  imageSource: any;
+  nuevotelefono= '';
+  nuevoEmail = '';
 
-  constructor(public router:Router, private db: DbservicesService, public toastController: ToastController, private alertController: AlertController,private activedRouter: ActivatedRoute) {
-    this.activedRouter.queryParams.subscribe(res => {
+  constructor(public router: Router,private db: DbservicesService,public toastController: ToastController,private alertController: AlertController,private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.queryParams.subscribe(res => {
       if (this.router.getCurrentNavigation()?.extras.state) {
-        this.idusuario = this.router.getCurrentNavigation()?.extras?.state?.['idusuario'];
-        this.nombreUsu = this.router.getCurrentNavigation()?.extras?.state?.['nombreUsu'];
+        this.idusuario = this.router.getCurrentNavigation()?.extras?.state?.['idEnviado'];
 
-        this.apellidoUsu = this.router.getCurrentNavigation()?.extras?.state?.['apellidoUsu'];
 
-        this.fechaUsu = this.router.getCurrentNavigation()?.extras?.state?.['fechaUsu'];
-        this.imagenUsu = this.router.getCurrentNavigation()?.extras?.state?.['imagenUsu'];
-        this.telefonoUsu = this.router.getCurrentNavigation()?.extras?.state?.['telefonoUsu'];
+        this.nuevoNombre = this.router.getCurrentNavigation()?.extras?.state?.['nuevoNombre'];
+        this.nuevoapellido = this.router.getCurrentNavigation()?.extras?.state?.['nuevoapellido'];
+        this.fechanacimiento = this.router.getCurrentNavigation()?.extras?.state?.['fechanacimiento'];
+        this.nuevotelefono = this.router.getCurrentNavigation()?.extras?.state?.['nuevotelefono'];
+        this.imageSource = this.router.getCurrentNavigation()?.extras?.state?.['imageSource'];
+        this.nuevoEmail = this.router.getCurrentNavigation()?.extras?.state?.['nuevoEmail'];
       }
     })
+    
   }
   takePicture = async () => {
     const image = await Camera.getPhoto({
@@ -44,10 +47,19 @@ export class ModificarPerfilPage implements OnInit {
     // passed to the Filesystem API to read the raw data of the image,
     // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
     //var imageUrl = image.webPath;
-    this.imagenUsu = image.dataUrl;
+    this.imageSource = image.dataUrl;
     // Can be set to the src of an image now
     //imageElement.src = imageUrl;
   };
+  modificar(){ 
+    try{
+      this.db.modificarPerfil(this.idusuario,this.nuevoNombre,this.nuevoapellido,this.fechanacimiento,this.nuevotelefono,this.imageSource,this.nuevoEmail)
+      this.db.presentAlert("Usuario modificado");
+      this.router.navigate(['/perfil']);
+    }catch(error){
+      this.db.presentAlert("error al Modificar perfil usuario" + + JSON.stringify(error));
+    }
+  }
 
   ngOnInit() {
     this.idusuario = localStorage.getItem('idusuario')
