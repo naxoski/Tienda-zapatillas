@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "111178115209",
+    "project_id": "tienda-zapatillas-b496f",
+    "storage_bucket": "tienda-zapatillas-b496f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:111178115209:android:c163224a45d6c16854be58",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsjk_w947awZG61pNwVVIRk_zoA9Y9WH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
