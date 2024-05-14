@@ -10,23 +10,18 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ng-container *ngIf="(historialCompras$ | async) as historialCompras; else emptyHistorial">
+  <ng-container *ngIf="(historialCompras$ | async) as historialCompras;">
     <ion-list *ngIf="historialCompras.length > 0">
       <ion-item *ngFor="let compra of historialCompras" class="historial-item">
         <ion-img [src]="compra.fotoprodc" class="historial-image"></ion-img>
         <div class="historial-details">
           <h2 class="historial-product-name">{{ compra.nombreprodc }}</h2>
           <p class="historial-cantidad">Cantidad: {{ compra.cantidadc }}</p>
-          <p class="historial-subtotal">Subtotal: {{ compra.subtotalc }}</p>
+          <p class="historial-subtotal">Costo: {{ compra.subtotalc }}</p> <!-- Mostrar costo en lugar de subtotal -->
         </div>
       </ion-item>
     </ion-list>
   </ng-container>
-  <ion-list *ngIf="emptyHistorial || historialCompras.length === 0">
-    <div class="empty-historial-message">
-      No hay historial de compras.
-    </div>
-  </ion-list>
 </ion-content>
 
 <ng-template #emptyHistorial>
@@ -37,3 +32,4 @@
     </div>
   </ion-list>
 </ng-template>
+

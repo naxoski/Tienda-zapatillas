@@ -45,3 +45,40 @@
     margin-bottom: 10px;
     font-size: 14px;
   }
+  /* Estilos para el contenedor de historial */
+ion-content {
+  --background: #f8f8f8; /* Color de fondo */
+}
+
+/* Estilos para los elementos del historial */
+.historial-item {
+  border-bottom: 1px solid #ddd; /* Borde inferior entre elementos */
+}
+
+.historial-image {
+  width: 80px; /* Ancho de la imagen */
+  height: 80px; /* Alto de la imagen */
+  margin-right: 10px; /* Margen derecho entre la imagen y los detalles */
+}
+
+.historial-details {
+  flex: 1; /* Los detalles ocupan todo el espacio disponible */
+}
+
+.historial-product-name {
+  font-size: 16px; /* Tamaño de fuente del nombre del producto */
+  font-weight: bold; /* Fuente en negrita para destacar */
+  margin-bottom: 5px; /* Espacio inferior entre el nombre del producto y la cantidad */
+}
+
+.historial-cantidad, .historial-subtotal {
+  font-size: 14px; /* Tamaño de fuente para la cantidad y el costo */
+  margin: 0; /* Elimina los márgenes por defecto */
+  color: #666; /* Color de texto gris para los detalles */
+}
+
+.empty-historial-message {
+  padding: 20px; /* Relleno interno */
+  text-align: center; /* Centrar el texto */
+  color: #666; /* Color de texto gris */
+}
