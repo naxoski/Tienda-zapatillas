@@ -26,7 +26,7 @@ export class DbservicesService {
   usuario: string="CREATE TABLE IF NOT EXISTS usuario(idusuario INTEGER PRIMARY KEY autoincrement, rut VARCHAR(20) NOT NULL, nombreusuario VARCHAR(30) NOT NULL, apellidousuario VARCHAR(30) NOT NULL, fnacimiento DATE, telefono INTEGER , fotoperfil BLOB, correo VARCHAR(30) NOT NULL, clave VARCHAR(10) NOT NULL, respuesta VARCHAR(30) NOT NULL, idpregunta INTEGER NOT NULL, idrol INTEGER NOT NULL,FOREIGN KEY(idpregunta) REFERENCES pregunta(idpregunta), FOREIGN KEY(idrol) REFERENCES rol(idrol) );";
   venta: string = "CREATE TABLE IF NOT EXISTS venta(idventa INTEGER PRIMARY KEY autoincrement, fventa DATE, fdespacho DATE, estatus VARCHAR(30) NOT NULL, total INTEGER NOT NULL , carrito VARCHAR(30) NOT NULL, idusuario INTEGER NOT NULL, FOREIGN KEY(idusuario) REFERENCES usuario(idusuario) );";
   detalle: string = "CREATE TABLE IF NOT EXISTS detalle(iddetalle INTEGER PRIMARY KEY autoincrement, cantidad INTEGER NOT NULL , detalle INTEGER NOT NULL, idproducto INTEGER NOT NULL, idventa INTEGER NOT NULL,FOREIGN KEY (idproducto) REFERENCES producto(idproducto),  FOREIGN KEY(idventa) REFERENCES venta(idventa) );";
-  detalleComprado: string ="CREATE TABLE IF NOT EXISTS detallecomprado(iddetallec INTEGER PRIMARY KEY AUTOINCREMENT, nombreprodc TEXT NOT NULL, fotoprodc TEXT NOT NULL, cantidadc INTEGER NOT NULL, subtotalc INTEGER NOT NULL, ventac INTEGER NOT NULL, FOREIGN KEY (ventac) REFERENCES venta(idventa) );";
+  detalleComprado: string ="CREATE TABLE IF NOT EXISTS detallecomprado(iddetallec INTEGER PRIMARY KEY AUTOINCREMENT, nombreprodc TEXT NOT NULL, fotoprodc TEXT NOT NULL, cantidadc INTEGER NOT NULL, subtotalc INTEGER , ventac INTEGER NOT NULL, FOREIGN KEY (ventac) REFERENCES venta(idventa) );";
 
   
 
@@ -419,6 +419,25 @@ export class DbservicesService {
 
     })
   }
+  insertarDetalleCompra(idproducto: number, nombreprodc: string, fotoprodc: string, cantidadc: number, subtotalc: number, ventac: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      // Verificar si subtotalc es nulo y proporcionar un valor predeterminado si es necesario
+      if (subtotalc == null) {
+        subtotalc = 0; // Aquí proporciona el valor predeterminado deseado
+      }
+  
+      this.database.executeSql('INSERT INTO detallecomprado (nombreprodc, fotoprodc, cantidadc, subtotalc, ventac) VALUES (?, ?, ?, ?, ?)',
+      [nombreprodc, fotoprodc, cantidadc, subtotalc, ventac])
+      .then(res => {
+        resolve(res);
+      })
+      .catch(error => {
+        reject(error);
+      });
+    });
+  }
+  
+  
   buscarDetallesCompraVenta(venta: any): Observable<Detallecomprado[]> {
     return new Observable<Detallecomprado[]>(observer => {
       this.database.executeSql("SELECT * FROM detallecomprado WHERE ventac = ?;", [venta]).then(res => {
@@ -658,7 +677,7 @@ export class DbservicesService {
               nombreprodc: res.rows.item(i).nombreprodc,
               fotoprodc: res.rows.item(i).fotoprodc,
               cantidadc: res.rows.item(i).cantidadc,
-              subtotalc: res.rows.item(i).subtotalc,
+              subtotalc: res.rows.item(i).precio, // Cambiar a precio en lugar de subtotal
               ventac: res.rows.item(i).ventac
             });
           }
@@ -669,6 +688,7 @@ export class DbservicesService {
       });
     });
   }
+  
 
  
 

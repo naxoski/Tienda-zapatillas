@@ -53,6 +53,13 @@ export class CarritoPage implements OnInit {
       }
     });
   }
+  async mostrarMensaje(mensaje: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2000,
+    });
+    toast.present();
+  }
   async cargarDetallesVenta() {
     try {
       const detalles = await lastValueFrom(this.db.buscarDetallesVenta(this.venta.idventa));
@@ -69,6 +76,12 @@ export class CarritoPage implements OnInit {
       await this.db.modificarFechaEntrega(this.venta.idventa, this.fdespacho);
       await this.db.modificarEstadoVenta(this.venta.idventa, 'Comprado');
   
+      // Calcula el total de la venta
+      let totalVenta = 0;
+      for (let x of this.detalles) {
+        totalVenta += x.detalle;
+      }
+  
       for (let x of this.detalles) {
         this.stock = x.stock - x.cantidad;
         console.log("Stock del producto: " + x.stock);
@@ -78,9 +91,8 @@ export class CarritoPage implements OnInit {
         await this.db.restarStock(x.idproducto, this.stock);
         await this.db.buscarCompras(x.idproducto);
   
-        this.db.fetchProducto().subscribe(item => {
-          this.arregloZapatillas = item[0];
-        });
+        // Insertar la información de la compra en la tabla detallecomprado
+        await this.db.insertarDetalleCompra(x.idproducto, x.nombreproducto, x.foto, x.cantidad, totalVenta, this.venta.idventa);
       }
   
       // Recupera detalles comprados (historial de compras) después de pagar
@@ -96,15 +108,4 @@ export class CarritoPage implements OnInit {
       await this.mostrarMensaje('Error al realizar la compra. Inténtalo nuevamente.');
     }
   }
-  
-  async mostrarMensaje(mensaje: string) {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: 2000,
-    });
-    toast.present();
-  }
-  
 }
-
-

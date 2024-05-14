@@ -28,16 +28,19 @@ export class HistorialCompraPage implements OnInit {
 
   ngOnInit() {
     this.idUser = localStorage.getItem('idusuario');
-
+  
     // Inicializar el observable con los datos del historial de compras
     this.historialCompras$ = this.db.buscarHistorialCompras(this.idUser);
-
+  
     // Suscribirse al observable para obtener los datos y almacenarlos en la propiedad historialCompras
-    this.historialCompras$.subscribe(historialCompras => {
-      this.historialCompras = historialCompras;
-
-      // Aquí puedes imprimir o realizar otras acciones con el historial
-      console.log('Historial de compras:', historialCompras);
-    });
+    this.historialCompras$.subscribe(
+      historialCompras => {
+        this.historialCompras = historialCompras;
+        console.log('Historial de compras:', historialCompras);
+      },
+      error => {
+        console.error('Error al recuperar el historial de compras:', error);
+      }
+    );
   }
-}
+}  
