@@ -2,14 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DbservicesService } from 'src/app/services/dbservices.service';
 import { AlertController, NavController, ToastController } from '@ionic/angular';
-import { Observable } from 'rxjs';
 import { lastValueFrom } from 'rxjs';
-
-// Interfaz para detalles de venta
-interface DetalleVenta {
-  cantidad: number;
-  detalle: string;
-}
+import { FlowIntegrationService } from 'src/app/services/flow-integration.service';
 
 @Component({
   selector: 'app-carrito',
@@ -17,42 +11,44 @@ interface DetalleVenta {
   styleUrls: ['./carrito.page.scss'],
 })
 export class CarritoPage implements OnInit {
-  idUser: any =0;
+  idUser: any = 0;
   hayprod: boolean = true;
   idproducto: number = 0;
-  arregloZapatillas: any = [{idproducto:'',nombreproducto:'',descripcion:'',precio:'',stock:'',foto:'',idcategoria:''}];
+  arregloZapatillas: any = [{ idproducto: '', nombreproducto: '', descripcion: '', precio: '', stock: '', foto: '', idcategoria: '' }];
   permisoStorage: any = 0;
   permiso: any = 0;
   correoUser: any = "";
-  usuario: any = {idusuario: '', rut: '', nombreusuario: '', apellidousuario: '',fnacimiento: '', telefono: '', fotoperfil: '' ,correo: '',clave: '', respuesta: '',idpregunta:'',idrol:''};
-  venta: any =[{idventa:'',fventa:'',fdespacho:'',estatus:'',total:'',carrito:'',idusuario:''}];
+  usuario: any = { idusuario: '', rut: '', nombreusuario: '', apellidousuario: '', fnacimiento: '', telefono: '', fotoperfil: '', correo: '', clave: '', respuesta: '', idpregunta: '', idrol: '' };
+  venta: any = [{ idventa: '', fventa: '', fdespacho: '', estatus: '', total: '', carrito: '', idusuario: '' }];
   fechaActual = new Date();
   diasSumar = 7;
   fdespacho = new Date(this.fechaActual);
-  detalle: any = [{iddetalle: '', cantidad: '',detalle:'',idproducto:'',idventa:''}];
-  detalles:any =[{iddetalle:'',cantidad:'',detalle:'',idproducto:'',idventa:'',nombreproducto:'', precio:'',stock:'',foto:''}];
+  detalle: any = [{ iddetalle: '', cantidad: '', detalle: '', idproducto: '', idventa: '' }];
+  detalles: any = [{ iddetalle: '', cantidad: '', detalle: '', idproducto: '', idventa: '', nombreproducto: '', precio: '', stock: '', foto: '' }];
   stock: number = 0;
   carrito: any = {};
-  
-  
- 
 
-
-
-  constructor(private db: DbservicesService, private router: Router, private navCtrl: NavController, private route: ActivatedRoute, public toastController: ToastController, private alertController: AlertController) {}
+  constructor(
+    private db: DbservicesService,
+    private router: Router,
+    private navCtrl: NavController,
+    private route: ActivatedRoute,
+    public toastController: ToastController,
+    private alertController: AlertController,
+    private flowService: FlowIntegrationService
+  ) { }
 
   ngOnInit() {
     this.idUser = localStorage.getItem('idusuario');
-  
+
     this.db.buscarVentaCarrito(this.idUser, "Activo").subscribe(datos => {
       if (datos && datos.length > 0) {
         this.venta = datos[0];
-  
-        // Manejo adicional si es necesario antes de cargar los detalles
         this.cargarDetallesVenta();
       }
     });
   }
+
   async mostrarMensaje(mensaje: string) {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -60,51 +56,60 @@ export class CarritoPage implements OnInit {
     });
     toast.present();
   }
+
   async cargarDetallesVenta() {
     try {
       const detalles = await lastValueFrom(this.db.buscarDetallesVenta(this.venta.idventa));
       this.detalles = detalles;
     } catch (error) {
       console.error('Error al cargar detalles de venta:', error);
-      // Agrega manejo de errores según sea necesario
     }
   }
+
   async Pagar() {
     try {
       this.fdespacho.setDate(this.fechaActual.getDate() + this.diasSumar);
-  
+
       await this.db.modificarFechaEntrega(this.venta.idventa, this.fdespacho);
       await this.db.modificarEstadoVenta(this.venta.idventa, 'Comprado');
-  
-      // Calcula el total de la venta
+
       let totalVenta = 0;
-      for (let x of this.detalles) {
-        totalVenta += x.detalle;
+      for (let detalle of this.detalles) {
+        totalVenta += detalle.precio * detalle.cantidad;
       }
-  
+
+      const datosPago = {
+        amount: totalVenta,
+        subject: 'Compra en MiTienda',
+        email: this.correoUser, // Reemplaza con el correo del usuario
+        currency: 'CLP' // Asegúrate de usar la moneda correcta
+      };
+
+      const respuestaFlow = await this.flowService.iniciarPago(datosPago).toPromise();
+      console.log('Respuesta de Flow:', respuestaFlow);
+
+      if (respuestaFlow && respuestaFlow.payment_url) {
+        window.location.href = respuestaFlow.payment_url;
+      } else {
+        throw new Error('No se recibió la URL de pago de Flow');
+      }
+
+      await this.mostrarMensaje('Redirigiendo al portal de pago...');
+
       for (let x of this.detalles) {
         this.stock = x.stock - x.cantidad;
-        console.log("Stock del producto: " + x.stock);
-        console.log("Cantidad del detalle:" + x.cantidad);
-        console.log("ID del producto: " + x.idproducto);
-  
         await this.db.restarStock(x.idproducto, this.stock);
         await this.db.buscarCompras(x.idproducto);
-  
-        // Insertar la información de la compra en la tabla detallecomprado
         await this.db.insertarDetalleCompra(x.idproducto, x.nombreproducto, x.foto, x.cantidad, totalVenta, this.venta.idventa);
       }
-  
-      // Recupera detalles comprados (historial de compras) después de pagar
+
       const detallesComprados = await lastValueFrom(this.db.buscarDetallesCompraVenta(this.venta.idventa));
       console.log('Detalles comprados:', detallesComprados);
-  
-      // Muestra un mensaje de éxito
+
       await this.mostrarMensaje('Compra realizada con éxito.');
-  
+
     } catch (error) {
       console.error('Error al realizar el pago:', error);
-      // Muestra un mensaje de error
       await this.mostrarMensaje('Error al realizar la compra. Inténtalo nuevamente.');
     }
   }
