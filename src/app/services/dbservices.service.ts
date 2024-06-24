@@ -17,6 +17,7 @@ import { Detallesventa } from './detallesventa';
 })
 export class DbservicesService {
   public database!: SQLiteObject;
+  
 
   //TABLAS
   rol: string= "CREATE TABLE IF NOT EXISTS rol(idrol INTEGER PRIMARY KEY autoincrement,nombrerol VARCHAR(30) NOT NULL);";
@@ -887,4 +888,32 @@ export class DbservicesService {
       resultType: CameraResultType.Uri
     });
   }
+
+  async exportDataToJson(): Promise<any> {
+    const data: any = {};
+
+    const tables = [
+      'rol',
+      'pregunta',
+      'categoria',
+      'producto',
+      'usuario',
+      'venta',
+      'detalle',
+      'detallecomprado'
+    ];
+
+    for (const table of tables) {
+      const rows = await this.database.executeSql(`SELECT * FROM ${table};`, []);
+      data[table] = [];
+
+      for (let i = 0; i < rows.rows.length; i++) {
+        data[table].push(rows.rows.item(i));
+      }
+    }
+
+    return data;
+  }
+
+
 }
