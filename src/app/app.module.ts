@@ -2,6 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { provideAuth,getAuth, connectAuthEmulator } from '@angular/fire/auth';
+import { provideFirestore,getFirestore, connectFirestoreEmulator } from '@angular/fire/firestore';
+import { provideFunctions,getFunctions, connectFunctionsEmulator } from '@angular/fire/functions';
+import { provideMessaging,getMessaging } from '@angular/fire/messaging';
+import { provideStorage,getStorage, connectStorageEmulator } from '@angular/fire/storage';
 
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -15,7 +20,10 @@ import { SQLite } from '@awesome-cordova-plugins/sqlite/ngx';
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },SQLite],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy, },SQLite],
   bootstrap: [AppComponent],
+  
+  
 })
+
 export class AppModule {}
