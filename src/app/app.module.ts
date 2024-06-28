@@ -2,11 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { provideAuth,getAuth, connectAuthEmulator } from '@angular/fire/auth';
-import { provideFirestore,getFirestore, connectFirestoreEmulator } from '@angular/fire/firestore';
-import { provideFunctions,getFunctions, connectFunctionsEmulator } from '@angular/fire/functions';
-import { provideMessaging,getMessaging } from '@angular/fire/messaging';
-import { provideStorage,getStorage, connectStorageEmulator } from '@angular/fire/storage';
+import { environment } from '../environments/environment';
 
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
