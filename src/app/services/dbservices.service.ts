@@ -4,6 +4,7 @@ import { Platform,AlertController } from '@ionic/angular';
 import { BehaviorSubject, Observable, firstValueFrom, from, of, throwError } from 'rxjs';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { initializeApp } from "firebase/app";
 
 
 import { Zapatillas } from './zapatillas';
@@ -178,6 +179,7 @@ export class DbservicesService {
       this.listaUsuario.next(items as any);
     })
   }
+  
 
   buscarDetalle(){
     return this.database.executeSql('SELECT * FROM detalle',[]).then(res=>{
