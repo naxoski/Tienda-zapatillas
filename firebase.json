@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/Tienda-zapatillas",
+    "public": "www",
     "ignore": [
       "firebase.json",
       "**/.*",
