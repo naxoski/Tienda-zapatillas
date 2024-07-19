@@ -37,29 +37,19 @@ export class RecuperarContraPage implements OnInit {
   }
   async buscarCorreoYPregunta() {
     try {
-      // Verificar si las variables son válidas
-      if (!this.correo || !this.pregunta || !this.respuesta) {
-        const alert = await this.alertController.create({
-          header: 'Error',
-          message: 'Todos los campos son obligatorios',
-          buttons: ['OK']
-        });
-        await alert.present();
-        return; // Salir si alguna variable es inválida
-      }
-  
-      // Llamar a la función de búsqueda
       const usuario = await this.db.buscarCorreoYPregunta(this.correo, this.pregunta, this.respuesta);
-  
+
       if (usuario) {
-        const alert = await this.alertController.create({
-          header: 'Credenciales Verificadas!',
-          message: 'Credenciales encontradas',
-          buttons: ['OK']
-        });
-        await alert.present();
-        this.router.navigate(['/cambiarcontra']);
+          const alert = await this.alertController.create({
+            header: 'Credenciales Verificadas!',
+            message: 'Credenciales encontradas',
+            buttons: ['OK']
+          });
+          await alert.present();
+          this.router.navigate(['/cambiarcontra']);
+        
       } else {
+        // Si las credenciales no son válidas, muestra un mensaje indicando credenciales incorrectas
         const alert = await this.alertController.create({
           header: 'Credenciales incorrectas',
           message: 'No se encontraron las credenciales ingresadas',
@@ -68,7 +58,8 @@ export class RecuperarContraPage implements OnInit {
         await alert.present();
       }
     } catch (error) {
+      // Maneja errores si ocurren durante la consulta
       console.error('Error al verificar credenciales:', error);
     }
-}
+  }
 }
