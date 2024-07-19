@@ -55,15 +55,19 @@ export class ModificarProductosPage {
   };
   modificarProducto() {
     try {
-    this.db.modificarProducto(this.idEnviado,this.nombreEnviado,this.descripcionEnviada,this.precioEnviado,this.stockEnviado,this.fotoEnviada)
-    this.db.presentAlert("Producto modificado");
-    this.router.navigate(['/ver-productos']);
-      
+      // Asegúrate de que solo estás pasando 5 argumentos
+      this.db.modificarProducto(
+        this.idEnviado,
+        this.nombreEnviado,
+        this.descripcionEnviada,
+        parseFloat(this.precioEnviado), // Asegúrate de que el precio es un número
+        parseInt(this.stockEnviado, 10) // Asegúrate de que el stock es un número
+      );
+      this.db.presentAlert("Producto modificado");
+      this.router.navigate(['/ver-productos']);
     } catch (error) {
-      this.db.presentAlert("error al insertar producto" + + JSON.stringify(error));
-      
+      this.db.presentAlert("Error al modificar producto: " + JSON.stringify(error));
     }
-
   }
   ngOnInit() {
   }
