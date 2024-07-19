@@ -48,41 +48,43 @@ export class HomePage implements OnInit {
 
   async iniciar() {
     try {
-      this.db.buscarUsu(this.usu, this.claveu).subscribe(
-        usuario => {
-          if (usuario) {
-            if (usuario.idrol === 'usuario') {
-              this.alertController.create({
-                header: 'Bienvenido usuario!',
-                message: 'Sesión iniciada correctamente',
-                buttons: ['OK']
-              }).then(alert => alert.present());
-              this.router.navigate(['/principal']);
-            } else if (usuario.idrol === 'admin') {
-              this.alertController.create({
-                header: 'Bienvenido admin!',
-                message: 'Sesión iniciada correctamente',
-                buttons: ['OK']
-              }).then(alert => alert.present());
-              this.router.navigate(['/menu-admin']);
-            }
-          } else {
-            this.alertController.create({
-              header: 'Credenciales incorrectas',
-              message: 'No se inició sesión',
-              buttons: ['OK']
-            }).then(alert => alert.present());
-          }
-        },
-        error => {
-          console.error('Error al verificar credenciales:', error);
+      const usuario = await this.db.buscarUsu(this.usu, this.claveu);
+
+      if (usuario) {
+        // Verifica el tipo de usuario basándote en el campo idrol
+        if (usuario.idrol == 'usuario') {
+          // Si el idrol es 'usuario', redirige a la página de usuarios
+          const alert = await this.alertController.create({
+            header: 'Bienvenido usuario!',
+            message: 'Sesion iniciada correctamente',
+            buttons: ['OK']
+          });
+          await alert.present();
+          this.router.navigate(['/principal']);
+        } else if (usuario.idrol == 'admin') {
+          // Si el idrol es 'admin', redirige a la página de administradores
+          const alert = await this.alertController.create({
+            header: 'Bienvenido admin!',
+            message: 'Sesion iniciada correctamente',
+            buttons: ['OK']
+          });
+          await alert.present();
+          this.router.navigate(['/menu-admin']);
         }
-      );
+      } else {
+        // Si las credenciales no son válidas, muestra un mensaje indicando credenciales incorrectas
+        const alert = await this.alertController.create({
+          header: 'Credenciales incorrectas',
+          message: 'No se inicio sesion',
+          buttons: ['OK']
+        });
+        await alert.present();
+      }
     } catch (error) {
+      // Maneja errores si ocurren durante la consulta
       console.error('Error al verificar credenciales:', error);
     }
   }
-  
 }
 
  
