@@ -78,18 +78,15 @@ export class DbservicesService {
    
   constructor(private alertController: AlertController,private sqlite : SQLite, private platform : Platform,private firestore: AngularFirestore,private db: AngularFireDatabase) {
     this.usuariosCollection = this.firestore.collection<Usuario>('usuario');
-    this.crearBD();
   }
-
 
 
 
   dbState(){
     return this.isDBReady.asObservable();
   }
-  fetchProducto(): Observable<Zapatillas[]>{
-    return this.listaZapatillas.asObservable();
-    
+  fetchProducto(): Observable<Zapatillas[]> {
+    return this.firestore.collection<Zapatillas>('zapatillas').valueChanges();
   }
   fetchUsuario(): Observable<Usuario[]>{
     return this.listaUsuario.asObservable();
@@ -638,12 +635,10 @@ insertarZapatilla(nombreproducto: string, descripcion: string, precio: number, s
     });
   }
   eliminarProducto(idproducto: string) {
-    const productoRef = this.firestore.collection('producto').doc(idproducto);
-    return productoRef.delete().then(() => {
-      console.log('Producto eliminado exitosamente');
-      this.buscarZapatillas();
-    }).catch((error) => {
-      console.error('Error eliminando producto:', error);
+    this.firestore.collection('zapatillas').doc(idproducto).delete().then(() => {
+      console.log('Producto eliminado');
+    }).catch(error => {
+      console.error('Error al eliminar el producto:', error);
     });
   }
   eliminarUsuario(idusuario: string) {
@@ -689,85 +684,6 @@ insertarZapatilla(nombreproducto: string, descripcion: string, precio: number, s
       console.error('Error al agregar usuario:', error);
     });
   }
-
-  //Creacion base de datos
-  crearBD(){
-    //verifiacion
-    this.platform.ready().then(()=>{
-      this.sqlite.create({
-        name:'dbzapatillas.db',
-        location: 'default'
-      }).then((db : SQLiteObject)=>{
-        //Guardar dentro variable
-        this.database = db;
-        //llamar funcion que crea las tablas
-        this.creaTablas();
-      }).catch(e=>{
-        //capturamos el error(poner una alerta)
-        this.presentAlert("error en crear bd" + e);
-      })
-    })
-  }
-
-   async creaTablas(){
-    try {
-      //ejecutar la creacion de tablas
-      await this.database.executeSql(this.rol,[]);
-
-      await this.database.executeSql(this.pregunta,[]);
-
-      await this.database.executeSql(this.usuario,[]);
-
-      await this.database.executeSql(this.categoria,[]);
-
-      await this.database.executeSql(this.producto,[]);
-
-      await this.database.executeSql(this.venta,[]); 
-
-      await this.database.executeSql(this.detalle,[]);
-
-      await this.database.executeSql(this.detalleComprado,[]);
-
-
-
-
-
-     
-      
-     
-
-
-      await this.database.executeSql(this.registroRol,[]);
-      await this.database.executeSql(this.registroRol2,[]);
-      await this.database.executeSql(this.registroPregunta,[]);
-      await this.database.executeSql(this.registroPregunta2,[]);
-      await this.database.executeSql(this.registroPregunta3,[]);
-      await this.database.executeSql(this.registroUsuario,[]);
-      await this.database.executeSql(this.registroUsuario2,[]);
-
-      await this.database.executeSql(this.registroCategoria,[]);
-      await this.database.executeSql(this.registroCategoria2,[]);
-
-      
-
-      await this.database.executeSql(this.registroZapatillas,[]);
-
-      this.flag.next(true);
-
-
-  
-
-
-      this.isDBReady.next(true);
-      this.buscarZapatillas();
-      this.buscarUsuarios();
-      
-    }catch (e) {
-       //capturamos el error(poner una alerta)
-       this.presentAlert("error al crear tablas" + e);
-    }
-  }
-
 
   async presentAlert(msj:string) {
     const alert = await this.alertController.create({

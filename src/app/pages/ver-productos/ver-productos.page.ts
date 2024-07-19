@@ -29,16 +29,15 @@ export class VerProductosPage implements OnInit {
   constructor(private db: DbservicesService, private router: Router) { }
 
   ngOnInit() {
-     //subscribo al observable de la BD
-     this.db.dbState().subscribe(res=>{
-      if(res){
-        this.db.fetchProducto().subscribe(datos=>{
+    // Subscribirse al observable de la base de datos
+    this.db.dbState().subscribe(res => {
+      if (res) {
+        this.db.fetchProducto().subscribe(datos => {
           this.arregloZapatillas = datos;
-        })
+        });
       }
-     })
-
-    }
+    });
+  }
     modificar(x:any){
       let navigationExtras: NavigationExtras = {
         state: {
