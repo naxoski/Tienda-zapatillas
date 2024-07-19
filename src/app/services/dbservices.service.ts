@@ -4,6 +4,10 @@ import { Platform,AlertController } from '@ionic/angular';
 import { BehaviorSubject, Observable, firstValueFrom, from, of, throwError } from 'rxjs';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { Firestore, collection, writeBatch, query, where, getDocs } from '@angular/fire/firestore';
+import { AngularFirestore ,AngularFirestoreCollection} from '@angular/fire/compat/firestore';
+import { QuerySnapshot, DocumentSnapshot } from '@angular/fire/compat/firestore';
+import { AngularFireDatabase } from '@angular/fire/compat/database';
 
 
 import { Zapatillas } from './zapatillas';
@@ -18,6 +22,8 @@ import { Detallesventa } from './detallesventa';
 })
 export class DbservicesService {
   public database!: SQLiteObject;
+  private usuariosCollection: AngularFirestoreCollection<Usuario>;
+ 
   
 
   //TABLAS
@@ -59,26 +65,25 @@ export class DbservicesService {
    registroZapatillas: string = "INSERT or IGNORE INTO producto(idproducto, nombreproducto, descripcion, precio, stock, foto, idcategoria) VALUES (100, 'Nike', 'Soy una descripción', 100000, 50, 'assets/air jordan 1.webp', 'hombre');";
 
 
-   listaZapatillas= new BehaviorSubject([]);
-
-   listaUsuario= new BehaviorSubject([]);
-
-   listaVenta= new BehaviorSubject([]);
-
-   listaDetalle = new BehaviorSubject([]);
-   
-   listaDetalleComprado = new BehaviorSubject([]);
-
-   listaDetallesVenta = new BehaviorSubject([]);
-
-   private isDBReady :  BehaviorSubject<boolean> = new  BehaviorSubject(false);
+   private listaZapatillas = new BehaviorSubject<Zapatillas[]>([]);
+   private listaUsuario = new BehaviorSubject<Usuario[]>([]);
+   private listaVenta = new BehaviorSubject<Venta[]>([]);
+   private listaDetalle = new BehaviorSubject<Detalle[]>([]);
+   private listaDetalleComprado = new BehaviorSubject<Detallecomprado[]>([]);
+   private listaDetallesVenta = new BehaviorSubject<Detallesventa[]>([]);
+   private isDBReady = new BehaviorSubject<boolean>(false);
 
    private flag: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
    
-  constructor(private alertController: AlertController,private sqlite : SQLite, private platform : Platform) {
+  constructor(private alertController: AlertController,private sqlite : SQLite, private platform : Platform,private firestore: AngularFirestore,private db: AngularFireDatabase) {
+    this.usuariosCollection = this.firestore.collection<Usuario>('usuario');
     this.crearBD();
   }
+
+
+
+
   dbState(){
     return this.isDBReady.asObservable();
   }
@@ -109,336 +114,162 @@ export class DbservicesService {
     return firstValueFrom(this.listaVenta);
   }
 
-  buscarZapatillas(){
-    return this.database.executeSql('SELECT * FROM producto',[]).then(res=>
-    {
-      let items: Zapatillas[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            idproducto: res.rows.item(i).idproducto,
-            nombreproducto: res.rows.item(i).nombreproducto,
-            descripcion: res.rows.item(i).descripcion,
-            precio: res.rows.item(i).precio,
-            stock: res.rows.item(i).stock,
-            foto:res.rows.item(i).foto,
-            idcategoria: res.rows.item(i).idcategoria,
-          })
-        }
-      }
-      this.listaZapatillas.next(items as any);
-    })
+  buscarZapatillas() {
+    this.firestore.collection<Zapatillas>('producto').valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching zapatillas:', error);
+        return [];
+      }),
+      map((zapatillas) => zapatillas as Zapatillas[])
+    ).subscribe((zapatillas) => {
+      this.listaZapatillas.next(zapatillas);
+    });
   }
-  buscarUsuarios(){
-    return this.database.executeSql('SELECT * FROM usuario',[]).then(res=>{
-      let items: Usuario[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            idusuario: res.rows.item(i).idusuario,
-            rut: res.rows.item(i).rut,
-            nombreusuario: res.rows.item(i).nombreusuario,
-            apellidousuario: res.rows.item(i).apellidousuario,
-            fnacimiento: res.rows.item(i).fnacimiento,
-            telefono: res.rows.item(i).telefono,
-            fotoperfil: res.rows.item(i).fotoperfil,
-            correo: res.rows.item(i).correo,
-            clave: res.rows.item(i).clave,
-            respuesta: res.rows.item(i).respuesta,
-            idpregunta: res.rows.item(i).idpregunta,
-            idrol: res.rows.item(i).idrol,
-          })
-        }
-      }
-      this.listaUsuario.next(items as any);
-    })
-  }
-
-  buscarUsuariosPorid(idusuario : any){
-    return this.database.executeSql('SELECT * FROM usuario where idusuario = ? ',[idusuario]).then(res=>{
-      let items: Usuario[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            idusuario: res.rows.item(i).idusuario,
-            rut: res.rows.item(i).rut,
-            nombreusuario: res.rows.item(i).nombreusuario,
-            apellidousuario: res.rows.item(i).apellidousuario,
-            fnacimiento: res.rows.item(i).fnacimiento,
-            telefono: res.rows.item(i).telefono,
-            fotoperfil: res.rows.item(i).fotoperfil,
-            correo: res.rows.item(i).correo,
-            clave: res.rows.item(i).clave,
-            respuesta: res.rows.item(i).respuesta,
-            idpregunta: res.rows.item(i).idpregunta,
-            idrol: res.rows.item(i).idrol,
-          })
-        }
-      }
-      this.listaUsuario.next(items as any);
-    })
-  }
-
-  buscarDetalle(){
-    return this.database.executeSql('SELECT * FROM detalle',[]).then(res=>{
-      let items: Detalle[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            iddetalle: res.rows.item(i).iddetalle,
-            cantidad: res.rows.item(i).cantidad,
-            detalle: res.rows.item(i).detalle,
-            idproducto: res.rows.item(i).idproducto,
-            idventa : res.rows.item(i).idventa,
-          })
-        }
-      }
-      this.listaDetalle.next(items as any);
-    })
-  }
-
-  buscarVenta(){
-    return this.database.executeSql('SELECT * FROM venta ',[]).then(res=>{
-      let items: Venta[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            idventa: res.rows.item(i).idventa,
-            fventa: res.rows.item(i).fventa,
-            fdespacho: res.rows.item(i).fdespacho,
-            estatus: res.rows.item(i).estatus,
-            total: res.rows.item(i).total,
-            carrito : res.rows.item(i).carrito,
-            idusuario: res.rows.item(i).idusuario
-          })
-        }
-      }
-      this.listaVenta.next(items as any);
-    })
-  }
-  
-  buscarVentas(idventa : any){
-    return this.database.executeSql('SELECT * FROM venta WHERE idventa = ? ',[idventa]).then(res=>{
-      let items: Venta[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            idventa: res.rows.item(i).idventa,
-            fventa: res.rows.item(i).fventa,
-            fdespacho: res.rows.item(i).fdespacho,
-            estatus: res.rows.item(i).estatus,
-            total: res.rows.item(i).total,
-            carrito : res.rows.item(i).total,
-            idusuario: res.rows.item(i).idusuario,
-          })
-        }
-      }
-      this.listaVenta.next(items as any);
-    })
-  }
-  buscarProducto(idproducto : any){
-    return this.database.executeSql('SELECT * FROM producto WHERE idproducto = ? ',[idproducto]).then(res=>{
-      let items: Zapatillas[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            idproducto: res.rows.item(i).idproducto,
-            nombreproducto: res.rows.item(i).nombreproducto,
-            descripcion: res.rows.item(i).descripcion,
-            precio: res.rows.item(i).precio,
-            stock: res.rows.item(i).stock,
-            foto:res.rows.item(i).foto,
-            idcategoria: res.rows.item(i).idcategoria,
-          })
-        }
-      }
-      this.listaZapatillas.next(items as any);
-    })
-  }
-  buscarVentaCarrito(usuario: any, estado: any): Observable<Venta[]> {
-    console.log("ID del usuario que recibio la busqueda del carrito: "+usuario);
-    return new Observable<Venta[]>(observer => {
-      this.database.executeSql("SELECT * FROM venta WHERE idusuario = ? AND estatus = ?;", [usuario, estado]).then(res => {
-        let items: Venta[] = [];
-  
-        if (res.rows.length > 0) {
-          for (let i = 0; i < res.rows.length; i++) {
-            items.push({
-              idventa: res.rows.item(i).idventa,
-              fventa: res.rows.item(i).fventa,
-              fdespacho: res.rows.item(i).fdespacho,
-              estatus: res.rows.item(i).estatus,
-              total: res.rows.item(i).total,
-              carrito : res.rows.item(i).total,
-              idusuario: res.rows.item(i).idusuario,
-            });
-          }
-        }
-  
-        observer.next(items);
-        observer.complete();
-      });
+  buscarUsuarios() {
+    this.firestore.collection<Usuario>('usuario').valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching usuarios:', error);
+        return [];
+      }),
+      map((usuarios) => usuarios as Usuario[])
+    ).subscribe((usuarios) => {
+      this.listaUsuario.next(usuarios);
     });
   }
 
-  buscarCompras(estado: any): Observable<Venta[]> {
-    return new Observable<Venta[]>(observer => {
-      this.database.executeSql("SELECT * FROM venta WHERE estatus = ?;", [estado]).then(res => {
-        let items: Venta[] = [];
-  
-        if (res.rows.length > 0) {
-          for (let i = 0; i < res.rows.length; i++) {
-            items.push({
-              idventa: res.rows.item(i).idventa,
-            fventa: res.rows.item(i).fventa,
-            fdespacho: res.rows.item(i).fdespacho,
-            estatus: res.rows.item(i).estatus,
-            total: res.rows.item(i).total,
-            carrito : res.rows.item(i).total,
-            idusuario: res.rows.item(i).idusuario,
-            });
-          }
+  buscarUsuariosPorid(id: string): Promise<Usuario[]> {
+    return this.firestore.collection('usuario', ref => ref.where('id', '==', id))
+      .get()
+      .toPromise() // Convierte Observable a Promise
+      .then(querySnapshot => {
+        // Verifica si querySnapshot es undefined
+        if (!querySnapshot) {
+          throw new Error('No se encontraron resultados.');
         }
   
-        observer.next(items);
-        observer.complete();
-      });
-    });
-  }
-
-  buscarDetalles(iddetalle: any){
-    return this.database.executeSql('SELECT * FROM detalle',[iddetalle]).then(res=>{
-      let items: Detalle[] = [];
-      if(res.rows.length > 0){
-        for(var i=0; i<res.rows.length; i++){
-          items.push({
-            iddetalle: res.rows.item(i).iddetalle,
-            cantidad: res.rows.item(i).cantidad,
-            detalle: res.rows.item(i).detalle,
-            idproducto: res.rows.item(i).idproducto,
-            idventa : res.rows.item(i).idventa,
-          })
-        }
-      }
-      this.listaDetalle.next(items as any);
-    })
-  }
-  buscarDetalleProd(prod: any, venta: any): Observable<Detalle[]> {
-    return new Observable<Detalle[]>(observer => {
-      this.database.executeSql("SELECT * FROM detalle WHERE idproducto = ? AND idventa = ?;", [prod, venta]).then(res => {
-        let items: Detalle[] = [];
-  
-        if (res.rows.length > 0) {
-          for (let i = 0; i < res.rows.length; i++) {
-            items.push({
-            iddetalle: res.rows.item(i).iddetalle,
-            cantidad: res.rows.item(i).cantidad,
-            detalle: res.rows.item(i).detalle,
-            idproducto: res.rows.item(i).idproducto,
-            idventa : res.rows.item(i).idventa,
-            });
-          }
-        }
-  
-        observer.next(items);
-        observer.complete();
-      });
-    });
-  }
-  buscarDetallesVenta(venta: any): Observable<Detallesventa[]> {
-    return new Observable<Detallesventa[]>(observer => {
-      this.database.executeSql("SELECT d.iddetalle, d.cantidad, d.detalle, d.idproducto ,d.idventa, p.nombreproducto, p.precio, p.stock, p.foto FROM detalle d JOIN producto p ON(d.idproducto = p.idproducto) WHERE idventa = ?;", [venta]).then(res => {
-        let items: Detallesventa[] = [];
-  
-        if (res.rows.length > 0) {
-          for (let i = 0; i < res.rows.length; i++) {
-            items.push({
-              iddetalle: res.rows.item(i).iddetalle,
-              cantidad: res.rows.item(i).cantidad,
-              detalle: res.rows.item(i).detalle,
-              idventa: res.rows.item(i).idventa,
-              idproducto: res.rows.item(i).idproducto,
-              nombreproducto: res.rows.item(i).nombreproducto,
-              precio: res.rows.item(i).precio,
-              stock: res.rows.item(i).stock,
-              foto: res.rows.item(i).foto
-            });
-          }
-        }
-  
-        observer.next(items);
-        observer.complete();
-      });
-    });
-  }
-  
-  buscarDetallesVentaPorD(id: any): Observable<Detallesventa[]> {
-    return new Observable<Detallesventa[]>(observer => {
-      this.database.executeSql("SELECT d.iddetalle, d.cantidad, d.detalle, d.idventa ,d.idproducto, p.nombreproducto, p.precio, p.stock, p.foto FROM detalle d JOIN producto p ON(d.idproducto = p.idproducto) WHERE d.iddetalle = ?;", [id]).then(res => {
-        let items: Detallesventa[] = [];
-  
-        if (res.rows.length > 0) {
-          for (let i = 0; i < res.rows.length; i++) {
-            items.push({
-              iddetalle: res.rows.item(i).iddetalle,
-              cantidad: res.rows.item(i).cantidad,
-              detalle: res.rows.item(i).detalle,
-              idventa: res.rows.item(i).idventa,
-              idproducto: res.rows.item(i).idproducto,
-              nombreproducto: res.rows.item(i).nombreproducto,
-              precio: res.rows.item(i).precio,
-              stock: res.rows.item(i).stock,
-              foto: res.rows.item(i).foto
-            });
-          }
-        }
-  
-        observer.next(items);
-        observer.complete();
-      });
-    });
-  }
-  buscarDetallesCompra(){
-    return this.database.executeSql("SELECT * FROM detallecomprado;",[]).then(res =>{
-      //todo bien
-      let items: Detallecomprado[] = [];
-      //Validar cantidad registros
-      if(res.rows.length > 0){
-        //Recorrer los datos
-        for(var i = 0; i < res.rows.length; i++ ){
-          //Guardando los datos
-          items.push({ 
-            iddetallec: res.rows.item(i).iddetallec,
-            nombreprodc: res.rows.item(i).nombreprodc,
-            fotoprodc: res.rows.item(i).fotoProdc,
-            cantidadc: res.rows.item(i).cantidadc,
-            subtotalc: res.rows.item(i).subtotalc,
-            ventac: res.rows.item(i).ventac
-           });
-        }
-      }
-      this.listaDetalleComprado.next(items as any);
-
-    })
-  }
-  insertarDetalleCompra(idproducto: number, nombreprodc: string, fotoprodc: string, cantidadc: number, subtotalc: number, ventac: number): Promise<any> {
-    return new Promise((resolve, reject) => {
-      // Verificar si subtotalc es nulo y proporcionar un valor predeterminado si es necesario
-      if (subtotalc == null) {
-        subtotalc = 0; // Aquí proporciona el valor predeterminado deseado
-      }
-  
-      this.database.executeSql('INSERT INTO detallecomprado (nombreprodc, fotoprodc, cantidadc, subtotalc, ventac) VALUES (?, ?, ?, ?, ?)',
-      [nombreprodc, fotoprodc, cantidadc, subtotalc, ventac])
-      .then(res => {
-        resolve(res);
+        const usuarios: Usuario[] = [];
+        querySnapshot.forEach(doc => {
+          usuarios.push(doc.data() as Usuario);
+        });
+        return usuarios;
       })
       .catch(error => {
-        reject(error);
+        console.error('Error al obtener usuarios:', error);
+        throw error;
       });
+  }
+  buscarDetalle() {
+    this.firestore.collection<Detalle>('detalle').valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching detalles:', error);
+        return of([]);
+      })
+    ).subscribe((detalles) => {
+      this.listaDetalle.next(detalles);
+    });
+  }
+
+  buscarVenta() {
+    this.firestore.collection<Venta>('venta').valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching ventas:', error);
+        return of([]);
+      })
+    ).subscribe((ventas) => {
+      this.listaVenta.next(ventas);
     });
   }
   
+  buscarVentas(idventa: string) {
+    this.firestore.collection<Venta>('venta', ref => ref.where('idventa', '==', idventa)).valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching venta by ID:', error);
+        return of([]);
+      })
+    ).subscribe((ventas) => {
+      this.listaVenta.next(ventas);
+    });
+  }
+  buscarProducto(idproducto: string) {
+    this.firestore.collection<Zapatillas>('producto', ref => ref.where('idproducto', '==', idproducto)).valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching producto by ID:', error);
+        return of([]);
+      })
+    ).subscribe((productos) => {
+      this.listaZapatillas.next(productos);
+    });
+  }
+  buscarVentaCarrito(usuario: string, estado: string): Observable<Venta[]> {
+    return this.firestore.collection<Venta>('venta', ref => ref.where('idusuario', '==', usuario).where('estatus', '==', estado)).valueChanges();
+  }
+
+  buscarCompras(estado: string): Observable<Venta[]> {
+    return this.firestore.collection<Venta>('venta', ref => ref.where('estatus', '==', estado)).valueChanges();
+  }
+
+  buscarDetalles(iddetalle: string) {
+    this.firestore.collection<Detalle>('detalle', ref => ref.where('iddetalle', '==', iddetalle)).valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching detalles by ID:', error);
+        return of([]);
+      })
+    ).subscribe((detalles) => {
+      this.listaDetalle.next(detalles);
+    });
+  }
+  buscarDetalleProd(prod: string, venta: string): Observable<Detalle[]> {
+    return this.firestore.collection<Detalle>('detalle', ref => ref.where('idproducto', '==', prod).where('idventa', '==', venta)).valueChanges();
+  }
+  buscarDetallesVenta(venta: string): Observable<Detallesventa[]> {
+    return this.firestore.collectionGroup<Detallesventa>('detalle', ref => ref.where('idventa', '==', venta)).valueChanges();
+  }
+  
+  buscarDetallesVentaPorD(id: string): Observable<Detallesventa[]> {
+    return this.firestore.collectionGroup<Detallesventa>('detalle', ref => ref.where('iddetalle', '==', id)).valueChanges();
+  }
+  buscarDetallesCompra() {
+    this.firestore.collection<Detallecomprado>('detallecomprado').valueChanges().pipe(
+      catchError((error) => {
+        console.error('Error fetching detalles de compra:', error);
+        return of([]);
+      })
+    ).subscribe((detallesComprados) => {
+      this.listaDetalleComprado.next(detallesComprados);
+    });
+  }
+  insertarDetalleCompra(idproducto: string, nombreproducto: string, foto: string, cantidad: number, subtotal: number, idventa: string): Promise<void> {
+    return this.firestore.collection('detallecomprado').add({
+      idproducto,
+      nombreproducto,
+      foto,
+      cantidad,
+      subtotal,
+      idventa
+    }).then(() => {
+      console.log('Detalle de compra agregado exitosamente');
+    }).catch((error) => {
+      console.error('Error al agregar detalle de compra:', error);
+    });
+  }
+  insertarVenta(fechaActual: Date, fechaDespacho: Date, estado: string, total: number, tipo: string, idUser: string): Promise<void> {
+    const venta = {
+      fechaActual: fechaActual,
+      fechaDespacho: fechaDespacho,
+      estado: estado,
+      total: total,
+      tipo: tipo,
+      idUser: idUser
+    };
+
+    // Inserta una nueva venta en la colección 'ventas'
+    return this.firestore.collection('ventas').add(venta).then(() => {
+      console.log('Venta agregada exitosamente');
+    }).catch((error) => {
+      console.error('Error al agregar venta:', error);
+    });
+  }
+
   
   buscarDetallesCompraVenta(venta: any): Observable<Detallecomprado[]> {
     return new Observable<Detallecomprado[]>(observer => {
@@ -466,230 +297,266 @@ export class DbservicesService {
       });
     });
   }
-  restarStock(id: any, stock: any){  
-    console.log("Stock recibido: "+stock);
-    return this.database.executeSql("UPDATE producto SET stock = ? WHERE idproducto = ?",[stock, id]).then(res =>{
+  restarStock(id: string, stock: number) {
+    const productoRef = this.firestore.collection('producto').doc(id);
+    return productoRef.update({ stock }).then(() => {
       this.buscarZapatillas();
-    })
+    }).catch((error) => {
+      console.error('Error updating stock:', error);
+    });
   }
-  CambiarContra(clave: any, pregunta:any, respuesta:any, correo: any){
-    return this.database.executeSql("UPDATE usuario SET clave = ? WHERE correo = ? AND respuesta = ? AND idpregunta = ?",[clave,correo,respuesta,pregunta]).then(res=>{
-      this.buscarUsuarios();
-    })
-
+  CambiarContra(clave: string, pregunta: string, respuesta: string, correo: string) {
+    this.firestore.collection('usuario', ref => ref.where('correo', '==', correo).where('respuesta', '==', respuesta).where('idpregunta', '==', pregunta))
+      .get().pipe(
+        catchError((error) => {
+          console.error('Error changing password:', error);
+          return of([]);
+        })
+      ).subscribe(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          doc.ref.update({ clave }).then(() => {
+            this.buscarUsuarios();
+          }).catch((error) => {
+            console.error('Error updating password:', error);
+          });
+        });
+      });
   }
    //Venta/carrito
-   modificarEstadoVenta(id: any, estado: any){  
-    return this.database.executeSql("UPDATE venta SET estatus = ? WHERE idventa = ?",[estado, id]).then(res =>{
+   modificarEstadoVenta(id: string, estado: string) {
+    const ventaRef = this.firestore.collection('venta').doc(id);
+    return ventaRef.update({ estatus: estado }).then(() => {
       this.buscarVenta();
-    })
+    }).catch((error) => {
+      console.error('Error updating venta status:', error);
+    });
   }
-  modificarFechaEntrega(id: any, fecha: any){  
-    return this.database.executeSql("UPDATE venta SET fdespacho = ? WHERE idventa = ?",[fecha, id]).then(res =>{
+  modificarFechaEntrega(id: string, fecha: string) {
+    const ventaRef = this.firestore.collection('venta').doc(id);
+    return ventaRef.update({ fdespacho: fecha }).then(() => {
       this.buscarVenta();
-    })
+    }).catch((error) => {
+      console.error('Error updating delivery date:', error);
+    });
   }
-  modificarEntrega(id: any, entrega: any){  
-    return this.database.executeSql("UPDATE venta SET fdespacho = ? WHERE idventa = ?",[entrega, id]).then(res =>{
+  modificarEntrega(id: string, entrega: string) {
+    return this.modificarFechaEntrega(id, entrega); // Same implementation as modificarFechaEntrega
+  }
+  modificarTotal(id: string, total: number) {
+    const ventaRef = this.firestore.collection('venta').doc(id);
+    return ventaRef.update({ total }).then(() => {
       this.buscarVenta();
-    })
+    }).catch((error) => {
+      console.error('Error updating total:', error);
+    });
   }
-  modificarTotal(id: any, total: any){  
-    return this.database.executeSql("UPDATE venta SET total = ? WHERE idventa = ?",[total, id]).then(res =>{
-      this.buscarVenta();
-    })
-  }
-  modificarDetalle(id: any, detalle: any, cantidad: any){  
-    console.log("Id del detalle que se quiere modificar"+id);
-    console.log("Subtotal nuevo del detalle: "+detalle);
-    console.log("Cantidad nueva del detalle: "+cantidad);
-    return this.database.executeSql("UPDATE detalle SET detalle = ?, cantidad = ? WHERE iddetalle = ?",[detalle, cantidad, id]).then(res =>{
+  modificarDetalle(id: string, detalle: string, cantidad: number) {
+    const detalleRef = this.firestore.collection('detalle').doc(id);
+    return detalleRef.update({ detalle, cantidad }).then(() => {
       this.buscarDetalle();
-    })
+    }).catch((error) => {
+      console.error('Error updating detalle:', error);
+    });
   }
-  modificarVentaCarrito(estatus:any ,id: any ){
-    return this.database.executeSql("UPDATE venta SET estatus = ? WHERE idventa = ?",[estatus, id]).then(res=>{
-      this.buscarDetalle();
-    })
+  modificarVentaCarrito(estatus: string, id: string) {
+    return this.modificarEstadoVenta(id, estatus); // Same implementation as modificarEstadoVenta
   }
-  modificarUsuario(idusuario:any,rut:any,nombreusuario:any,apellidousuario:any,telefono:any,fotoperfil:any,correo:any){
-    console.log("Id "+idusuario);
-    console.log("Rut: "+rut);
-    console.log("Nombre:  "+nombreusuario);
-    console.log("Apellido: "+apellidousuario);
-    console.log("Teléfono:  "+telefono);
-    console.log("Fotoperfil:  "+fotoperfil);
-    console.log("Correo:  "+correo);
-    return this.database.executeSql('UPDATE usuario SET  rut = ?, nombreusuario = ? , apellidousuario = ?  , telefono = ?, fotoperfil = ?, correo = ? WHERE idusuario = ?',[rut,nombreusuario,apellidousuario,telefono,fotoperfil,correo,idusuario]).then(res=>{
+  modificarUsuario(idusuario: string, rut: string, nombreusuario: string, apellidousuario: string, telefono: string, fotoperfil: string, correo: string) {
+    const usuarioRef = this.firestore.collection('usuario').doc(idusuario);
+    return usuarioRef.update({ rut, nombreusuario, apellidousuario, telefono, fotoperfil, correo }).then(() => {
       this.buscarUsuarios();
-    })
+    }).catch((error) => {
+      console.error('Error updating usuario:', error);
+    });
   }
-  modificarProducto(idproducto: any, nombreproducto: any, descripcion: any, precio: any , stock: any , foto: any ){
-    console.log("Id "+idproducto);
-    console.log("Nombre producto "+nombreproducto);
-    console.log("Descripciom  "+descripcion);
-    console.log("Precio "+precio);
-    console.log("Stock  "+stock);
-    console.log("Foto:  "+foto);
-    return this.database.executeSql('UPDATE producto SET nombreproducto = ? , descripcion = ?, precio = ?, stock = ?, foto = ? WHERE idproducto = ?',[nombreproducto,descripcion,precio,stock,foto,idproducto]).then(res=>{
-      this.buscarZapatillas();
-    })
+  modificarProducto(idproducto: string, nombreproducto: string, descripcion: string, precio: number, stock: number): Promise<void> {
+    return this.firestore.collection('productos').doc(idproducto).update({
+      nombreproducto,
+      descripcion,
+      precio,
+      stock
+    }).then(() => {
+      console.log('Producto modificado exitosamente');
+    }).catch((error) => {
+      console.error('Error al modificar producto:', error);
+    });
   }
-  modificarPerfil(idusuario:any,nombreusuario:any,apellidousuario:any,fnacimiento:any,telefono:any,fotoperfil:any,correo:any){
-    return this.database.executeSql('UPDATE usuario SET  nombreusuario = ? , apellidousuario = ? , fnacimiento = ? , telefono = ?, fotoperfil = ?, correo = ? WHERE idusuario = ?',[nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,idusuario]).then(res=>{
+  modificarPerfil(idusuario: string, nombreusuario: string, apellidousuario: string, fnacimiento: string, telefono: string, fotoperfil: string, correo: string) {
+    const usuarioRef = this.firestore.collection('usuario').doc(idusuario);
+    return usuarioRef.update({
+      nombreusuario,
+      apellidousuario,
+      fnacimiento,
+      telefono,
+      fotoperfil,
+      correo
+    }).then(() => {
+      console.log('Perfil actualizado exitosamente');
       this.buscarUsuarios();
-    })
+    }).catch((error) => {
+      console.error('Error actualizando perfil:', error);
+    });
   }
   insertarDetalleComprado(nombreproducto: string, fotoproducto: string, cantidad: number, subtotal: number, idventa: number) {
-    return this.database.executeSql("INSERT INTO detallecomprado (nombreprodc, fotoprodc, cantidadc, subtotalc, ventac) VALUES (?, ?, ?, ?, ?);",[nombreproducto, fotoproducto, cantidad, subtotal, idventa]);
-  }
-  eliminarDetallesVenta(idVenta: any) {
-    return this.database.executeSql("DELETE FROM detalle WHERE idventa = ?;", [idVenta]).then(res => {
+    return this.firestore.collection('detallecomprado').add({
+      nombreprodc: nombreproducto,
+      fotoprodc: fotoproducto,
+      cantidadc: cantidad,
+      subtotalc: subtotal,
+      ventac: idventa
+    }).then(() => {
+      console.log('Detalle comprado agregado exitosamente');
+    }).catch((error) => {
+      console.error('Error agregando detalle comprado:', error);
     });
   }
-
-
-
-
-
-  buscarUsu(correo: any, clave: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.database.executeSql('SELECT idusuario, correo, clave, idrol FROM usuario WHERE correo = ? AND clave = ?', [correo, clave])
-        .then((res) => {
-          // Si la consulta se ejecuta con éxito, verifica si se encontraron datos
-          if (res.rows.length > 0) {
-            // Obtiene el primer resultado encontrado
-            const usuario = res.rows.item(0);
-            // Guarda el idusuario en el localStorage
-            localStorage.setItem('idusuario', usuario.idusuario.toString()); // Convierte a cadena si es necesario
-            // Resuelve la promesa con el objeto de usuario
-            resolve(usuario);
-          } else {
-            // Si no se encontraron datos, resuelve la promesa con null o un mensaje indicando la falta de coincidencias
-            resolve(null); // O puedes enviar un mensaje específico: resolve({ mensaje: 'No se encontraron coincidencias' });
-          }
-        })
-        .catch((error) => {
-          // Si hay un error en la consulta, rechaza la promesa con el error
-          reject('Error al ejecutar la consulta: ' + JSON.stringify(error));
-        });
-    });
-  }
-  buscarCorreo(correo: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.database.executeSql('SELECT correo FROM usuario WHERE correo = ?', [correo])
-        .then((res) => {
-          // Si la consulta se ejecuta con éxito, verifica si se encontraron datos
-          if (res.rows.length > 0) {
-            // Obtiene el primer resultado encontrado
-            const usuario = res.rows.item(0);
-            
-            // Resuelve la promesa con el objeto de usuario
-            resolve(usuario);
-          } else {
-            // Si no se encontraron datos, resuelve la promesa con null o un mensaje indicando la falta de coincidencias
-            resolve(null); // O puedes enviar un mensaje específico: resolve({ mensaje: 'No se encontraron coincidencias' });
-          }
-        })
-        .catch((error) => {
-          // Si hay un error en la consulta, rechaza la promesa con el error
-          reject('Error al ejecutar la consulta: ' + JSON.stringify(error));
-        });
-    });
-  }
+  eliminarDetallesVenta(idVenta: string) {
+    // Referencia a la colección
+    const detallesRef = this.firestore.collection('detalle', ref => ref.where('idventa', '==', idVenta));
   
-  buscarCorreoYPregunta(correo: any, pregunta: any, respuesta: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.database.executeSql('SELECT u.correo, u.idpregunta, u.respuesta FROM usuario u WHERE u.correo = ? AND u.idpregunta = ?  AND u.respuesta = ?', [correo, pregunta, respuesta])
-        .then((res) => {
-          // Si la consulta se ejecuta con éxito, verifica si se encontraron datos
-          if (res.rows.length > 0) {
-            // Obtiene el primer resultado encontrado
-            const usuario = res.rows.item(0);
-            localStorage.setItem('correo', usuario.correo.toString());
-            localStorage.setItem('idpregunta', usuario.idpregunta.toString());
-            localStorage.setItem('respuesta', usuario.respuesta.toString());
-            // Resuelve la promesa con el objeto de usuario
-            resolve(usuario);
-          } else {
-            // Si no se encontraron datos, resuelve la promesa con null o un mensaje indicando la falta de coincidencias
-            resolve(null); // O puedes enviar un mensaje específico: resolve({ mensaje: 'No se encontraron coincidencias' });
-          }
-        })
-        .catch((error) => {
-          // Si hay un error en la consulta, rechaza la promesa con el error
-          reject('Error al ejecutar la consulta: ' + JSON.stringify(error));
-        });
+    // Obtener documentos
+    return detallesRef.get().toPromise().then(querySnapshot => {
+      // Verificar si querySnapshot está definido
+      if (!querySnapshot || querySnapshot.empty) {
+        console.log('No se encontraron detalles para eliminar');
+        return; // Salir si no hay documentos
+      }
+  
+      // Iterar sobre cada documento
+      const deletePromises = querySnapshot.docs.map(doc => {
+        // Eliminar cada documento individualmente
+        return this.firestore.collection('detalle').doc(doc.id).delete();
+      });
+  
+      // Esperar que todas las eliminaciones se completen
+      return Promise.all(deletePromises);
+    }).then(() => {
+      console.log('Detalles eliminados exitosamente');
+    }).catch((error) => {
+      console.error('Error eliminando detalles:', error);
     });
   }
 
-   async obtenerProducto(idproducto: any): Promise<any>{
-    return new Promise((resolve, reject)=>{
-      this.database.executeSql('SELECT * FROM producto WHERE idproducto = ?', [idproducto]).then((res)=>{
-        if (res.rows.length > 0){
-          resolve(res.rows.item(0));
-        }else{
-          resolve(null);
-        }
-      }).catch((error)=>{
-        reject('Error al obtener el producto' + JSON.stringify(error));
-      });
-    });
 
-   }
 
-    async ObtenerCategoria(idcategoria:any){
-    return new Promise((resolve, reject)=>{
-      this.database.executeSql('SELECT * FROM producto WHERE idcategoria = ?', [idcategoria]).then((res)=>{
-        if (res.rows.length > 0){
-          resolve(res.rows.item(0));
-        }else{
-          resolve(null);
-        }
-      }).catch((error)=>{
-        reject('Error al obtener el producto' + JSON.stringify(error));
-      });
-    });
-   }
-
-   async obtenerUsuario(idusuario :any): Promise<any>{
-    return new Promise((resolve, reject)=>{
-      this.database.executeSql('SELECT * FROM usuario WHERE idusuario = ?', [idusuario]).then((res)=>{
-        if (res.rows.length > 0){
-          resolve(res.rows.item(0));
-        }else{
-          resolve(null);
-        }
-      }).catch((error)=>{
-        reject('Error al obtener el usuario' + JSON.stringify(error));
-      });
-    });
-
-   }
-   buscarHistorialCompras(idUsuario: any): Observable<Detallecomprado[]> {
-    console.log("ID del usuario para historial de compras:", idUsuario);
-    return new Observable<Detallecomprado[]>(observer => {
-      this.database.executeSql("SELECT * FROM detallecomprado dc JOIN venta v ON(dc.ventac = v.idventa) WHERE v.idusuario = ?;", [idUsuario]).then(res => {
-        let items: Detallecomprado[] = [];
-  
-        if (res.rows.length > 0) {
-          for (let i = 0; i < res.rows.length; i++) {
-            items.push({
-              iddetallec: res.rows.item(i).iddetallec,
-              nombreprodc: res.rows.item(i).nombreprodc,
-              fotoprodc: res.rows.item(i).fotoprodc,
-              cantidadc: res.rows.item(i).cantidadc,
-              subtotalc: res.rows.item(i).precio, // Cambiar a precio en lugar de subtotal
-              ventac: res.rows.item(i).ventac
-            });
-          }
-        }
-  
-        observer.next(items);
+  buscarUsu(correo: string | undefined, clave: string | undefined): Observable<Usuario | null> {
+    if (!correo || !clave) {
+      return new Observable<Usuario | null>(observer => {
+        observer.next(null);
         observer.complete();
       });
+    }
+    return new Observable<Usuario | null>(observer => {
+      this.usuariosCollection.ref
+        .where('correo', '==', correo)
+        .where('clave', '==', clave)
+        .get()
+        .then(querySnapshot => {
+          if (querySnapshot.empty) {
+            observer.next(null);
+          } else {
+            observer.next(querySnapshot.docs[0].data() as Usuario);
+          }
+          observer.complete();
+        })
+        .catch(error => {
+          console.error('Error al ejecutar la consulta: ', error);
+          observer.error('Error al ejecutar la consulta: ' + error.message);
+        });
     });
   }
+  
+
+  buscarCorreo(correo: string): Observable<any> {
+    return this.firestore.collection('usuario', ref => ref.where('correo', '==', correo))
+      .get()
+      .pipe(
+        map(querySnapshot => {
+          if (querySnapshot.empty) {
+            return null; // No se encontraron usuarios
+          }
+          return querySnapshot.docs[0].data(); // Retorna los datos del primer documento encontrado
+        })
+      );
+  }
+  buscarCorreoYPregunta(correo: string, pregunta: string, respuesta: string): Observable<Usuario | null> {
+    return this.firestore.collection<Usuario>('usuario', ref => 
+      ref.where('correo', '==', correo)
+         .where('idpregunta', '==', pregunta)
+         .where('respuesta', '==', respuesta)
+    ).get().pipe(
+      map(querySnapshot => {
+        if (querySnapshot.empty) {
+          return null; // No se encontraron usuarios
+        }
+        const usuario = new Usuario();
+        localStorage.setItem('correo', usuario.correo);
+        localStorage.setItem('idpregunta', usuario.idpregunta);
+        localStorage.setItem('respuesta', usuario.respuesta);
+        return usuario;
+      })
+    );
+  }
+
+  obtenerProducto(idproducto: string): Observable<any> {
+    return this.firestore.collection('producto').doc(idproducto).get().pipe(
+      map(doc => {
+        if (!doc.exists) {
+          return null;
+        }
+        return doc.data();
+      }),
+      catchError(error => {
+        console.error('Error al obtener el producto:', error);
+        return of(null); // En caso de error, retorna null
+      })
+    );
+  }
+  ObtenerCategoria(idcategoria: string): Observable<any> {
+    return this.firestore.collection('producto', ref => ref.where('idcategoria', '==', idcategoria)).get().pipe(
+      map(querySnapshot => {
+        if (querySnapshot.empty) {
+          return null;
+        }
+        // Devuelve el primer documento encontrado
+        return querySnapshot.docs[0].data();
+      }),
+      catchError(error => {
+        console.error('Error al obtener la categoría:', error);
+        return of(null); // En caso de error, retorna null
+      })
+    );
+  }
+
+ obtenerUsuario(idusuario: string): Observable<any> {
+  return this.firestore.collection('usuario').doc(idusuario).get().pipe(
+    map(doc => {
+      if (!doc.exists) {
+        return null;
+      }
+      return doc.data();
+    }),
+    catchError(error => {
+      console.error('Error al obtener el usuario:', error);
+      return of(null); // En caso de error, retorna null
+    })
+  );
+}
+buscarHistorialCompras(idUsuario: string): Observable<Detallecomprado[]> {
+  return this.firestore.collection('detallecomprado', ref => ref.where('idusuario', '==', idUsuario)).get().pipe(
+    map(querySnapshot => {
+      let items: Detallecomprado[] = [];
+      querySnapshot.forEach(doc => {
+        items.push(doc.data() as Detallecomprado);
+      });
+      return items;
+    }),
+    catchError(error => {
+      console.error('Error al obtener historial de compras:', error);
+      return of([]); // Retorna un array vacío en caso de error
+    })
+  );
+}
   
 
  
@@ -701,26 +568,22 @@ export class DbservicesService {
 
 
 
-  insertarZapatilla(nombreproducto:any, descripcion: any, precio : any, stock: any , foto: any , idcategoria: any){
-    return this.database.executeSql('INSERT INTO producto(nombreproducto,descripcion,precio,stock,foto,idcategoria) VALUES (?,?,?,?,?,?)',[nombreproducto,descripcion,precio,stock,foto,idcategoria ]).then(res=>{
-      this.buscarZapatillas();
-    }).catch(e=>{
-      this.presentAlert("error al insertar zapatilla" + e);
-    })
-  }
-  insertarVenta(fventa:any,fdespacho:any, estatus: any, total : any, carrito: any , idusuario: any ){
-    console.log("Fecha despascho ingresada: "+fventa);
-    console.log("Fecha despascho ingresada: "+fdespacho);
-    console.log("Fecha despascho ingresada: "+estatus);
-    console.log("Fecha despascho ingresada: "+total);
-    console.log("Fecha despascho ingresada: "+carrito);
-    console.log("Fecha despascho ingresada: "+idusuario);
-    return this.database.executeSql('INSERT INTO venta(fventa,fdespacho,estatus,total,carrito,idusuario) VALUES (?,?,?,?,?,?)',[fventa,fdespacho,estatus,total,carrito,idusuario ]).then(res=>{
-      this.buscarVenta();
-    }).catch(e=>{
-      this.presentAlert("error al insertar Venta" + e);
-    })
-  }
+insertarZapatilla(nombreproducto: string, descripcion: string, precio: number, stock: number, foto: string, categoria: string) {
+  return this.firestore.collection('zapatillas').add({
+    nombreproducto,
+    descripcion,
+    precio,
+    stock,
+    foto,
+    categoria
+  })
+  .then(() => {
+    console.log('Zapatilla agregada exitosamente');
+  })
+  .catch((error) => {
+    console.error('Error al agregar zapatilla:', error);
+  });
+}
 
   cambiarcontra(){
 
@@ -742,56 +605,89 @@ export class DbservicesService {
    }
 
 
-  agregarDetalle(cantidad: any, detalle: any, idventa: any, idproducto: any){ 
-    console.log("cantidad: "+cantidad);
-    console.log("detalle: "+detalle);
-    console.log("idproducto: "+idproducto);
-    console.log("idventa: "+idventa);
-  
-    return this.database.executeSql("INSERT INTO detalle(cantidad, detalle, idproducto, idventa) VALUES(?, ?, ?, ?)",[cantidad, detalle,idproducto,idventa]).then(res=> {
-      this.buscarDetalle(); 
-    }).catch(e=>{
-      this.presentAlert("error al insertar detalle" + e);
-    })
+   agregarDetalle(cantidad: number, detalle: string, idventa: string, idproducto: string) {
+    return this.firestore.collection('detalle').add({
+      cantidad,
+      detalle,
+      idproducto,
+      idventa
+    }).then(() => {
+      console.log('Detalle agregado exitosamente');
+      this.buscarDetalle();
+    }).catch((error) => {
+      console.error('Error agregando detalle:', error);
+    });
   }
-  agregarDetalleCompra(nombre: any, foto: any, cantidad: any, subtotal: any, venta: any) {  
-    // Ejecutar la sentencia SQL para agregar el detalle de compra
-      return this.database.executeSql("INSERT INTO detallecomprado(nombreprodc, fotoprodc, cantidadc, subtotalc, ventac) VALUES (?, ?, ?, ?, ?)", [nombre, foto, cantidad, subtotal, venta]).then(res => {
-        console.log('Registro insertado con éxito.');
-        this.buscarDetallesCompra(); // Actualizar la lista de detalles de compra
-      });
-    }
-
-  actualizarProducto(idproducto: any, nombreproducto:any, descripcion:any, precio:any, stock:any, foto: any ,categoria: any){
-    return this.database.executeSql('UPDATE producto SET nombreproducto = ?, descripcion = ? WHERE id_producto = ?',[nombreproducto,descripcion]).then(res=>{
+  agregarDetalleCompra(nombre: string, foto: string, cantidad: number, subtotal: number, venta: number) {
+    return this.insertarDetalleComprado(nombre, foto, cantidad, subtotal, venta); // Reutilizar método ya definido
+  }
+  actualizarProducto(idproducto: string, nombreproducto: string, descripcion: string, precio: number, stock: number, foto: string, categoria: string) {
+    const productoRef = this.firestore.collection('producto').doc(idproducto);
+    return productoRef.update({
+      nombreproducto,
+      descripcion,
+      precio,
+      stock,
+      foto,
+      categoria
+    }).then(() => {
+      console.log('Producto actualizado exitosamente');
       this.buscarZapatillas();
-    }).catch(e=>{
-      this.presentAlert("error al actualizar" + e);
-    })
-
+    }).catch((error) => {
+      console.error('Error actualizando producto:', error);
+    });
   }
-  eliminarProducto(idproducto: any){
-    return this.database.executeSql('DELETE FROM producto WHERE idproducto = ?',[idproducto]).then(res=>{
+  eliminarProducto(idproducto: string) {
+    const productoRef = this.firestore.collection('producto').doc(idproducto);
+    return productoRef.delete().then(() => {
+      console.log('Producto eliminado exitosamente');
       this.buscarZapatillas();
-    }).catch(e=>{
-      this.presentAlert("error al eliminar" + e);
-    })
-
+    }).catch((error) => {
+      console.error('Error eliminando producto:', error);
+    });
   }
-  eliminarUsuario(idusuario: any){
-    return this.database.executeSql('DELETE FROM usuario WHERE idusuario = ?',[idusuario]).then(res=>{
+  eliminarUsuario(idusuario: string) {
+    const usuarioRef = this.firestore.collection('usuario').doc(idusuario);
+    return usuarioRef.delete().then(() => {
+      console.log('Usuario eliminado exitosamente');
       this.buscarUsuarios();
-    }).catch(e=>{
-      this.presentAlert("error al eliminar" + e);
-    })
-
+    }).catch((error) => {
+      console.error('Error eliminando usuario:', error);
+    });
   }
-  insertarUsuario(rut : any, nombreusuario:any, apellidousuario: any, fnacimiento: any , telefono: any , fotoperfil: any,correo: any,clave: any,respuesta: any,idpregunta: any,idrol: any){
-    return this.database.executeSql('INSERT INTO usuario(rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES (?,?,?,?,?,?,?,?,?,?,?)',[rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol]).then(res=>{
-      this.buscarUsuarios();
-    }).catch(e=>{
-      this.presentAlert("error al insertar usuario" + e);
+
+  insertarUsuario(
+    rut: string,
+    nombre: string,
+    apellido: string,
+    fechaNacimiento: string,
+    telefono: string,
+    foto: string,
+    correo: string,
+    clave: string,
+    respuesta: string,
+    pregunta: string,
+    rol: string
+  ): Promise<void> {
+    return this.firestore.collection('usuario').add({
+      rut,
+      nombre,
+      apellido,
+      fechaNacimiento,
+      telefono,
+      foto,
+      correo,
+      clave,
+      respuesta,
+      pregunta,
+      rol
     })
+    .then(() => {
+      console.log('Usuario agregado exitosamente');
+    })
+    .catch((error) => {
+      console.error('Error al agregar usuario:', error);
+    });
   }
 
   //Creacion base de datos
@@ -890,9 +786,7 @@ export class DbservicesService {
     });
   }
 
-  async exportDataToJson(): Promise<any> {
-    const data: any = {};
-
+  exportDataToJson(): Promise<any> {
     const tables = [
       'rol',
       'pregunta',
@@ -903,17 +797,20 @@ export class DbservicesService {
       'detalle',
       'detallecomprado'
     ];
-
-    for (const table of tables) {
-      const rows = await this.database.executeSql(`SELECT * FROM ${table};`, []);
-      data[table] = [];
-
-      for (let i = 0; i < rows.rows.length; i++) {
-        data[table].push(rows.rows.item(i));
-      }
-    }
-
-    return data;
+    
+    const data: any = {};
+  
+    const fetchCollection = (collection: string) => {
+      return firstValueFrom(this.firestore.collection(collection).get()).then(querySnapshot => {
+        data[collection] = querySnapshot.docs.map(doc => doc.data());
+      });
+    };
+  
+    return Promise.all(tables.map(fetchCollection)).then(() => {
+      return data;
+    }).catch((error) => {
+      return Promise.reject('Error exportando datos a JSON: ' + error.message);
+    });
   }
 
 
