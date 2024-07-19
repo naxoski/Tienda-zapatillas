@@ -18,13 +18,20 @@ export class AgregarProductosPage implements OnInit {
 
   constructor(public router:Router, private db: DbservicesService) { }
 
-  insertar(){
+  insertar() {
     try {
-    this.db.insertarZapatilla(this.nombreProductos,this.descripcionProducto,this.precioProducto,this.stockProducto,this.fotoProducto,this.categoriaProducto);
-    this.db.presentAlert("Zapatillas Agregada");
-    this.router.navigate(['/ver-productos']);
+      this.db.insertarZapatilla(
+        this.nombreProductos,
+        this.descripcionProducto,
+        parseFloat(this.precioProducto),
+        parseInt(this.stockProducto, 10),
+        this.fotoProducto,
+        this.categoriaProducto
+      );
+      this.db.presentAlert("Zapatilla Agregada");
+      this.router.navigate(['/ver-productos']);
     } catch (error) {
-      this.db.presentAlert("Zapatillas no agregada"); 
+      this.db.presentAlert("Zapatilla no agregada");
     }
   }
   takePicture = async () => {

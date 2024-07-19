@@ -22,22 +22,31 @@ export class CambiarcontraPage implements OnInit {
       this.mostrarMensaje('Las contraseñas no coinciden.');
       return;
     }
-
+  
     // Obtener datos del localStorage
     const pregunta = localStorage.getItem('idpregunta');
     const respuesta = localStorage.getItem('respuesta');
     const correo = localStorage.getItem('correo');
-
-    // Llamar a CambiarContra del servicio de base de datos.
-    await this.db.CambiarContra(
-      this.clave1,pregunta,respuesta,correo
-    );
-
-    // Mostrar un mensaje de éxito
-    this.mostrarMensaje('Contraseña cambiada exitosamente.');
-    this.router.navigate(['/home']);
+  
+    // Verificar que los datos no sean null
+    if (!pregunta || !respuesta || !correo) {
+      this.mostrarMensaje('Datos de recuperación no disponibles.');
+      return;
+    }
+  
+    // Llamar a CambiarContra del servicio de base de datos
+    try {
+      await this.db.CambiarContra(this.clave1, pregunta, respuesta, correo);
+      // Mostrar un mensaje de éxito
+      this.mostrarMensaje('Contraseña cambiada exitosamente.');
+      this.router.navigate(['/home']);
+    } catch (error) {
+      // Mostrar un mensaje de error en caso de que CambiarContra falle
+      this.mostrarMensaje('Error al cambiar la contraseña.');
+      console.error('Error al cambiar la contraseña:', error);
+    }
   }
-
+  
   async mostrarMensaje(mensaje: string) {
     const toast = await this.toastController.create({
       message: mensaje,

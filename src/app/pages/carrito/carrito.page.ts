@@ -49,14 +49,6 @@ export class CarritoPage implements OnInit {
     });
   }
 
-  async mostrarMensaje(mensaje: string) {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: 2000,
-    });
-    toast.present();
-  }
-
   async cargarDetallesVenta() {
     try {
       const detalles = await lastValueFrom(this.db.buscarDetallesVenta(this.venta.idventa));
@@ -68,49 +60,58 @@ export class CarritoPage implements OnInit {
 
   async Pagar() {
     try {
+      // Ajustar la fecha de despacho y convertirla a string
       this.fdespacho.setDate(this.fechaActual.getDate() + this.diasSumar);
-
-      await this.db.modificarFechaEntrega(this.venta.idventa, this.fdespacho);
+      const fechaEntrega = this.fdespacho.toISOString(); // Convierte a ISO string
+      await this.db.modificarFechaEntrega(this.venta.idventa, fechaEntrega);
       await this.db.modificarEstadoVenta(this.venta.idventa, 'Comprado');
-
+  
       let totalVenta = 0;
       for (let detalle of this.detalles) {
         totalVenta += detalle.precio * detalle.cantidad;
       }
-
+  
       const datosPago = {
         amount: totalVenta,
         subject: 'Compra en MiTienda',
         email: this.correoUser, // Reemplaza con el correo del usuario
         currency: 'CLP' // Asegúrate de usar la moneda correcta
       };
-
+  
       const respuestaFlow = await this.flowService.iniciarPago(datosPago).toPromise();
       console.log('Respuesta de Flow:', respuestaFlow);
-
+  
       if (respuestaFlow && respuestaFlow.payment_url) {
         window.location.href = respuestaFlow.payment_url;
       } else {
         throw new Error('No se recibió la URL de pago de Flow');
       }
-
+  
       await this.mostrarMensaje('Redirigiendo al portal de pago...');
-
+  
       for (let x of this.detalles) {
         this.stock = x.stock - x.cantidad;
         await this.db.restarStock(x.idproducto, this.stock);
         await this.db.buscarCompras(x.idproducto);
         await this.db.insertarDetalleCompra(x.idproducto, x.nombreproducto, x.foto, x.cantidad, totalVenta, this.venta.idventa);
       }
-
+  
       const detallesComprados = await lastValueFrom(this.db.buscarDetallesCompraVenta(this.venta.idventa));
       console.log('Detalles comprados:', detallesComprados);
-
+  
       await this.mostrarMensaje('Compra realizada con éxito.');
-
+  
     } catch (error) {
       console.error('Error al realizar el pago:', error);
       await this.mostrarMensaje('Error al realizar la compra. Inténtalo nuevamente.');
     }
+  }
+  
+  async mostrarMensaje(mensaje: string) {
+    const toast = await this.toastController.create({
+      message: mensaje,
+      duration: 2000,
+    });
+    toast.present();
   }
 }

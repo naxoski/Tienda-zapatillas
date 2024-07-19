@@ -33,29 +33,37 @@ export class ValidacionCorreoPage implements OnInit {
   }
   async buscarCorreo() {
     try {
-      const usuario = await this.db.buscarCorreo(this.correo);
-
-      if (usuario) {
-          const alert = await this.alertController.create({
-            header: 'Correo Verificado!',
-            message: 'Correo encontrado',
-            buttons: ['OK']
-          });
-          await alert.present();
-          this.router.navigate(['/recuperar-contra']);
-        
-      } else {
-        // Si las credenciales no son válidas, muestra un mensaje indicando credenciales incorrectas
+      // Verificar si correo es un string válido
+      if (!this.correo) {
         const alert = await this.alertController.create({
-          header: 'Credenciales incorrectas',
-          message: 'No se encontro el correo ingresado',
+          header: 'Error',
+          message: 'El correo no puede estar vacío.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return; // Salir si el correo es inválido
+      }
+  
+      const usuario = await this.db.buscarCorreo(this.correo);
+  
+      if (usuario) {
+        const alert = await this.alertController.create({
+          header: 'Correo Verificado!',
+          message: 'Correo encontrado',
+          buttons: ['OK']
+        });
+        await alert.present();
+        this.router.navigate(['/recuperar-contra']);
+      } else {
+        const alert = await this.alertController.create({
+          header: 'Correo no encontrado',
+          message: 'No se encontró el correo ingresado',
           buttons: ['OK']
         });
         await alert.present();
       }
     } catch (error) {
-      // Maneja errores si ocurren durante la consulta
-      console.error('Error al verificar credenciales:', error);
+      console.error('Error al verificar el correo:', error);
     }
-  }
+}
 }
