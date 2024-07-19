@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
-import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
-import { Platform,AlertController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { BehaviorSubject, Observable, firstValueFrom, from, of, throwError } from 'rxjs';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { Firestore, collection, writeBatch, query, where, getDocs } from '@angular/fire/firestore';
+import { catchError, map } from 'rxjs/operators';
 import { AngularFirestore ,AngularFirestoreCollection} from '@angular/fire/compat/firestore';
-import { QuerySnapshot, DocumentSnapshot } from '@angular/fire/compat/firestore';
-import { AngularFireDatabase } from '@angular/fire/compat/database';
 
 
 import { Zapatillas } from './zapatillas';
@@ -21,48 +17,9 @@ import { Detallesventa } from './detallesventa';
   providedIn: 'root'
 })
 export class DbservicesService {
-  public database!: SQLiteObject;
   private usuariosCollection: AngularFirestoreCollection<Usuario>;
  
   
-
-  //TABLAS
-  rol: string= "CREATE TABLE IF NOT EXISTS rol(idrol INTEGER PRIMARY KEY autoincrement,nombrerol VARCHAR(30) NOT NULL);";
-  pregunta: string= "CREATE TABLE IF NOT EXISTS pregunta(idpregunta INTEGER PRIMARY KEY autoincrement, nombrepregunta VARCHAR(30) NOT NULL);";
-  categoria: string= "CREATE TABLE IF NOT EXISTS  categoria(idcategoria INTEGER PRIMARY KEY autoincrement, nombrecategoria VARCHAR(30) NOT NULL);";
-  producto: string= "CREATE TABLE IF NOT EXISTS  producto(idproducto INTEGER PRIMARY KEY autoincrement, nombreproducto VARCHAR(30) NOT NULL, descripcion VARCHAR(30) NOT NULL, precio INTEGER NOT NULL, stock INTEGER NOT NULL, foto BLOB NOT NULL,idcategoria INTEGER NOT NULL,  FOREIGN KEY(idcategoria) REFERENCES categoria(idcategoria) );";
-  usuario: string="CREATE TABLE IF NOT EXISTS usuario(idusuario INTEGER PRIMARY KEY autoincrement, rut VARCHAR(20) NOT NULL, nombreusuario VARCHAR(30) NOT NULL, apellidousuario VARCHAR(30) NOT NULL, fnacimiento DATE, telefono INTEGER , fotoperfil BLOB, correo VARCHAR(30) NOT NULL, clave VARCHAR(10) NOT NULL, respuesta VARCHAR(30) NOT NULL, idpregunta INTEGER NOT NULL, idrol INTEGER NOT NULL,FOREIGN KEY(idpregunta) REFERENCES pregunta(idpregunta), FOREIGN KEY(idrol) REFERENCES rol(idrol) );";
-  venta: string = "CREATE TABLE IF NOT EXISTS venta(idventa INTEGER PRIMARY KEY autoincrement, fventa DATE, fdespacho DATE, estatus VARCHAR(30) NOT NULL, total INTEGER NOT NULL , carrito VARCHAR(30) NOT NULL, idusuario INTEGER NOT NULL, FOREIGN KEY(idusuario) REFERENCES usuario(idusuario) );";
-  detalle: string = "CREATE TABLE IF NOT EXISTS detalle(iddetalle INTEGER PRIMARY KEY autoincrement, cantidad INTEGER NOT NULL , detalle INTEGER NOT NULL, idproducto INTEGER NOT NULL, idventa INTEGER NOT NULL,FOREIGN KEY (idproducto) REFERENCES producto(idproducto),  FOREIGN KEY(idventa) REFERENCES venta(idventa) );";
-  detalleComprado: string ="CREATE TABLE IF NOT EXISTS detallecomprado(iddetallec INTEGER PRIMARY KEY AUTOINCREMENT, nombreprodc TEXT NOT NULL, fotoprodc TEXT NOT NULL, cantidadc INTEGER NOT NULL, subtotalc INTEGER , ventac INTEGER NOT NULL, FOREIGN KEY (ventac) REFERENCES venta(idventa) );";
-
-  
-
-   
-   
-   //REGISTROS
-   registroCategoria: string = "INSERT or IGNORE INTO categoria(idcategoria,nombrecategoria) VALUES (1,'hombre');";
-
-   registroCategoria2: string = "INSERT or IGNORE INTO categoria(idcategoria,nombrecategoria) VALUES (2,'mujer');";
-   
-   registroRol: string="INSERT or IGNORE INTO rol(idrol,nombrerol) VALUES(10,'usuario');";
-
-   registroRol2: string="INSERT or IGNORE INTO rol(idrol,nombrerol) VALUES(20,'admin');";
-
-   registroPregunta: string="INSERT or IGNORE INTO pregunta(idpregunta,nombrepregunta) VALUES(30, '¿Tienes mascotas?');";
-
-   registroPregunta2: string="INSERT or IGNORE INTO pregunta(idpregunta,nombrepregunta) VALUES(40, '¿Tienes hermanos?');";
-
-   registroPregunta3: string="INSERT or IGNORE INTO pregunta(idpregunta,nombrepregunta) VALUES(50, '¿Tienes pareja?');";
-
-   registroUsuario: string="INSERT or IGNORE INTO usuario(idusuario,rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES(500, '21.475.570-k','ignacio', 'huerta', '2004-01-05',123456789,'assets/chad.webp','ignaciohuerta8a@gmail.com','claveprueba123','si','¿Tienes pareja?','usuario');"
-
-   registroUsuario2: string="INSERT or IGNORE INTO usuario(idusuario,rut,nombreusuario,apellidousuario,fnacimiento,telefono,fotoperfil,correo,clave,respuesta,idpregunta,idrol) VALUES(600, '21.475.571-k','ignacio', 'huerta', '2004-01-05',123456789,'assets/chad.webp','administrador@gmail.com','claveprueba123','si','¿Tienes pareja?','admin');"
-   
-
-
-
-   registroZapatillas: string = "INSERT or IGNORE INTO producto(idproducto, nombreproducto, descripcion, precio, stock, foto, idcategoria) VALUES (100, 'Nike', 'Soy una descripción', 100000, 50, 'assets/air jordan 1.webp', 'hombre');";
 
 
    private listaZapatillas = new BehaviorSubject<Zapatillas[]>([]);
@@ -70,14 +27,98 @@ export class DbservicesService {
    private listaVenta = new BehaviorSubject<Venta[]>([]);
    private listaDetalle = new BehaviorSubject<Detalle[]>([]);
    private listaDetalleComprado = new BehaviorSubject<Detallecomprado[]>([]);
-   private listaDetallesVenta = new BehaviorSubject<Detallesventa[]>([]);
    private isDBReady = new BehaviorSubject<boolean>(false);
 
-   private flag: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
    
-  constructor(private alertController: AlertController,private sqlite : SQLite, private platform : Platform,private firestore: AngularFirestore,private db: AngularFireDatabase) {
+  constructor(  private alertController: AlertController,
+    private firestore: AngularFirestore,
+  )
+  {
     this.usuariosCollection = this.firestore.collection<Usuario>('usuario');
+
+    //Categorias
+    this.firestore.collection('categoria').add({
+      idcategoria: 1,
+      nombrecategoria: 'Hombre'
+    });
+    
+    this.firestore.collection('categoria').add({
+      idcategoria: 2,
+      nombrecategoria: 'Mujer'
+    });
+
+    //Roles
+    this.firestore.collection('rol').add({
+      idrol: 10,
+      nombrerol: 'Usuario'
+    });
+    
+    this.firestore.collection('rol').add({
+      idrol: 20,
+      nombrerol: 'Admin'
+    });
+
+    //Preguntas de seguridad
+    this.firestore.collection('pregunta').add({
+      idpregunta: 30,
+      nombrepregunta: '¿Tienes mascotas?'
+    });
+    
+    this.firestore.collection('pregunta').add({
+      idpregunta: 40,
+      nombrepregunta: '¿Tienes hermanos?'
+    });
+    
+    this.firestore.collection('pregunta').add({
+      idpregunta: 50,
+      nombrepregunta: '¿Tienes pareja?'
+    });
+
+
+    //Usuario normal
+    this.firestore.collection('usuario').add({
+      idusuario: 500,
+      rut: '21.475.570-k',
+      nombreusuario: 'Ignacio',
+      apellidousuario: 'Huerta',
+      fnacimiento: new Date('2004-01-05'),
+      telefono: 123456789,
+      fotoperfil: 'assets/chad.webp',
+      correo: 'ignaciohuerta8a@gmail.com',
+      clave: 'claveprueba123',
+      respuesta: 'si',
+      idpregunta: 50, /* Pregunta asociada a ¿Tienes pareja? */
+      idrol: 'usuario' /* Rol de usuario */
+    });
+    //Usuario admin
+    this.firestore.collection('usuario').add({
+      idusuario: 600,
+      rut: '21.475.571-k',
+      nombreusuario: 'Ignacio',
+      apellidousuario: 'Huerta',
+      fnacimiento: new Date('2004-01-05'),
+      telefono: 123456789,
+      fotoperfil: 'assets/chad.webp',
+      correo: 'administrador@gmail.com',
+      clave: 'claveprueba123',
+      respuesta: 'si',
+      idpregunta: 50, /* Pregunta asociada a ¿Tienes pareja? */
+      idrol: 'admin' /* Rol de admin */
+    });
+
+    //Zapatilla de prueba 
+    this.firestore.collection('producto').add({
+      idproducto: 100,
+      nombreproducto: 'Nike Air Jordan 1',
+      descripcion: 'Zapatilla clásica de alto rendimiento.',
+      precio: 100000,
+      stock: 50,
+      foto: 'assets/air jordan 1.webp',
+      idcategoria: 'hombre' /* Categoría asociada a Hombre */
+    });
+
+
   }
 
 
@@ -86,7 +127,7 @@ export class DbservicesService {
     return this.isDBReady.asObservable();
   }
   fetchProducto(): Observable<Zapatillas[]> {
-    return this.firestore.collection<Zapatillas>('zapatillas').valueChanges();
+    return this.firestore.collection<Zapatillas>('producto').valueChanges();
   }
   fetchUsuario(): Observable<Usuario[]>{
     return this.listaUsuario.asObservable();
@@ -266,34 +307,24 @@ export class DbservicesService {
       console.error('Error al agregar venta:', error);
     });
   }
-
   
-  buscarDetallesCompraVenta(venta: any): Observable<Detallecomprado[]> {
+  buscarDetallesCompraVenta(venta: string): Observable<Detallecomprado[]> {
     return new Observable<Detallecomprado[]>(observer => {
-      this.database.executeSql("SELECT * FROM detallecomprado WHERE ventac = ?;", [venta]).then(res => {
-        let items: Detallecomprado[] = [];
-  
-        // Validar cantidad de registros
-        if (res.rows.length > 0) {
-          // Recorrer los datos
-          for (var i = 0; i < res.rows.length; i++) {
-            // Guardando los datos
-            items.push({ 
-              iddetallec: res.rows.item(i).iddetallec,
-              nombreprodc: res.rows.item(i).nombreprodc,
-              fotoprodc: res.rows.item(i).fotoprodc,
-              cantidadc: res.rows.item(i).cantidadc,
-              subtotalc: res.rows.item(i).subtotalc,
-              ventac: res.rows.item(i).ventac
-            });
+      this.firestore.collection<Detallecomprado>('detallecomprado', ref => ref.where('ventac', '==', venta))
+        .valueChanges()
+        .subscribe(
+          (items: Detallecomprado[]) => {
+            observer.next(items);
+            observer.complete();
+          },
+          (error: Error) => {
+            observer.error(error);
           }
-        }
-  
-        observer.next(items);
-        observer.complete();
-      });
+        );
     });
   }
+  
+  
   restarStock(id: string, stock: number) {
     const productoRef = this.firestore.collection('producto').doc(id);
     return productoRef.update({ stock }).then(() => {
@@ -586,20 +617,26 @@ insertarZapatilla(nombreproducto: string, descripcion: string, precio: number, s
 
   }
 
-  async obtenerHistorial(idusuario :any): Promise<any>{
-    return new Promise((resolve, reject)=>{
-      this.database.executeSql('SELECT * FROM venta WHERE idusuario = ?', [idusuario]).then((res)=>{
-        if (res.rows.length > 0){
-          resolve(res.rows.item(0));
-        }else{
-          resolve(null);
-        }
-      }).catch((error)=>{
-        reject('Error al obtener el venta' + JSON.stringify(error));
-      });
+ 
+  obtenerHistorial(idusuario: any): Observable<any> {
+    return new Observable<any>(observer => {
+      this.firestore.collection('venta', ref => ref.where('idusuario', '==', idusuario))
+        .valueChanges()
+        .subscribe(
+          (items: any[]) => {
+            if (items.length > 0) {
+              observer.next(items[0]); // Retorna el primer resultado
+            } else {
+              observer.next(null); // No se encontraron documentos
+            }
+            observer.complete();
+          },
+          (error: any) => {
+            observer.error('Error al obtener la venta: ' + error.message);
+          }
+        );
     });
-
-   }
+  }
 
 
    agregarDetalle(cantidad: number, detalle: string, idventa: string, idproducto: string) {
